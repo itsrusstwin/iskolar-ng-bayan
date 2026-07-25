@@ -10,30 +10,51 @@ use Illuminate\Support\Facades\Storage;
 class RequirementUploadController extends Controller
 {
     public function store(Request $request, ApplicantRequirement $requirement)
+{
+    abort_unless(
+        $requirement->applicant_id === Auth::user()->applicant?->id,
+        403
+    );
+
+    $validated = $request->validate([
+        'file' => 'required|file|mimes:pdf|max:5120', // 5MB, PDF only
+    ], [
+        'file.mimes' => 'Only PDF files are allowed. Please upload your document as a PDF.',
+    ]);
+
+    if ($requirement->file_path) {
+        Storage::disk('public')->delete($requirement->file_path);
+    }
+
+    $path = $request->file('file')->store('requirements', 'public');
+
+    $requirement->update([
+        'file_path' => $path,
+        'is_submitted' => true,
+        'submitted_at' => now(),
+        'approval_status' => 'pending',
+    ]);
+
+    return redirect()->route('dashboard')->with('success', 'Requirement uploaded successfully.');
+}
+
+    public function destroy(ApplicantRequirement $requirement)
     {
-        // Only the owning student can upload to their own requirement
         abort_unless(
             $requirement->applicant_id === Auth::user()->applicant?->id,
             403
         );
 
-        $validated = $request->validate([
-            'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB
-        ]);
-
-        // Remove the old file if this is a re-upload
         if ($requirement->file_path) {
             Storage::disk('public')->delete($requirement->file_path);
         }
 
-        $path = $request->file('file')->store('requirements', 'public');
-
         $requirement->update([
-            'file_path' => $path,
-            'is_submitted' => true,
-            'submitted_at' => now(),
+            'file_path' => null,
+            'is_submitted' => false,
+            'submitted_at' => null,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Requirement uploaded successfully.');
+        return redirect()->route('dashboard')->with('success', 'Requirement removed.');
     }
 }

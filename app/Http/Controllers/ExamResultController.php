@@ -19,14 +19,12 @@ class ExamResultController extends Controller
     public function store(Request $request, Applicant $applicant)
     {
         $validated = $request->validate([
-            'exam_id' => 'required|exists:exams,id',
-            'score' => 'nullable|numeric',
             'passed' => 'required|boolean',
         ]);
 
         $applicant->examResults()->create([
-            'exam_id' => $validated['exam_id'],
-            'score' => $validated['score'] ?? null,
+            'exam_id' => null,
+            'score' => null,
             'passed' => $validated['passed'],
             'posted_at' => now(),
         ]);

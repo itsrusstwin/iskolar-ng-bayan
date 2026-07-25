@@ -54,7 +54,7 @@ class ApplicantController extends Controller
         'requirements.requirement',
         'verification',
         'mswdoAssessment',
-        'examResults.exam',
+        'examResults',
         'orientation',
         'wasteCompliance',
         'payouts',
@@ -65,8 +65,7 @@ class ApplicantController extends Controller
     $user = Auth::user();
 
     if ($user && $user->isAdmin()) {
-        $exams = \App\Models\Exam::all();
-        return view('admin.applicant-show', compact('applicant', 'exams'));
+        return view('admin.applicant-show', compact('applicant'));
     }
 
     return view('applicants.show', compact('applicant'));

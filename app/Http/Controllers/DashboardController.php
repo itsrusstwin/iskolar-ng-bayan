@@ -21,33 +21,45 @@ class DashboardController extends Controller
     public function store(Request $request)
 {
     $validated = $request->validate([
-    'school_id' => 'nullable|string|max:50',
-    'program_type' => 'required|in:current,aspiring',
-    'contact_number' => 'nullable|string|max:20',
-    'province' => 'nullable|string|max:100',
-    'city_municipality' => 'nullable|string|max:100',
-    'barangay' => 'nullable|string|max:100',
-    'course' => 'nullable|string|max:150',
-    'year_level' => 'nullable|in:1st Year,2nd Year,3rd Year,4th Year',
-    'school_name' => 'nullable|string|max:150',
-]);
+        'last_name' => 'required|string|max:100',
+        'first_name' => 'required|string|max:100',
+        'middle_name' => 'nullable|string|max:100',
+        'contact_number' => 'required|string|max:20',
+        'program_type' => 'required|in:new,renewal',
+        'date_of_birth' => 'required|date',
+        'sex' => 'required|in:Male,Female',
+        'landmark' => 'nullable|string|max:150',
+        'sitio' => 'nullable|string|max:100',
+        'barangay' => 'required|string|max:100',
+        'father_name' => 'nullable|string|max:150',
+        'mother_maiden_name' => 'nullable|string|max:150',
+        'school_name' => 'required|in:ACTS COMPUTER COLLEGE,AMA COLLEGE,
+        LAGUNA STATE POLYTECHNIC UNIVERSITY,LAGUNA UNIVERSITY,STI COLLEGE,
+        PHINMA UNION COLLEGE,SOUTHBAY MONTESSORI SCHOOL,PHILIPPINE WOMEN\'S UNIVERSITY',
+        'year_level' => 'required|string|max:20',
+        'course' => 'required|string|max:150',
+    ]);
 
     $user = Auth::user();
 
     $applicant = Applicant::create([
-    'user_id' => $user->id,
-    'first_name' => explode(' ', $user->name)[0] ?? $user->name,
-    'last_name' => explode(' ', $user->name)[1] ?? '',
-    'school_id' => $validated['school_id'] ?? null,
-    'program_type' => $validated['program_type'],
-    'contact_number' => $validated['contact_number'] ?? null,
-    'province' => $validated['province'] ?? null,
-    'city_municipality' => $validated['city_municipality'] ?? null,
-    'barangay' => $validated['barangay'] ?? null,
-    'course' => $validated['course'] ?? null,
-    'year_level' => $validated['year_level'] ?? null,
-    'school_name' => $validated['school_name'] ?? null,
-]);
+        'user_id' => $user->id,
+        'first_name' => $validated['first_name'],
+        'middle_name' => $validated['middle_name'] ?? null,
+        'last_name' => $validated['last_name'],
+        'contact_number' => $validated['contact_number'],
+        'program_type' => $validated['program_type'],
+        'date_of_birth' => $validated['date_of_birth'],
+        'sex' => $validated['sex'],
+        'landmark' => $validated['landmark'] ?? null,
+        'sitio' => $validated['sitio'] ?? null,
+        'barangay' => $validated['barangay'],
+        'father_name' => $validated['father_name'] ?? null,
+        'mother_maiden_name' => $validated['mother_maiden_name'] ?? null,
+        'school_name' => $validated['school_name'],
+        'year_level' => $validated['year_level'],
+        'course' => $validated['course'],
+    ]);
 
     foreach (Requirement::all() as $requirement) {
         $applicant->requirements()->create([

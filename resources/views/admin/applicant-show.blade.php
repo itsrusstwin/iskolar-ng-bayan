@@ -30,12 +30,11 @@
             </div>
             <div>
                 <p class="font-medium text-lg mb-0.5 text-gray-900 dark:text-gray-100">{{ $applicant->first_name }} {{ $applicant->last_name }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                    Student ID: {{ $applicant->school_id ?? 'N/A' }}
-                    @if ($applicant->course || $applicant->year_level)
-                        &nbsp;•&nbsp; {{ $applicant->course }}{{ $applicant->course && $applicant->year_level ? ', ' : '' }}{{ $applicant->year_level }}
-                    @endif
-                </p>
+                @if ($applicant->course || $applicant->year_level)
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">
+        {{ $applicant->course }}{{ $applicant->course && $applicant->year_level ? ', ' : '' }}{{ $applicant->year_level }}
+    </p>
+@endif
                 @if ($applicant->school_name)
                     <p class="text-sm text-gray-500 dark:text-gray-400">{{ $applicant->school_name }}</p>
                 @endif
@@ -47,47 +46,90 @@
     </div>
 
     <div class="border-t border-gray-100 dark:border-gray-700 mt-4 pt-3.5 grid grid-cols-1 md:grid-cols-4 gap-3.5 text-sm">
-        <div>
-            <span class="text-gray-500 dark:text-gray-400">Email</span><br>
-            <span class="text-gray-800 dark:text-gray-200">{{ $applicant->user->email ?? 'N/A' }}</span>
-        </div>
-        <div>
-            <span class="text-gray-500 dark:text-gray-400">Contact number</span><br>
-            <span class="text-gray-800 dark:text-gray-200">{{ $applicant->contact_number ?? 'N/A' }}</span>
-        </div>
-        <div>
-            <span class="text-gray-500 dark:text-gray-400">Address</span><br>
-            <span class="text-gray-800 dark:text-gray-200">
-                @php $addressParts = array_filter([$applicant->province, $applicant->city_municipality, $applicant->barangay]); @endphp
-                {{ $addressParts ? implode(', ', $addressParts) : 'N/A' }}
-            </span>
-        </div>
-        <div>
-            <span class="text-gray-500 dark:text-gray-400">Applicant type</span><br>
-            <span class="text-gray-800 dark:text-gray-200">{{ ucfirst($applicant->program_type) }}</span>
-        </div>
+    <div>
+        <span class="text-gray-500 dark:text-gray-400">Email</span><br>
+        <span class="text-gray-800 dark:text-gray-200">{{ $applicant->user->email ?? 'N/A' }}</span>
     </div>
+    <div>
+        <span class="text-gray-500 dark:text-gray-400">Contact number</span><br>
+        <span class="text-gray-800 dark:text-gray-200">{{ $applicant->contact_number ?? 'N/A' }}</span>
+    </div>
+    <div>
+        <span class="text-gray-500 dark:text-gray-400">Date of birth</span><br>
+        <span class="text-gray-800 dark:text-gray-200">{{ optional($applicant->date_of_birth)->format('M d, Y') ?? 'N/A' }}</span>
+    </div>
+    <div>
+        <span class="text-gray-500 dark:text-gray-400">Sex</span><br>
+        <span class="text-gray-800 dark:text-gray-200">{{ $applicant->sex ?? 'N/A' }}</span>
+    </div>
+    <div>
+        <span class="text-gray-500 dark:text-gray-400">Address</span><br>
+        <span class="text-gray-800 dark:text-gray-200">
+            @php $addressParts = array_filter([$applicant->landmark, $applicant->sitio, $applicant->barangay]); @endphp
+            {{ $addressParts ? implode(', ', $addressParts) : 'N/A' }}
+        </span>
+    </div>
+    <div>
+        <span class="text-gray-500 dark:text-gray-400">Application type</span><br>
+        <span class="text-gray-800 dark:text-gray-200">{{ ucfirst($applicant->program_type) }}</span>
+    </div>
+    <div>
+        <span class="text-gray-500 dark:text-gray-400">Father's name</span><br>
+        <span class="text-gray-800 dark:text-gray-200">{{ $applicant->father_name ?? 'N/A' }}</span>
+    </div>
+    <div>
+        <span class="text-gray-500 dark:text-gray-400">Mother's maiden name</span><br>
+        <span class="text-gray-800 dark:text-gray-200">{{ $applicant->mother_maiden_name ?? 'N/A' }}</span>
+    </div>
+</div>
 </div>
 
 <!-- Requirements -->
 <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-5">
     <p class="font-medium text-sm text-gray-900 dark:text-gray-100 mb-3">Requirements checklist</p>
-    @foreach ($applicant->requirements as $req)
-        <div class="flex items-center justify-between py-2.5 border-t border-gray-100 dark:border-gray-700 first:border-t-0">
-            <span class="text-sm text-gray-800 dark:text-gray-200">{{ $req->requirement->name }}</span>
-            @if ($req->is_submitted)
-                <div class="flex items-center gap-2.5">
-                    @if ($req->file_path)
-                        <a href="{{ asset('storage/' . $req->file_path) }}" target="_blank"
-                           class="text-xs text-blue-600 dark:text-blue-400 hover:underline">View file</a>
-                    @endif
-                    <span class="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs font-medium px-2.5 py-1 rounded-full">Submitted</span>
-                </div>
-            @else
-                <span class="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs font-medium px-2.5 py-1 rounded-full">Not submitted</span>
-            @endif
-        </div>
-    @endforeach
+   @foreach ($applicant->requirements as $req)
+    @php $isPersonalSubmission = str_contains(strtolower($req->requirement->name), 'brown envelope'); @endphp
+    <div class="flex items-center justify-between py-2.5 border-t border-gray-100 dark:border-gray-700 first:border-t-0">
+        <span class="text-sm text-gray-800 dark:text-gray-200">{{ $req->requirement->name }}</span>
+        @if ($isPersonalSubmission)
+            <span class="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs font-medium px-2.5 py-1 rounded-full">
+                Submitted in person
+            </span>
+        @elseif ($req->is_submitted)
+            <div class="flex items-center gap-2.5">
+                @if ($req->file_path)
+                    <a href="{{ asset('storage/' . $req->file_path) }}" target="_blank"
+                       class="text-xs text-blue-600 dark:text-blue-400 hover:underline">View file</a>
+                @endif
+
+                @if ($req->approval_status === 'approved')
+                    <span class="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs font-medium px-2.5 py-1 rounded-full">Approved</span>
+                @elseif ($req->approval_status === 'rejected')
+                    <span class="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-xs font-medium px-2.5 py-1 rounded-full">Not approved</span>
+                @else
+                    <span class="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium px-2.5 py-1 rounded-full">Pending review</span>
+                @endif
+
+                <form method="POST" action="{{ route('admin.requirements.approve', $req) }}">
+                    @csrf
+                    <button type="submit"
+                        class="text-xs font-medium px-2.5 py-1 rounded-lg transition {{ $req->approval_status === 'approved' ? 'bg-green-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-green-600 hover:text-white' }}">
+                        Approve
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('admin.requirements.reject', $req) }}">
+                    @csrf
+                    <button type="submit"
+                        class="text-xs font-medium px-2.5 py-1 rounded-lg transition {{ $req->approval_status === 'rejected' ? 'bg-red-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-red-600 hover:text-white' }}">
+                        Reject
+                    </button>
+                </form>
+            </div>
+        @else
+            <span class="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs font-medium px-2.5 py-1 rounded-full">Not submitted</span>
+        @endif
+    </div>
+@endforeach
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -139,26 +181,19 @@
         @endif
     </div>
 
-    <!-- Step 8: Exam result -->
+   <!-- Step 8: Exam result -->
     <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
         <p class="font-medium text-sm text-gray-900 dark:text-gray-100 mb-1">Qualifying Exam Result</p>
         @if ($applicant->examResults->count())
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Already recorded.</p>
             @foreach ($applicant->examResults as $result)
-                <p class="text-sm text-gray-700 dark:text-gray-300">{{ $result->exam->name ?? 'Exam' }}: Score {{ $result->score ?? 'N/A' }} — {{ $result->passed ? 'Passed' : 'Failed' }}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">{{ $result->passed ? 'Passed' : 'Failed' }}</p>
             @endforeach
         @else
             <form method="POST" action="{{ route('admin.exam-result', $applicant) }}" class="space-y-2 text-sm">
                 @csrf
-                <select name="exam_id" class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded p-2 text-sm" required>
-                    <option value="">-- Select exam --</option>
-                    @foreach ($exams as $exam)
-                        <option value="{{ $exam->id }}">{{ $exam->name }}</option>
-                    @endforeach
-                </select>
-                <input type="number" step="0.01" name="score" placeholder="Score"
-                       class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded p-2 text-sm">
                 <select name="passed" class="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded p-2 text-sm" required>
+                    <option value="">-- Select result --</option>
                     <option value="1">Passed</option>
                     <option value="0">Failed</option>
                 </select>
@@ -166,7 +201,6 @@
             </form>
         @endif
     </div>
-
     <!-- Step 9: Orientation -->
     <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
         <p class="font-medium text-sm text-gray-900 dark:text-gray-100 mb-1">Orientation</p>

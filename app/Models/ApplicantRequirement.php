@@ -15,6 +15,7 @@ class ApplicantRequirement extends Model
     'is_submitted',
     'file_path',
     'submitted_at',
+    'approval_status',
 ];
 
     public function requirement() { return $this->belongsTo(Requirement::class); }

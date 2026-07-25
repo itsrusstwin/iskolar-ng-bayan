@@ -23,15 +23,30 @@
 
         <!-- Sidebar -->
         <div class="w-60 shrink-0 bg-gray-900 dark:bg-gray-950 text-gray-300 flex flex-col">
-            <div class="flex items-center gap-2 px-5 py-4 border-b border-gray-800">
-                <img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="h-8 bg-white rounded px-1 py-0.5">
-                <span class="text-white font-semibold text-sm leading-tight">Admin Panel</span>
+            <div class="px-5 py-4 border-b border-gray-800">
+                <a href="{{ route('home') }}" class="flex items-center gap-1.5">
+                    <img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="h-8 bg-white rounded px-1 py-0.5">
+                    <img src="{{ asset('images/iskolar-logo.jpg') }}" alt="Iskolar ng Bayan Logo" class="h-8 bg-white rounded px-1 py-0.5">
+                    <img src="{{ asset('images/lydo-logo.jpg') }}" alt="LYDO Logo" class="h-8 w-8 rounded-full object-cover">
+                </a>
+            </div>
+
+            <div class="px-3 pt-3">
+                <span class="block bg-blue-600 text-white font-semibold text-sm px-3 py-2.5 rounded-lg">Admin Panel</span>
             </div>
 
             <nav class="flex-1 p-3 space-y-1">
                 <a href="{{ route('admin.dashboard') }}"
                    class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
                     <i class="ti ti-layout-dashboard text-lg"></i> Dashboard
+                </a>
+                <a href="{{ route('admin.announcements.index') }}"
+                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.announcements.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
+                    <i class="ti ti-speakerphone text-lg"></i> Announcements
+                </a>
+                <a href="{{ route('admin.students.create') }}"
+                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.students.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
+                    <i class="ti ti-user-plus text-lg"></i> Create Student Account
                 </a>
                 <a href="{{ route('home') }}"
                    class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800">

@@ -10,13 +10,15 @@ use App\Http\Controllers\OrientationController;
 use App\Http\Controllers\WasteComplianceController;
 use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\AppealController;
-use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\RequirementUploadController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\StudentAccountController;
+use App\Http\Controllers\RequirementReviewController;
 
 
 
@@ -30,7 +32,15 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/guides', [HomeController::class, 'guides'])->name('guides');
 
+
+Route::post('/requirements/{requirement}/approve', [RequirementReviewController::class, 'approve'])
+    ->name('admin.requirements.approve');
+
+Route::post('/requirements/{requirement}/reject', [RequirementReviewController::class, 'reject'])
+    ->name('admin.requirements.reject');
+
 Route::post('/requirements/{requirement}/upload', [RequirementUploadController::class, 'store'])->name('requirements.upload');
+    Route::delete('/requirements/{requirement}', [RequirementUploadController::class, 'destroy'])->name('requirements.destroy');
 
 // -----------------------------
 // Authentication
@@ -49,9 +59,8 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
-Route::get('/register', [RegisterController::class, 'create'])->name('register');
-Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+// NOTE: Self-service registration has been removed.
+// Student accounts are now created only by an admin — see admin.students.* routes below.
 
 // -----------------------------
 // Public-facing (applicant side) — no login required
@@ -61,7 +70,7 @@ Route::get('/applicants/{applicant}', [ApplicantController::class, 'show'])->nam
 Route::post('/appeals', [AppealController::class, 'store'])->name('appeals.store');
 
 // -----------------------------
-// Complete Profile — requires login (Step 2 of registration)
+// Complete Profile — requires login (Step 2, after admin creates the account)
 // -----------------------------
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -73,6 +82,16 @@ Route::middleware('auth')->group(function () {
 // -----------------------------
 Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/dashboard', [ApplicantController::class, 'index'])->name('admin.dashboard');
+
+    Route::get('/students/create', [StudentAccountController::class, 'create'])->name('admin.students.create');
+    Route::post('/students', [StudentAccountController::class, 'store'])->name('admin.students.store');
+
+    Route::get('/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
+    Route::get('/announcements/create', [AnnouncementController::class, 'create'])->name('admin.announcements.create');
+    Route::post('/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
+    Route::get('/announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('admin.announcements.edit');
+    Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
+    Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
 
     Route::post('/applicants/{applicant}/verify-policy', [PolicyVerificationController::class, 'verify'])
         ->name('admin.verify-policy');

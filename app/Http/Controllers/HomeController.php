@@ -6,7 +6,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('home');
+        $announcements = \App\Models\Announcement::where('is_published', true)->latest()->get();
+        return view('home', compact('announcements'));
     }
 
     public function about()

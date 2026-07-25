@@ -18,9 +18,17 @@
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
 
     <nav class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between shadow">
-        <div class="flex items-center gap-3">
-            <img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="h-9 bg-white rounded-md px-2 py-1">
-        </div>
+        <div class="flex items-center gap-2">
+    <a href="{{ route('home') }}" class="inline-block">
+        <img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="h-9 bg-white rounded-md px-2 py-1">
+    </a>
+    <a href="{{ route('home') }}" class="inline-block">
+        <img src="{{ asset('images/iskolar-logo.jpg') }}" alt="Iskolar ng Bayan Logo" class="h-9 bg-white rounded-md px-2 py-1">
+    </a>
+    <a href="{{ route('home') }}" class="inline-block">
+        <img src="{{ asset('images/lydo-logo.jpg') }}" alt="LYDO Logo" class="h-9 w-9 rounded-full object-cover">
+    </a>
+</div>
 
         <div class="flex items-center gap-8 text-sm font-semibold">
             <a href="{{ route('home') }}"

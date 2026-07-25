@@ -14,39 +14,38 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        // Check if the email exists at all before checking the password
-        $userExists = User::where('email', $credentials['email'])->exists();
+    // Check if the email exists at all before checking the password
+    $userExists = User::where('email', $credentials['email'])->exists();
 
-        if (!$userExists) {
-            return back()->withErrors([
-                'email' => 'No account found with that email. Please register first.',
-            ])->withInput($request->only('email'))
-              ->with('show_register_prompt', true);
-        }
-
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-
-            /** @var \App\Models\User $user */
-            $user = Auth::user();
-
-            if ($user->isAdmin()) {
-    return redirect()->intended(route('admin.dashboard'))->with('success', 'Welcome back!');
-}
-
-return redirect()->route('dashboard')->with('success', 'Welcome back!');
-        }
-
+    if (!$userExists) {
         return back()->withErrors([
-            'email' => 'Incorrect password. Please try again.',
-        ])->onlyInput('email');
+            'email' => 'No account found with that email. Please contact your scholarship administrator to have an account created for you.',
+        ])->withInput($request->only('email'));
     }
+
+    if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        $request->session()->regenerate();
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard'))->with('success', 'Welcome back!');
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Welcome back!');
+    }
+
+    return back()->withErrors([
+        'email' => 'Incorrect password. Please try again.',
+    ])->onlyInput('email');
+}
 
     public function logout(Request $request)
     {

@@ -17,16 +17,21 @@ class GoogleController extends Controller
     {
         $googleUser = Socialite::driver('google')->user();
 
-        $user = User::updateOrCreate(
-            ['email' => $googleUser->getEmail()],
-            [
-                'name' => $googleUser->getName(),
+        $user = User::where('email', $googleUser->getEmail())->first();
+
+        if (!$user) {
+            return redirect()->route('login')->withErrors([
+                'email' => 'No account found for that Google email. Please contact your scholarship administrator to have an account created for you.',
+            ]);
+        }
+
+        // Link the Google identity to the existing account if not already linked
+        if (!$user->provider) {
+            $user->update([
                 'provider' => 'google',
                 'provider_id' => $googleUser->getId(),
-                'password' => bcrypt(str()->random(16)),
-                'role' => 'applicant',
-            ]
-        );
+            ]);
+        }
 
         Auth::login($user);
 
@@ -34,6 +39,6 @@ class GoogleController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-       return redirect()->route('dashboard')->with('success', 'Welcome back!');
+        return redirect()->route('dashboard')->with('success', 'Welcome back!');
     }
 }

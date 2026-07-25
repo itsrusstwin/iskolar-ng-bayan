@@ -12,6 +12,24 @@
             </div>
         </div>
 
+        @forelse ($announcements as $announcement)
+            <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
+                <div class="bg-blue-600 text-white px-4 py-2 font-semibold">
+                    {{ $announcement->title }}
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 text-sm text-gray-700 dark:text-gray-300">
+                    <p class="whitespace-pre-line">{{ $announcement->body }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ $announcement->created_at->format('M d, Y') }}</p>
+                </div>
+            </div>
+        @empty
+            <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
+                <div class="bg-white dark:bg-gray-800 p-4 text-sm text-gray-500 dark:text-gray-400">
+                    No announcements at this time.
+                </div>
+            </div>
+        @endforelse
+
         <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
             <div class="bg-blue-600 text-white px-4 py-2 font-semibold">
                 Scholarship Requirements
