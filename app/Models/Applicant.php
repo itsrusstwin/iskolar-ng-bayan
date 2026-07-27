@@ -46,4 +46,5 @@ class Applicant extends Model
     public function wasteCompliance() { return $this->hasMany(WasteCompliance::class); }
     public function payouts() { return $this->hasMany(Payout::class); }
     public function disqualifications() { return $this->hasMany(Disqualification::class); }
+    public function auditLogs() { return $this->hasMany(AuditLog::class)->latest(); }
 }

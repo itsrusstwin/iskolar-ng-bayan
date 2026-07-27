@@ -16,6 +16,10 @@ class Appeal extends Model
         'result',
     ];
 
+    protected $casts = [
+        'filed_at' => 'datetime',
+    ];
+
     public function disqualification()
     {
         return $this->belongsTo(Disqualification::class);

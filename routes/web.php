@@ -19,6 +19,7 @@ use App\Http\Controllers\RequirementUploadController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\StudentAccountController;
 use App\Http\Controllers\RequirementReviewController;
+use App\Http\Controllers\AuditLogController;
 
 
 
@@ -80,7 +81,7 @@ Route::middleware('auth')->group(function () {
 // -----------------------------
 // Admin side — requires login
 // -----------------------------
-Route::middleware('auth')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [ApplicantController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/students/create', [StudentAccountController::class, 'create'])->name('admin.students.create');
@@ -110,4 +111,15 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 
     Route::post('/applicants/{applicant}/payout', [PayoutController::class, 'release'])
         ->name('admin.payout');
+
+    // Appeal resolution
+    Route::post('/appeals/{appeal}/approve', [AppealController::class, 'approve'])
+        ->name('admin.appeals.approve');
+
+    Route::post('/appeals/{appeal}/reject', [AppealController::class, 'reject'])
+        ->name('admin.appeals.reject');
+
+    // Audit log
+    Route::get('/audit-log', [AuditLogController::class, 'index'])
+        ->name('admin.audit-log.index');
 });

@@ -58,7 +58,8 @@ class ApplicantController extends Controller
         'orientation',
         'wasteCompliance',
         'payouts',
-        'disqualifications',
+        'disqualifications.appeals',
+        'auditLogs.user',
     ]);
 
     /** @var User|null $user */

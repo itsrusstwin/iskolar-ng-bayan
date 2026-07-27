@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Applicant;
+use App\Models\AuditLog;
 use App\Services\ApplicationWorkflowService;
 use Illuminate\Http\Request;
 
@@ -24,13 +25,20 @@ class WasteComplianceController extends Controller
 
         $isCompliant = $validated['kilos_submitted'] >= 10;
 
-        $applicant->wasteCompliance()->create([
+        $wasteCompliance = $applicant->wasteCompliance()->create([
             'semester' => $validated['semester'],
             'kilos_submitted' => $validated['kilos_submitted'],
             'is_compliant' => $isCompliant,
         ]);
 
         $this->workflow->recordWasteCompliance($applicant, (float) $validated['kilos_submitted']);
+
+        AuditLog::record(
+            'waste_compliance_recorded',
+            "Recorded waste compliance ({$validated['kilos_submitted']}kg, {$validated['semester']}) for {$applicant->first_name} {$applicant->last_name} — resulting status: {$applicant->status}",
+            $applicant,
+            $wasteCompliance
+        );
 
         return redirect()
             ->route('applicants.show', $applicant)

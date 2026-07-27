@@ -4,69 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Iskolar ng Bayan')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = { darkMode: 'class' }
-</script>
-<script>
-  if (localStorage.theme === 'dark' ||
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
-  }
-</script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+<body class="bg-surface">
 
-    <nav class="bg-blue-600 text-white px-6 py-3 flex items-center justify-between shadow">
-        <div class="flex items-center gap-2">
-    <a href="{{ route('home') }}" class="inline-block">
-        <img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="h-9 bg-white rounded-md px-2 py-1">
-    </a>
-    <a href="{{ route('home') }}" class="inline-block">
-        <img src="{{ asset('images/iskolar-logo.jpg') }}" alt="Iskolar ng Bayan Logo" class="h-9 bg-white rounded-md px-2 py-1">
-    </a>
-    <a href="{{ route('home') }}" class="inline-block">
-        <img src="{{ asset('images/lydo-logo.jpg') }}" alt="LYDO Logo" class="h-9 w-9 rounded-full object-cover">
-    </a>
-</div>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-brand-navy shadow-soft py-2">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-3" href="{{ route('home') }}">
+                <span class="logo-chip"><img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="logo-mark"></span>
+                <span class="logo-chip"><img src="{{ asset('images/iskolar-logo.jpg') }}" alt="Iskolar ng Bayan Logo" class="logo-mark"></span>
+                <span class="logo-chip"><img src="{{ asset('images/lydo-logo.jpg') }}" alt="LYDO Logo" class="logo-mark"></span>
+            </a>
 
-        <div class="flex items-center gap-8 text-sm font-semibold">
-            <a href="{{ route('home') }}"
-               class="{{ request()->routeIs('home') ? 'text-white border-b-2 border-white pb-1' : 'text-blue-100 hover:text-white' }}">
-                Home
-            </a>
-            <a href="{{ route('about') }}"
-               class="{{ request()->routeIs('about') ? 'text-white border-b-2 border-white pb-1' : 'text-blue-100 hover:text-white' }}">
-                About us
-            </a>
-            <a href="{{ route('guides') }}"
-               class="{{ request()->routeIs('guides') ? 'text-white border-b-2 border-white pb-1' : 'text-blue-100 hover:text-white' }}">
-                Guides
-            </a>
-            @auth
-    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="text-blue-100 hover:text-white">
-        Dashboard
-    </a>
-@else
-    <a href="{{ route('login') }}"
-               class="text-blue-100 hover:text-white">
-                Login\Sign up
-            </a>
-@endauth
-            <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-white/10 transition" title="Toggle dark mode">
-                <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+            <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <i class="bi bi-list fs-2 text-white"></i>
             </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-4 mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a href="{{ route('home') }}" class="nav-link fw-semibold {{ request()->routeIs('home') ? 'text-white border-bottom border-2' : 'text-white-50' }}" style="border-color: var(--gold-500) !important;">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('about') }}" class="nav-link fw-semibold {{ request()->routeIs('about') ? 'text-white border-bottom border-2' : 'text-white-50' }}" style="border-color: var(--gold-500) !important;">About us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('guides') }}" class="nav-link fw-semibold {{ request()->routeIs('guides') ? 'text-white border-bottom border-2' : 'text-white-50' }}" style="border-color: var(--gold-500) !important;">Guides</a>
+                    </li>
+                    <li class="nav-item mt-2 mt-lg-0">
+                        @auth
+                            <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="btn btn-brand btn-sm px-3">Dashboard</a>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-brand btn-sm px-3">Login / Sign up</a>
+                        @endauth
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
     @yield('content')
 
-    <script>
-      function toggleDarkMode() {
-        document.documentElement.classList.toggle('dark');
-        localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      }
-    </script>
+    <footer class="bg-brand-navy text-white-50 py-4 mt-5">
+        <div class="container text-center small">
+            &copy; {{ date('Y') }} Iskolar ng Bayan — Municipality of Santa Cruz, Laguna
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
 </html>

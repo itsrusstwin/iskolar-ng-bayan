@@ -4,130 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin - Iskolar ng Bayan')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = { darkMode: 'class' }
-    </script>
-    <script>
-      if (localStorage.theme === 'dark' ||
-          (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      }
-    </script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+<body class="bg-surface">
 
 @auth
-    <div class="w-full min-h-screen flex">
+<div class="d-flex" style="min-height: 100vh;">
 
-        <!-- Sidebar -->
-        <div class="w-60 shrink-0 bg-gray-900 dark:bg-gray-950 text-gray-300 flex flex-col">
-            <div class="px-5 py-4 border-b border-gray-800">
-                <a href="{{ route('home') }}" class="flex items-center gap-1.5">
-                    <img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="h-8 bg-white rounded px-1 py-0.5">
-                    <img src="{{ asset('images/iskolar-logo.jpg') }}" alt="Iskolar ng Bayan Logo" class="h-8 bg-white rounded px-1 py-0.5">
-                    <img src="{{ asset('images/lydo-logo.jpg') }}" alt="LYDO Logo" class="h-8 w-8 rounded-full object-cover">
-                </a>
+    <!-- Sidebar -->
+    <div class="d-none d-lg-flex flex-column bg-brand-navy text-white p-3" style="width: 250px; flex-shrink: 0;">
+        <a href="{{ route('home') }}" class="d-flex align-items-center gap-2 mb-4 px-1">
+            <span class="logo-chip"><img src="{{ asset('images/stc-logo.jpg') }}" class="logo-mark" alt="Santa Cruz Logo"></span>
+            <span class="logo-chip"><img src="{{ asset('images/iskolar-logo.jpg') }}" class="logo-mark" alt="Iskolar ng Bayan Logo"></span>
+        </a>
+
+        <span class="badge-soft-gold mb-4 d-inline-block text-center">Admin Panel</span>
+
+        <nav class="nav flex-column gap-1 flex-grow-1">
+            <a href="{{ route('admin.dashboard') }}"
+               class="nav-link text-white d-flex align-items-center gap-2 rounded-md px-3 py-2 {{ request()->routeIs('admin.dashboard') ? '' : 'text-white-50' }}"
+               style="{{ request()->routeIs('admin.dashboard') ? 'background: var(--gold-500); color: var(--ink-900) !important; font-weight:600;' : '' }}">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="{{ route('admin.announcements.index') }}"
+               class="nav-link text-white d-flex align-items-center gap-2 rounded-md px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? '' : 'text-white-50' }}"
+               style="{{ request()->routeIs('admin.announcements.*') ? 'background: var(--gold-500); color: var(--ink-900) !important; font-weight:600;' : '' }}">
+                <i class="bi bi-megaphone"></i> Announcements
+            </a>
+            <a href="{{ route('admin.students.create') }}"
+               class="nav-link text-white d-flex align-items-center gap-2 rounded-md px-3 py-2 {{ request()->routeIs('admin.students.*') ? '' : 'text-white-50' }}"
+               style="{{ request()->routeIs('admin.students.*') ? 'background: var(--gold-500); color: var(--ink-900) !important; font-weight:600;' : '' }}">
+                <i class="bi bi-person-plus"></i> Create Student Account
+            </a>
+            <a href="{{ route('admin.audit-log.index') }}"
+               class="nav-link text-white d-flex align-items-center gap-2 rounded-md px-3 py-2 {{ request()->routeIs('admin.audit-log.*') ? '' : 'text-white-50' }}"
+               style="{{ request()->routeIs('admin.audit-log.*') ? 'background: var(--gold-500); color: var(--ink-900) !important; font-weight:600;' : '' }}">
+                <i class="bi bi-journal-text"></i> Audit Log
+            </a>
+            <a href="{{ route('home') }}" class="nav-link text-white-50 d-flex align-items-center gap-2 rounded-md px-3 py-2">
+                <i class="bi bi-globe"></i> Public Site
+            </a>
+        </nav>
+
+        <div class="border-top border-white border-opacity-10 pt-3 mt-3">
+            <div class="d-flex align-items-center gap-2 mb-2 small text-white-50">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold text-white"
+                      style="width:28px;height:28px;background:rgba(255,255,255,.15);">
+                    {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                </span>
+                <span class="text-truncate">{{ auth()->user()->name ?? 'Admin' }}</span>
             </div>
-
-            <div class="px-3 pt-3">
-                <span class="block bg-blue-600 text-white font-semibold text-sm px-3 py-2.5 rounded-lg">Admin Panel</span>
-            </div>
-
-            <nav class="flex-1 p-3 space-y-1">
-                <a href="{{ route('admin.dashboard') }}"
-                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
-                    <i class="ti ti-layout-dashboard text-lg"></i> Dashboard
-                </a>
-                <a href="{{ route('admin.announcements.index') }}"
-                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.announcements.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
-                    <i class="ti ti-speakerphone text-lg"></i> Announcements
-                </a>
-                <a href="{{ route('admin.students.create') }}"
-                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.students.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
-                    <i class="ti ti-user-plus text-lg"></i> Create Student Account
-                </a>
-                <a href="{{ route('home') }}"
-                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800">
-                    <i class="ti ti-home text-lg"></i> Public Site
-                </a>
-            </nav>
-
-            <div class="p-3 border-t border-gray-800">
-                <div class="flex items-center gap-2.5 px-2 py-2 mb-1 text-xs text-gray-400">
-                    <div class="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center text-white font-medium">
-                        {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
-                    </div>
-                    <span class="truncate">{{ auth()->user()->name ?? 'Admin' }}</span>
-                </div>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800">
-                        <i class="ti ti-logout text-lg"></i> Logout
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Main area -->
-        <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-3.5">
-                <h1 class="text-sm font-semibold text-gray-700 dark:text-gray-200">@yield('title', 'Admin Dashboard')</h1>
-                <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" title="Toggle dark mode">
-                    <svg class="w-5 h-5 hidden dark:block text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                    <svg class="w-5 h-5 block dark:hidden text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-link text-white-50 text-decoration-none d-flex align-items-center gap-2 p-0 small">
+                    <i class="bi bi-box-arrow-right"></i> Logout
                 </button>
-            </div>
-
-            <div class="max-w-7xl mx-auto py-8 px-6">
-                @if (session('success'))
-                    <div class="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 p-4 rounded-lg mb-6 text-sm">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div class="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 p-4 rounded-lg mb-6">
-                        <ul class="list-disc list-inside">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                @yield('content')
-            </div>
+            </form>
         </div>
     </div>
-@else
-    <div class="max-w-4xl mx-auto py-10 px-4">
-        @if (session('success'))
-            <div class="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 p-4 rounded mb-6">
-                {{ session('success') }}
-            </div>
-        @endif
 
+    <!-- Main -->
+    <div class="flex-grow-1 overflow-hidden">
+        <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center justify-content-between">
+            <button class="btn btn-sm d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarMobile">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <h1 class="h6 fw-bold mb-0">@yield('title', 'Admin Dashboard')</h1>
+            <span></span>
+        </div>
+
+        <div class="p-4">
+            @if (session('success'))
+                <div class="alert-brand-success p-3 mb-4 small">{{ session('success') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="alert-brand-danger p-3 mb-4">
+                    <ul class="mb-0 ps-3">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @yield('content')
+        </div>
+    </div>
+</div>
+
+<!-- Mobile sidebar -->
+<div class="offcanvas offcanvas-start bg-brand-navy text-white" tabindex="-1" id="adminSidebarMobile">
+    <div class="offcanvas-header">
+        <span class="badge-soft-gold">Admin Panel</span>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <nav class="nav flex-column gap-1">
+            <a href="{{ route('admin.dashboard') }}" class="nav-link text-white">Dashboard</a>
+            <a href="{{ route('admin.announcements.index') }}" class="nav-link text-white">Announcements</a>
+            <a href="{{ route('admin.students.create') }}" class="nav-link text-white">Create Student Account</a>
+            <a href="{{ route('admin.audit-log.index') }}" class="nav-link text-white">Audit Log</a>
+            <a href="{{ route('home') }}" class="nav-link text-white-50">Public Site</a>
+        </nav>
+    </div>
+</div>
+
+@else
+    <div class="container py-5">
+        @if (session('success'))
+            <div class="alert-brand-success p-3 mb-4">{{ session('success') }}</div>
+        @endif
         @if ($errors->any())
-            <div class="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 p-4 rounded mb-6">
-                <ul class="list-disc list-inside">
+            <div class="alert-brand-danger p-3 mb-4">
+                <ul class="mb-0 ps-3">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
         @endif
-
         @yield('content')
     </div>
 @endauth
 
-    <script>
-      function toggleDarkMode() {
-        document.documentElement.classList.toggle('dark');
-        localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      }
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@stack('scripts')
 </body>
-</html>
+</html> 

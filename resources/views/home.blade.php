@@ -2,70 +2,68 @@
 @section('title', 'Home - Iskolar ng Bayan')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-6 py-8 grid md:grid-cols-2 gap-6">
 
-    <!-- Left column: Announcements -->
-    <div>
-        <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
-            <div class="bg-white dark:bg-gray-800 px-4 py-2 font-semibold text-gray-800 dark:text-gray-100 border-b dark:border-gray-700">
-                Announcements
+<!-- Hero -->
+<section class="bg-brand-navy text-white position-relative overflow-hidden">
+    <div class="container py-5 position-relative" style="z-index: 2;">
+        <div class="row align-items-center g-4 py-4">
+            <div class="col-lg-7">
+                <span class="badge-soft-gold mb-3 d-inline-block">Municipality of Santa Cruz, Laguna</span>
+                <h1 class="display-4 fw-bold text-white mb-3">ISKOLAR NG BAYAN</h1>
+                <p class="fs-5 text-white-50 mb-4" style="max-width: 560px;">
+                    Supporting the scholars of Santa Cruz — from application to release of funds,
+                    every step of your scholarship journey in one place.
+                </p>
+                @guest
+                    <a href="{{ route('login') }}" class="btn btn-brand btn-lg px-4">Get Started</a>
+                @endguest
             </div>
+           
         </div>
+    </div>
+    <div class="position-absolute top-0 end-0 h-100 opacity-25 d-none d-lg-block"
+         style="width: 45%; background-image: url('{{ asset('images/login-bg.jpg') }}'); background-size: cover; background-position: center; z-index: 1; mask-image: linear-gradient(to right, transparent, black);"></div>
+</section>
 
-        @forelse ($announcements as $announcement)
-            <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
-                <div class="bg-blue-600 text-white px-4 py-2 font-semibold">
-                    {{ $announcement->title }}
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-4 text-sm text-gray-700 dark:text-gray-300">
-                    <p class="whitespace-pre-line">{{ $announcement->body }}</p>
-                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ $announcement->created_at->format('M d, Y') }}</p>
-                </div>
+<div class="container py-5">
+    <div class="row g-4">
+
+        <!-- Left column: announcements -->
+        <div class="col-lg-7">
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-megaphone-fill" style="color: var(--gold-600);"></i>
+                <h2 class="h5 fw-bold mb-0">Announcements</h2>
             </div>
-        @empty
-            <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
-                <div class="bg-white dark:bg-gray-800 p-4 text-sm text-gray-500 dark:text-gray-400">
+
+            @forelse ($announcements as $announcement)
+                <div class="card-flat mb-3 overflow-hidden">
+                    <div class="p-3 text-white" style="background: var(--ink-900);">
+                        <p class="fw-semibold mb-0">{{ $announcement->title }}</p>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-body mb-2" style="white-space: pre-line;">{{ $announcement->body }}</p>
+                        <p class="small text-muted-soft mb-0">{{ $announcement->created_at->format('M d, Y') }}</p>
+                    </div>
+                </div>
+            @empty
+                <div class="card-flat p-4 text-center text-muted-soft mb-3">
                     No announcements at this time.
                 </div>
-            </div>
-        @endforelse
-
-        <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
-            <div class="bg-blue-600 text-white px-4 py-2 font-semibold">
-                Scholarship Requirements
-            </div>
-            <ul class="bg-white dark:bg-gray-800 p-4 space-y-2 text-sm text-gray-700 dark:text-gray-300 list-disc list-inside">
-                <li>Certified True Copy of Grades</li>
-                <li>Photocopy PSA Birth Certificate</li>
-                <li>Photocopy Latest School ID</li>
-                <li>Long Brown Envelope</li>
-            </ul>
+            @endforelse
         </div>
 
-        <div class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
-            <div class="bg-blue-600 text-white px-4 py-2 font-semibold">
-                Period for the Submission of Requirements
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-4 text-sm text-gray-700 dark:text-gray-300">
-                <p>July 20, 2026 – November 20, 2026</p>
+        <!-- Right column: image -->
+        <div class="col-lg-5">
+            <div class="rounded-xl overflow-hidden shadow-soft position-relative" style="min-height: 420px;">
+                <div class="position-absolute w-100 h-100" style="background-image: url('{{ asset('images/login-bg.jpg') }}'); background-size: cover; background-position: center;"></div>
+                <div class="position-absolute w-100 h-100" style="background: linear-gradient(180deg, rgba(10,38,71,.15), rgba(10,38,71,.75));"></div>
+                <div class="position-absolute bottom-0 start-0 p-4 text-white">
+                        
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Right column: Background image -->
-<div class="relative rounded-lg overflow-hidden min-h-[500px] md:min-h-[600px]">
-        <div class="absolute inset-0 bg-cover bg-center"
-             style="background-image: url('{{ asset('images/login-bg.jpg') }}');">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-b from-blue-800/30 to-blue-600/70"></div>
-
-        <div class="relative z-10 h-full flex flex-col justify-start p-6 text-white">
-    <h2 class="text-3xl font-extrabold leading-tight">
-        ISKOLAR<br>NG BAYAN
-    </h2>
 </div>
-        </div>
-    </div>
 
-</div>
 @endsection

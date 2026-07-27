@@ -13,6 +13,7 @@ class RequirementSeeder extends Seeder
             'Certified True Copy of Grades (First Semester)',
             'Photocopy PSA Birth Certificate',
             'Photocopy Latest School ID',
+            
         ];
 
         foreach ($requirements as $name) {

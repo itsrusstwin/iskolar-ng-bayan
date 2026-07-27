@@ -17,6 +17,10 @@ class MswdoAssessment extends Model
         'assessed_at',
     ];
 
+    protected $casts = [
+        'assessed_at' => 'datetime',
+    ];
+
     public function applicant()
     {
         return $this->belongsTo(Applicant::class);

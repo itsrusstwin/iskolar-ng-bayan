@@ -12,106 +12,105 @@
     $disqualifiedCount = $allApplicants->filter(fn($a) => str_starts_with($a->status, 'disqualified'))->count();
 
     $statusLabels = [
-        'submitted' => ['label' => 'Application submitted', 'bg' => 'bg-amber-100 dark:bg-amber-900/40', 'text' => 'text-amber-700 dark:text-amber-300'],
-        'pending_mswdo' => ['label' => 'Pending MSWDO assessment', 'bg' => 'bg-amber-100 dark:bg-amber-900/40', 'text' => 'text-amber-700 dark:text-amber-300'],
-        'exam_scheduled' => ['label' => 'Exam scheduled', 'bg' => 'bg-blue-100 dark:bg-blue-900/40', 'text' => 'text-blue-700 dark:text-blue-300'],
-        'exam_passed' => ['label' => 'Exam passed', 'bg' => 'bg-green-100 dark:bg-green-900/40', 'text' => 'text-green-700 dark:text-green-300'],
-        'oriented' => ['label' => 'Orientation complete', 'bg' => 'bg-green-100 dark:bg-green-900/40', 'text' => 'text-green-700 dark:text-green-300'],
-        'compliance_met' => ['label' => 'Compliance met', 'bg' => 'bg-green-100 dark:bg-green-900/40', 'text' => 'text-green-700 dark:text-green-300'],
-        'paid_out' => ['label' => 'Scholarship released', 'bg' => 'bg-emerald-100 dark:bg-emerald-900/40', 'text' => 'text-emerald-700 dark:text-emerald-300'],
+        'submitted' => 'Application submitted',
+        'pending_mswdo' => 'Pending MSWDO assessment',
+        'exam_scheduled' => 'Exam scheduled',
+        'exam_passed' => 'Exam passed',
+        'oriented' => 'Orientation complete',
+        'compliance_met' => 'Compliance met',
+        'paid_out' => 'Scholarship released',
     ];
 @endphp
 
 <!-- Stat cards -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Applicants</p>
-        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ $total }}</p>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card-flat p-3">
+            <p class="small text-muted-soft mb-1">Total Applicants</p>
+            <p class="h4 fw-bold mb-0">{{ $total }}</p>
+        </div>
     </div>
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">In Progress</p>
-        <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ $submittedCount }}</p>
+    <div class="col-6 col-md-3">
+        <div class="card-flat p-3">
+            <p class="small text-muted-soft mb-1">In Progress</p>
+            <p class="h4 fw-bold mb-0" style="color: var(--gold-600);">{{ $submittedCount }}</p>
+        </div>
     </div>
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Qualified / Passed</p>
-        <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $passedCount }}</p>
+    <div class="col-6 col-md-3">
+        <div class="card-flat p-3">
+            <p class="small text-muted-soft mb-1">Qualified / Passed</p>
+            <p class="h4 fw-bold mb-0 text-success">{{ $passedCount }}</p>
+        </div>
     </div>
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Disqualified</p>
-        <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ $disqualifiedCount }}</p>
+    <div class="col-6 col-md-3">
+        <div class="card-flat p-3">
+            <p class="small text-muted-soft mb-1">Disqualified</p>
+            <p class="h4 fw-bold mb-0 text-danger">{{ $disqualifiedCount }}</p>
+        </div>
     </div>
 </div>
 
 <!-- Search -->
-<div class="mb-5">
-    <div class="relative max-w-sm">
-        <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        <input type="text" id="applicant-search" placeholder="Search by name..."
-               class="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+<div class="mb-4" style="max-width: 340px;">
+    <div class="input-group">
+        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted-soft"></i></span>
+        <input type="text" id="applicant-search" placeholder="Search by name..." class="form-control border-start-0">
     </div>
 </div>
 
 @forelse ($applicants as $status => $group)
-    <div class="mb-8">
-        <div class="flex items-center gap-2 mb-3">
-            <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                {{ $statusLabels[$status]['label'] ?? ucfirst(str_replace('_', ' ', $status)) }}
-            </h2>
-            <span class="text-xs text-gray-400 dark:text-gray-500">({{ $group->count() }})</span>
+    <div class="mb-4">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <h2 class="h6 fw-bold mb-0">{{ $statusLabels[$status] ?? ucfirst(str_replace('_', ' ', $status)) }}</h2>
+            <span class="small text-muted-soft">({{ $group->count() }})</span>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 dark:bg-gray-900/50 text-left text-xs text-gray-500 dark:text-gray-400 uppercase">
-                    <tr>
-                        <th class="px-5 py-3 font-medium">Name</th>
-                        <th class="px-5 py-3 font-medium">School</th>
-                        <th class="px-5 py-3 font-medium">Program</th>
-                        <th class="px-5 py-3 font-medium">Contact</th>
-                        <th class="px-5 py-3 font-medium text-right">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    @foreach ($group as $applicant)
-                        <tr class="applicant-row hover:bg-gray-50 dark:hover:bg-gray-900/30">
-                            <td class="px-5 py-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/40 flex items-center justify-center text-xs font-medium text-blue-700 dark:text-blue-300 shrink-0">
-                                        {{ strtoupper(substr($applicant->first_name, 0, 1) . substr($applicant->last_name, 0, 1)) }}
-                                    </div>
-                                    <span class="applicant-name font-medium text-gray-900 dark:text-gray-100">
-                                        {{ $applicant->first_name }} {{ $applicant->last_name }}
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="px-5 py-3 text-gray-600 dark:text-gray-300">
-                                {{ $applicant->school_name ?? '—' }}
-                                @if ($applicant->course)
-                                    <div class="text-xs text-gray-400 dark:text-gray-500">{{ $applicant->course }} {{ $applicant->year_level }}</div>
-                                @endif
-                            </td>
-                            <td class="px-5 py-3">
-                                <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                                    {{ ucfirst($applicant->program_type) }}
-                                </span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-600 dark:text-gray-300">
-                                {{ $applicant->contact_number ?? '—' }}
-                            </td>
-                            <td class="px-5 py-3 text-right">
-                                <a href="{{ route('applicants.show', $applicant) }}"
-                                   class="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium hover:underline">
-                                    View <i class="ti ti-arrow-right text-sm"></i>
-                                </a>
-                            </td>
+        <div class="card-flat overflow-hidden">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead style="background: var(--surface-50);">
+                        <tr class="small text-uppercase text-muted-soft">
+                            <th class="ps-3">Name</th>
+                            <th>School</th>
+                            <th>Program</th>
+                            <th>Contact</th>
+                            <th class="text-end pe-3">Action</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($group as $applicant)
+                            <tr class="applicant-row">
+                                <td class="ps-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-semibold small flex-shrink-0"
+                                              style="width:32px;height:32px;background: var(--surface-100); color: var(--ink-800);">
+                                            {{ strtoupper(substr($applicant->first_name, 0, 1) . substr($applicant->last_name, 0, 1)) }}
+                                        </span>
+                                        <span class="applicant-name fw-semibold">{{ $applicant->first_name }} {{ $applicant->last_name }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted-soft">
+                                    {{ $applicant->school_name ?? '—' }}
+                                    @if ($applicant->course)
+                                        <div class="small text-muted-soft">{{ $applicant->course }} {{ $applicant->year_level }}</div>
+                                    @endif
+                                </td>
+                                <td><span class="badge-soft-navy">{{ ucfirst($applicant->program_type) }}</span></td>
+                                <td class="text-muted-soft">{{ $applicant->contact_number ?? '—' }}</td>
+                                <td class="text-end pe-3">
+                                    <a href="{{ route('applicants.show', $applicant) }}" class="fw-semibold small" style="color: var(--ink-700);">
+                                        View <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 @empty
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-10 text-center text-gray-500 dark:text-gray-400">
+    <div class="card-flat p-5 text-center text-muted-soft">
         No applicants yet.
     </div>
 @endforelse

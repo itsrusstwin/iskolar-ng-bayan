@@ -4,138 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Iskolar ng Bayan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = { darkMode: 'class' }
-    </script>
-    <script>
-      if (localStorage.theme === 'dark' ||
-          (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      }
-    </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
 </head>
-<body class="min-h-screen">
+<body class="bg-surface">
 
-    <div class="w-full min-h-screen bg-white dark:bg-gray-900 flex flex-col md:flex-row">
+    <div class="container-fluid p-0">
+        <div class="row g-0 min-vh-100">
 
-        <!-- Left panel: image with overlay text -->
-        <div class="md:w-1/2 relative min-h-[280px] md:min-h-screen">
-            <div class="absolute inset-0 bg-cover bg-center"
-                 style="background-image: url('{{ asset('images/login-bg.jpg') }}');">
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-b from-blue-800/40 to-blue-500/70"></div>
+            <!-- Left: brand panel -->
+            <div class="col-lg-6 d-none d-lg-flex position-relative bg-brand-navy text-white flex-column justify-content-between p-5"
+                 style="background-image: linear-gradient(165deg, rgba(10,38,71,.92), rgba(28,79,143,.85)), url('{{ asset('images/login-bg.jpg') }}'); background-size: cover; background-position: center;">
 
-            <!-- Logo top-left -->
-<div class="absolute top-6 left-6 z-20 flex items-center gap-2">
-    <a href="{{ route('home') }}" class="inline-block">
-        <img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo"
-             class="h-10 bg-white rounded-md px-2 py-1 shadow-sm transition-all duration-200 hover:opacity-90 hover:scale-105 hover:shadow-md">
-    </a>
-    <a href="{{ route('home') }}" class="inline-block">
-        <img src="{{ asset('images/iskolar-logo.jpg') }}" alt="Iskolar ng Bayan Logo"
-             class="h-10 bg-white rounded-md px-2 py-1 shadow-sm transition-all duration-200 hover:opacity-90 hover:scale-105 hover:shadow-md">
-    </a>
-    <a href="{{ route('home') }}" class="inline-block">
-        <img src="{{ asset('images/lydo-logo.jpg') }}" alt="LYDO Logo"
-             class="h-10 w-10 rounded-full object-cover shadow-sm transition-all duration-200 hover:opacity-90 hover:scale-105 hover:shadow-md">
-    </a>
-</div>
-
-            <div class="relative z-10 h-full flex flex-col justify-end p-8 text-white">
-                <p class="text-sm font-medium mb-1 opacity-90">LOGIN</p>
-                <h2 class="text-3xl font-extrabold leading-tight">
-                    ISKOLAR<br>NG BAYAN
-                </h2>
-            </div>
-        </div>
-
-        <!-- Right panel: login form -->
-        <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-            <div class="flex justify-end mb-2">
-                <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition" title="Toggle dark mode">
-                    <svg class="w-5 h-5 hidden dark:block text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                    <svg class="w-5 h-5 block dark:hidden text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                </button>
-            </div>
-            <h1 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Welcome!</h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">
-                Log in with the account credentials provided by your scholarship administrator.
-            </p>
-
-            @if ($errors->any())
-                <div x-data="{ show: true }" x-show="show"
-                     class="relative bg-red-100 text-red-700 p-4 pr-10 rounded-lg mb-4 text-sm">
-                    <button type="button" @click="show = false"
-                            class="absolute top-2 right-3 text-red-500 hover:text-red-800 font-bold text-lg leading-none">
-                        &times;
-                    </button>
-                    @foreach ($errors->all() as $error)
-                        <p class="mb-2">{{ $error }}</p>
-                    @endforeach
+                <div class="d-flex align-items-center gap-3">
+                    <a href="{{ route('home') }}" class="logo-chip"><img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="logo-mark"></a>
+                    <a href="{{ route('home') }}" class="logo-chip"><img src="{{ asset('images/iskolar-logo.jpg') }}" alt="Iskolar ng Bayan Logo" class="logo-mark"></a>
+                    <a href="{{ route('home') }}" class="logo-chip"><img src="{{ asset('images/lydo-logo.jpg') }}" alt="LYDO Logo" class="logo-mark"></a>
                 </div>
-            @endif
-
-            @if (session('success'))
-                <div class="bg-green-100 text-green-700 p-3 rounded mb-4 text-sm">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login.attempt') }}" class="space-y-5">
-                @csrf
 
                 <div>
-                   <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">Email Address</label>
-                    <input type="email" name="email" value="{{ old('email') }}"
-                        placeholder="Enter your email"
-                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required autofocus>
+                    <span class="badge-soft-gold mb-3 d-inline-block">Municipality of Santa Cruz, Laguna</span>
+                    <h1 class="display-5 fw-bold text-white mb-3">ISKOLAR<br>NG BAYAN</h1>
+                    <p class="fs-5 text-white-50 mb-0" style="max-width: 420px;">
+                        A scholarship built for the youth of Santa Cruz — track your application,
+                        submit requirements, and follow every step from home.
+                    </p>
                 </div>
 
-                <div x-data="{ showPassword: false }">
-                    <label class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">Password</label>
-                    <div class="relative">
-                        <input :type="showPassword ? 'text' : 'password'" name="password"
-                            placeholder="Enter your password"
-                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-                            required>
-                        <button type="button" @click="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                            <svg x-show="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            <svg x-show="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                            </svg>
-                        </button>
+                <div class="d-flex align-items-center gap-3">
+                    <svg class="seal-badge" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="38" r="30" fill="#E8A33D"/>
+                        <circle cx="50" cy="38" r="30" stroke="#fff" stroke-width="2"/>
+                        <path d="M50 22L54.5 32.3L65.7 33.5L57.3 41.1L59.7 52.2L50 46.5L40.3 52.2L42.7 41.1L34.3 33.5L45.5 32.3L50 22Z" fill="#0A2647"/>
+                        <path d="M35 60L30 95L50 84L70 95L65 60" fill="#0A2647"/>
+                    </svg>
+                    <p class="small text-white-50 mb-0">Verified accounts only — created and managed by your scholarship administrator.</p>
+                </div>
+            </div>
+
+            <!-- Right: form -->
+            <div class="col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5">
+                <div style="width: 100%; max-width: 420px;">
+
+                    <div class="d-lg-none text-center mb-4">
+                        <img src="{{ asset('images/iskolar-logo.jpg') }}" alt="Iskolar ng Bayan Logo" height="48">
                     </div>
+
+                    <h2 class="fw-bold mb-1">Welcome back</h2>
+                    <p class="text-muted-soft mb-4">Log in with the credentials provided by your scholarship administrator.</p>
+
+                    @if ($errors->any())
+                        <div class="alert-brand-danger p-3 mb-4 small">
+                            @foreach ($errors->all() as $error)
+                                <div class="d-flex gap-2 mb-1"><i class="bi bi-exclamation-circle-fill mt-1"></i><span>{{ $error }}</span></div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert-brand-success p-3 mb-4 small">{{ session('success') }}</div>
+                    @endif
+
+                    <form method="POST" action="{{ route('login.attempt') }}">
+                        @csrf
+
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" value="{{ old('email') }}"
+                                   class="form-control" placeholder="you@example.com" required autofocus>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" name="password" id="passwordField"
+                                       class="form-control" placeholder="Enter your password" required>
+                                <button class="btn btn-icon" type="button" onclick="togglePassword()">
+                                    <i class="bi bi-eye" id="toggleIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                                <label class="form-check-label small text-muted-soft" for="remember">Remember me</label>
+                            </div>
+                            <a href="{{ route('password.request') }}" class="small fw-semibold" style="color: var(--ink-700);">Forgot Password?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-navy w-100 py-2">Login to Your Space</button>
+                    </form>
+
+                    <p class="text-center small text-muted-soft mt-4 mb-0">
+                        Iskolar ng Bayan · Municipality of Santa Cruz, Laguna
+                    </p>
                 </div>
-
-                <div class="flex items-center justify-between text-sm">
-                    <label class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                        <input type="checkbox" name="remember" class="rounded border-gray-300">
-                        Remember me
-                    </label>
-                    <a href="{{ route('password.request') }}" class="text-blue-600 dark:text-blue-400 hover:underline">Forgot Password?</a>
-                </div>
-
-                <button type="submit"
-                    class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition">
-                    Login to Your Space
-                </button>
-            </form>
-
+            </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      function toggleDarkMode() {
-        document.documentElement.classList.toggle('dark');
-        localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      }
+        function togglePassword() {
+            const field = document.getElementById('passwordField');
+            const icon = document.getElementById('toggleIcon');
+            const isPassword = field.type === 'password';
+            field.type = isPassword ? 'text' : 'password';
+            icon.classList.toggle('bi-eye');
+            icon.classList.toggle('bi-eye-slash');
+        }
     </script>
 </body>
 </html>

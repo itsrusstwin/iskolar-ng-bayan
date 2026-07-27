@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Applicant;
+use App\Models\AuditLog;
 use App\Services\ApplicationWorkflowService;
 use Illuminate\Http\Request;
 
@@ -17,13 +18,20 @@ class OrientationController extends Controller
 
     public function complete(Request $request, Applicant $applicant)
     {
-        $applicant->orientation()->updateOrCreate([], [
+        $orientation = $applicant->orientation()->updateOrCreate([], [
             'attended' => true,
             'signed_acknowledgement' => true,
             'attended_at' => now(),
         ]);
 
         $this->workflow->completeOrientation($applicant);
+
+        AuditLog::record(
+            'orientation_completed',
+            "Marked orientation complete for {$applicant->first_name} {$applicant->last_name}",
+            $applicant,
+            $orientation
+        );
 
         return redirect()
             ->route('applicants.show', $applicant)

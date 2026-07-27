@@ -14,7 +14,12 @@ class ExamResult extends Model
         'exam_id',
         'score',
         'passed',
+        'file_path',
         'posted_at',
+    ];
+
+    protected $casts = [
+        'posted_at' => 'datetime',
     ];
 
     public function applicant() { return $this->belongsTo(Applicant::class); }

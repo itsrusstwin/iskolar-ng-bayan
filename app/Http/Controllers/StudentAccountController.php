@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class StudentAccountController extends Controller
             'password' => 'required|min:6|confirmed',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $validated['first_name'] . ' ' . $validated['last_name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
@@ -35,6 +36,13 @@ class StudentAccountController extends Controller
 
         // Note: we intentionally do NOT Auth::login() here —
         // the admin stays logged in as themselves.
+
+        AuditLog::record(
+            'student_account_created',
+            "Created student account for {$user->name} ({$user->email})",
+            null,
+            $user
+        );
 
         return redirect()
             ->route('admin.students.create')

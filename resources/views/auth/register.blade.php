@@ -4,84 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Iskolar ng Bayan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = { darkMode: 'class' }
-    </script>
-    <script>
-      if (localStorage.theme === 'dark' ||
-          (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      }
-    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen py-10">
-    <div class="max-w-md mx-auto bg-white rounded-lg shadow p-8">
-        <div class="max-w-md mx-auto bg-white rounded-lg shadow p-8">
-        <div class="flex justify-center mb-6">
-            <a href="{{ route('home') }}" class="inline-block">
-                <img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" class="h-12">
-            </a>
+<body class="bg-surface">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+
+                <div class="text-center mb-4">
+                    <a href="{{ route('home') }}"><img src="{{ asset('images/stc-logo.jpg') }}" alt="Santa Cruz Logo" height="52"></a>
+                </div>
+
+                <div class="card-elevated p-4 p-md-5">
+                    <h2 class="fw-bold mb-1">Create Your Account</h2>
+                    <p class="text-muted-soft mb-4">Just a few details to get you started on your scholarship application.</p>
+
+                    @if ($errors->any())
+                        <div class="alert-brand-danger p-3 mb-4 small">
+                            @foreach ($errors->all() as $error)
+                                <div class="d-flex gap-2 mb-1"><i class="bi bi-exclamation-circle-fill mt-1"></i><span>{{ $error }}</span></div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('register.store') }}">
+                        @csrf
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" value="{{ old('first_name') }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" value="{{ old('last_name') }}" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" value="{{ old('email') }}" class="form-control" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" name="password_confirmation" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-navy w-100 py-2 mt-2">Continue</button>
+                    </form>
+
+                    <p class="text-center small text-muted-soft mt-4 mb-0">
+                        Already have an account? <a href="{{ route('login') }}" class="fw-semibold" style="color: var(--ink-700);">Log in</a>
+                    </p>
+                </div>
+            </div>
         </div>
-        <h1 class="text-2xl font-bold text-blue-700 mb-6">Create Your Account</h1>
-            <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-black/5 transition" title="Toggle dark mode">
-                <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-            </button>
-        </div>
-
-        @if ($errors->any())
-            <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
-                <ul class="list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('register.store') }}" class="space-y-5">
-            @csrf
-
-            <div>
-                <label class="block font-medium text-gray-700">First Name</label>
-                <input type="text" name="first_name" value="{{ old('first_name') }}" class="mt-1 w-full border rounded p-2" required>
-            </div>
-
-            <div>
-                <label class="block font-medium text-gray-700">Last Name</label>
-                <input type="text" name="last_name" value="{{ old('last_name') }}" class="mt-1 w-full border rounded p-2" required>
-            </div>
-
-            <div>
-                <label class="block font-medium text-gray-700">Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" class="mt-1 w-full border rounded p-2" required>
-            </div>
-
-            <div>
-                <label class="block font-medium text-gray-700">Password</label>
-                <input type="password" name="password" class="mt-1 w-full border rounded p-2" required>
-            </div>
-
-            <div>
-                <label class="block font-medium text-gray-700">Confirm Password</label>
-                <input type="password" name="password_confirmation" class="mt-1 w-full border rounded p-2" required>
-            </div>
-
-            <button type="submit" class="w-full bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                Continue
-            </button>
-        </form>
-
-        <p class="mt-4 text-sm text-gray-600 text-center">
-            Already have an account? <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Log in</a>
-        </p>
     </div>
-    <script>
-      function toggleDarkMode() {
-        document.documentElement.classList.toggle('dark');
-        localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      }
-    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
