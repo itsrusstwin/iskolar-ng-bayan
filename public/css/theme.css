@@ -629,3 +629,261 @@ a { text-decoration: none; }
   background: var(--surface-0);
   border: 1px solid var(--surface-border);
 }
+/* ========== FIX: Prevent dark mode from affecting sidebar ========== */
+
+/* Keep sidebar with original navy theme even in dark mode */
+[data-theme="dark"] .bg-brand-navy {
+    background: radial-gradient(120% 140% at 0% 0%, rgba(232, 163, 61, 0.16), transparent 55%),
+                linear-gradient(165deg, #0A2647 0%, #1c4f8f 100%) !important;
+    color: #fff !important;
+}
+
+/* Keep sidebar nav links white in dark mode */
+[data-theme="dark"] .bg-brand-navy .nav-link {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-theme="dark"] .bg-brand-navy .nav-link.text-white {
+    color: #fff !important;
+}
+
+/* Keep active nav items with gold background */
+[data-theme="dark"] .bg-brand-navy .nav-link[style*="background: var(--gold-500)"] {
+    background: #E8A33D !important;
+    color: #0A2647 !important;
+}
+
+/* Keep badge styling in sidebar */
+[data-theme="dark"] .bg-brand-navy .badge-soft-gold {
+    background: #FBEBD2 !important;
+    color: #cf8a26 !important;
+}
+
+/* Keep sidebar text elements white */
+[data-theme="dark"] .bg-brand-navy .text-white {
+    color: #fff !important;
+}
+
+[data-theme="dark"] .bg-brand-navy .text-white-50 {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Keep sidebar buttons normal */
+[data-theme="dark"] .bg-brand-navy .btn-link {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Keep sidebar borders */
+[data-theme="dark"] .bg-brand-navy .border-white {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-brand-navy .border-opacity-10 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Keep mobile offcanvas sidebar consistent */
+[data-theme="dark"] .offcanvas.bg-brand-navy {
+    background: radial-gradient(120% 140% at 0% 0%, rgba(232, 163, 61, 0.16), transparent 55%),
+                linear-gradient(165deg, #0A2647 0%, #1c4f8f 100%) !important;
+}
+
+[data-theme="dark"] .offcanvas.bg-brand-navy .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="dark"] .offcanvas.bg-brand-navy .badge-soft-gold {
+    background: #FBEBD2 !important;
+    color: #cf8a26 !important;
+}
+
+[data-theme="dark"] .offcanvas.bg-brand-navy .btn-close-white {
+    filter: brightness(0) invert(1) !important;
+}
+
+/* Keep logo chips visible */
+[data-theme="dark"] .bg-brand-navy .logo-chip {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .bg-brand-navy .logo-mark {
+    opacity: 1 !important;
+}
+/* ========== FIX: Login page background image in dark mode ========== */
+[data-theme="dark"] .bg-brand-navy[style*="background-image"] {
+    background-image: linear-gradient(165deg, rgba(10,38,71,.92), rgba(28,79,143,.85)), url('/images/login-bg.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+/* ========== FIX: Button styling in dark mode ========== */
+
+/* Keep primary buttons visible and styled properly */
+[data-theme="dark"] .btn-brand {
+    background: #E8A33D !important;
+    border-color: #E8A33D !important;
+    color: #0A2647 !important;
+}
+
+[data-theme="dark"] .btn-brand:hover {
+    background: #cf8a26 !important;
+    border-color: #cf8a26 !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .btn-navy {
+    background: #2c65ac !important;
+    border-color: #2c65ac !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .btn-navy:hover {
+    background: #1c4f8f !important;
+    border-color: #1c4f8f !important;
+}
+
+[data-theme="dark"] .btn-outline-navy {
+    border-color: #2c65ac !important;
+    color: #2c65ac !important;
+    background: transparent !important;
+}
+
+[data-theme="dark"] .btn-outline-navy:hover {
+    background: #2c65ac !important;
+    color: #fff !important;
+}
+
+/* Fix submit buttons and action buttons */
+[data-theme="dark"] button[type="submit"],
+[data-theme="dark"] .btn-primary {
+    background: #2c65ac !important;
+    border-color: #2c65ac !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] button[type="submit"]:hover,
+[data-theme="dark"] .btn-primary:hover {
+    background: #1c4f8f !important;
+    border-color: #1c4f8f !important;
+}
+
+/* Fix View buttons and small buttons */
+[data-theme="dark"] .btn-sm {
+    background: transparent !important;
+    color: var(--text-700) !important;
+}
+
+[data-theme="dark"] .btn-sm.btn-outline-navy {
+    border-color: #2c65ac !important;
+    color: #2c65ac !important;
+}
+
+[data-theme="dark"] .btn-sm.btn-outline-navy:hover {
+    background: #2c65ac !important;
+    color: #fff !important;
+}
+
+/* Fix icon buttons */
+[data-theme="dark"] .btn-icon {
+    background: var(--surface-100) !important;
+    border-color: var(--surface-border) !important;
+    color: var(--text-700) !important;
+}
+
+[data-theme="dark"] .btn-icon:hover {
+    background: var(--surface-0) !important;
+    color: var(--text-900) !important;
+}
+
+/* Keep all buttons readable */
+[data-theme="dark"] .btn {
+    border-radius: 0.5rem;
+}
+
+[data-theme="dark"] .btn-link {
+    color: #2c65ac !important;
+}
+
+[data-theme="dark"] .btn-link:hover {
+    color: #1c4f8f !important;
+}
+
+/* Fix login page elements */
+[data-theme="dark"] .seal-badge {
+    opacity: 0.9;
+}
+
+[data-theme="dark"] .logo-chip {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0.5rem;
+}
+
+[data-theme="dark"] .badge-soft-gold {
+    background: #FBEBD2 !important;
+    color: #cf8a26 !important;
+}
+/* ========== FIX: Chart tooltip styling in dark mode ========== */
+[data-theme="dark"] .admin-chart-wrap canvas {
+    background: transparent !important;
+}
+
+/* Fix chart.js tooltips */
+[data-theme="dark"] .chartjs-tooltip {
+    background: rgba(10, 38, 71, 0.95) !important;
+    color: #fff !important;
+}
+
+/* ========== FIX: Logout button disappearing on hover ========== */
+[data-theme="dark"] .bg-brand-navy form button[type="submit"] {
+    color: rgba(255, 255, 255, 0.5) !important;
+    background: transparent !important;
+    border: none !important;
+    text-decoration: none !important;
+}
+
+[data-theme="dark"] .bg-brand-navy form button[type="submit"]:hover {
+    color: rgba(255, 255, 255, 0.8) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .bg-brand-navy .btn-link:hover {
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ========== FIX: Logo glow effect in dark mode ========== */
+
+
+[data-theme="dark"] .logo-chip img,
+[data-theme="dark"] .logo-mark {
+    opacity: 0.95 !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+}
+
+/* Remove any glow/backdrop effects from logos */
+[data-theme="dark"] .logo-chip::before,
+[data-theme="dark"] .logo-chip::after {
+    display: none !important;
+}
+
+/* Fix seal badge on login page */
+[data-theme="dark"] .seal-badge {
+    opacity: 0.85;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* ========== FIX: Chart legend and labels ========== */
+[data-theme="dark"] .admin-panel__body canvas {
+    background: transparent !important;
+}
+
+/* Make sure chart text is visible */
+[data-theme="dark"] .admin-chart-wrap {
+    background: transparent !important;
+}
+
+/* Fix any white overlays on charts */
+[data-theme="dark"] .chartjs-render-monitor {
+    background: transparent !important;
+}
