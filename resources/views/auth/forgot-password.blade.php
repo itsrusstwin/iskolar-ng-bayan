@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - Iskolar ng Bayan</title>
@@ -13,7 +14,10 @@
 </head>
 <body class="bg-surface d-flex align-items-center" style="min-height: 100vh;">
 
-    <div class="container">
+    <div class="container position-relative">
+        <div class="position-absolute top-0 end-0 pt-3">
+            @include('partials.theme-toggle')
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-5 col-sm-8">
 
@@ -47,7 +51,7 @@
                     </form>
 
                     <p class="text-center small text-muted-soft mt-4 mb-0">
-                        <a href="{{ route('login') }}" class="fw-semibold" style="color: var(--ink-700);"><i class="bi bi-arrow-left me-1"></i>Back to Login</a>
+                        <a href="{{ route('login') }}" class="fw-semibold link-brand"><i class="bi bi-arrow-left me-1"></i>Back to Login</a>
                     </p>
                 </div>
             </div>
@@ -55,5 +59,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/theme.js') }}"></script>
 </body>
 </html>

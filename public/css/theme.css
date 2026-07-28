@@ -199,3 +199,433 @@ a { text-decoration: none; }
   object-fit: contain;
   display: block;
 }
+
+/* ---------- Admin Dashboard ---------- */
+.admin-kpi-card {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-0);
+  padding: 1.25rem;
+  height: 100%;
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.admin-kpi-card:hover {
+  box-shadow: var(--shadow-tight);
+  transform: translateY(-1px);
+}
+.admin-kpi-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+.admin-kpi-icon--navy { background: var(--surface-100); color: var(--ink-700); }
+.admin-kpi-icon--gold { background: var(--gold-100); color: var(--gold-600); }
+.admin-kpi-icon--green { background: #EAF7EF; color: #1E6B3C; }
+.admin-kpi-icon--red { background: #FDECEC; color: #C0392B; }
+.admin-kpi-icon--blue { background: #E8F0FA; color: var(--ink-600); }
+
+.admin-panel {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-0);
+  overflow: hidden;
+}
+.admin-panel__header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--surface-border);
+  background: var(--surface-0);
+}
+.admin-panel__body { padding: 1.25rem; }
+.admin-panel__body--flush { padding: 0; }
+
+.admin-chart-wrap {
+  position: relative;
+  height: 240px;
+}
+.admin-chart-wrap--sm { height: 200px; }
+
+.admin-badge-success,
+.admin-badge-warning,
+.admin-badge-danger,
+.admin-badge-released,
+.admin-badge-muted {
+  font-weight: 600;
+  font-size: .75rem;
+  border-radius: 50px;
+  padding: .35em .75em;
+  white-space: nowrap;
+}
+.admin-badge-success { background: #EAF7EF; color: #1E6B3C; }
+.admin-badge-warning { background: var(--gold-100); color: var(--gold-600); }
+.admin-badge-danger { background: #FDECEC; color: #C0392B; }
+.admin-badge-released { background: #E8F0FA; color: var(--ink-700); }
+.admin-badge-muted { background: var(--surface-100); color: var(--text-500); }
+
+.admin-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: .8rem;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--ink-800), var(--ink-600));
+  color: #fff;
+}
+
+.admin-activity-item {
+  padding: .75rem 0;
+  border-bottom: 1px solid var(--surface-border);
+}
+.admin-activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+.admin-activity-item:first-child { padding-top: 0; }
+
+.admin-quick-action {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1rem;
+  background: var(--surface-0);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .65rem;
+  color: var(--text-900);
+  transition: all .15s ease;
+  height: 100%;
+  min-height: 128px;
+}
+.admin-quick-action:hover {
+  border-color: var(--ink-600);
+  box-shadow: var(--shadow-tight);
+  color: var(--ink-900);
+  transform: translateY(-1px);
+}
+.admin-quick-action__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-100);
+  color: var(--ink-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.admin-quick-action__label {
+  min-width: 0;
+  width: 100%;
+}
+.admin-quick-action__label .d-block {
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.25;
+}
+
+/* Quick Actions grid: 2-up on narrow panels, 4-up once there's real room.
+   Stacked icon-over-label cards mean each card gets the panel's full
+   column width for text, so titles never need to be clipped. */
+.admin-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+@media (min-width: 860px) {
+  .admin-quick-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.admin-table thead th {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-500);
+  font-weight: 600;
+  background: var(--surface-50);
+  border-bottom: 1px solid var(--surface-border);
+  padding: .75rem .85rem;
+  white-space: nowrap;
+}
+.admin-table tbody td {
+  padding: .75rem .85rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--surface-border);
+  font-size: .85rem;
+}
+.admin-table tbody tr:last-child td { border-bottom: none; }
+.admin-table tbody tr:hover { background: var(--surface-50); }
+
+/* Keep the table snug inside its panel instead of forcing a scrollbar
+   that clips the Action column. The name/school column flexes and
+   truncates; Status/Program/Date/Action stay compact and never wrap. */
+.admin-table--compact {
+  table-layout: fixed;
+  width: 100%;
+}
+.admin-table--compact .col-applicant { width: 32%; }
+.admin-table--compact .col-status { width: 34%; }
+.admin-table--compact .col-date { width: 18%; }
+.admin-table--compact .col-action { width: 16%; }
+
+/* Status badges are normally single-line pills, but at this column width
+   a long label ("Disqualified policy verification") needs to wrap onto a
+   second line instead of overflowing into the Date column next to it. */
+.admin-table--compact tbody td .admin-badge-success,
+.admin-table--compact tbody td .admin-badge-warning,
+.admin-table--compact tbody td .admin-badge-danger,
+.admin-table--compact tbody td .admin-badge-released,
+.admin-table--compact tbody td .admin-badge-muted {
+  display: inline-block;
+  white-space: normal;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.admin-table__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.admin-table__meta {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+}
+.admin-table td.text-end .btn,
+.admin-table td.text-end a {
+  white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+  .admin-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+.admin-table-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
+.admin-table-scroll::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 4px;
+}
+
+/* Cap Recent Applications to a fixed height (matching the chart column
+   next to it) and scroll internally instead of pushing the page down. */
+.admin-table-scroll--y {
+  max-height: 452px;
+  overflow-y: auto;
+}
+.admin-table-scroll--y .admin-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.admin-status-accordion .accordion-button {
+  font-size: .9rem;
+  font-weight: 600;
+  padding: .85rem 1.25rem;
+  background: var(--surface-0);
+  color: var(--ink-900);
+}
+.admin-status-accordion .accordion-button:not(.collapsed) {
+  background: var(--surface-50);
+  color: var(--ink-900);
+  box-shadow: none;
+}
+.admin-status-accordion .accordion-item {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm) !important;
+  margin-bottom: .5rem;
+  overflow: hidden;
+}
+.admin-status-accordion .accordion-item:last-child { margin-bottom: 0; }
+
+.admin-search {
+  max-width: 320px;
+}
+.admin-search .form-control,
+.admin-search .input-group-text {
+  border-color: var(--surface-border);
+  font-size: .9rem;
+}
+.admin-search .input-group-text {
+  background: var(--surface-0);
+  color: var(--text-500);
+}
+
+/* =========================================================
+   Dark mode
+   Toggle via data-theme="dark" on <html> (see js/theme.js)
+   ========================================================= */
+
+[data-theme="dark"] {
+  --ink-900: #e8eef7;
+  --ink-800: #c5d4e8;
+  --ink-700: #9bb8d9;
+  --ink-600: #6a9fd4;
+
+  --gold-500: #E8A33D;
+  --gold-600: #f0b85a;
+  --gold-100: #3d3020;
+
+  --surface-0: #1a2436;
+  --surface-50: #0f1724;
+  --surface-100: #243044;
+  --surface-border: #2e3f56;
+
+  --text-900: #e8eef7;
+  --text-700: #b8c5d9;
+  --text-500: #8494ab;
+
+  --shadow-soft: 0 10px 30px -12px rgba(0, 0, 0, 0.45);
+  --shadow-tight: 0 2px 10px -2px rgba(0, 0, 0, 0.28);
+
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--surface-0) !important;
+}
+
+[data-theme="dark"] .text-dark {
+  color: var(--text-900) !important;
+}
+
+[data-theme="dark"] .border-bottom,
+[data-theme="dark"] .border-top,
+[data-theme="dark"] .border-end,
+[data-theme="dark"] .border {
+  border-color: var(--surface-border) !important;
+}
+
+[data-theme="dark"] .theme-header-bar {
+  background: var(--surface-0) !important;
+  border-color: var(--surface-border) !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: var(--surface-0);
+  color: var(--text-900);
+  border-color: var(--surface-border);
+}
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: var(--surface-0);
+  color: var(--text-900);
+}
+
+[data-theme="dark"] .input-group .btn-icon {
+  background: var(--surface-0);
+  border-color: var(--surface-border);
+  color: var(--text-500);
+}
+
+[data-theme="dark"] .alert-brand-success {
+  background: #1a2e22;
+  border-color: #2d5a3d;
+  color: #7dcea0;
+}
+[data-theme="dark"] .alert-brand-danger {
+  background: #2e1a1a;
+  border-color: #5a2d2d;
+  color: #f0a0a0;
+}
+
+[data-theme="dark"] .admin-kpi-icon--green { background: #1a2e22; color: #7dcea0; }
+[data-theme="dark"] .admin-kpi-icon--red { background: #2e1a1a; color: #f0a0a0; }
+[data-theme="dark"] .admin-kpi-icon--blue { background: #1a2840; color: #9bb8d9; }
+
+[data-theme="dark"] .admin-badge-success { background: #1a2e22; color: #7dcea0; }
+[data-theme="dark"] .admin-badge-warning { background: var(--gold-100); color: var(--gold-600); }
+[data-theme="dark"] .admin-badge-danger { background: #2e1a1a; color: #f0a0a0; }
+[data-theme="dark"] .admin-badge-released { background: #1a2840; color: #9bb8d9; }
+
+[data-theme="dark"] .admin-status-accordion .accordion-button {
+  background: var(--surface-0);
+  color: var(--text-900);
+}
+[data-theme="dark"] .admin-status-accordion .accordion-button:not(.collapsed) {
+  background: var(--surface-100);
+  color: var(--text-900);
+}
+
+[data-theme="dark"] .dropdown-menu {
+  background: var(--surface-0);
+  border-color: var(--surface-border);
+}
+[data-theme="dark"] .dropdown-item {
+  color: var(--text-700);
+}
+[data-theme="dark"] .dropdown-item:hover {
+  background: var(--surface-100);
+  color: var(--text-900);
+}
+[data-theme="dark"] .dropdown-divider {
+  border-color: var(--surface-border);
+}
+
+[data-theme="dark"] .offcanvas.bg-brand-navy {
+  background: var(--surface-0) !important;
+  color: var(--text-900) !important;
+}
+[data-theme="dark"] .offcanvas.bg-brand-navy .nav-link {
+  color: var(--text-700) !important;
+}
+[data-theme="dark"] .offcanvas.bg-brand-navy .btn-close-white {
+  filter: invert(1);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  border: 1px solid var(--surface-border);
+  background: var(--surface-0);
+  color: var(--text-700);
+  border-radius: var(--radius-sm);
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background .15s ease, color .15s ease;
+}
+.theme-toggle:hover {
+  background: var(--surface-100);
+  color: var(--ink-900);
+}
+.theme-icon-light { display: none; }
+[data-theme="dark"] .theme-icon-dark { display: none; }
+[data-theme="dark"] .theme-icon-light { display: inline; }
+
+.theme-toggle-nav {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+}
+.theme-toggle-nav:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.link-brand {
+  color: var(--ink-700);
+  font-weight: 600;
+}
+.link-brand:hover {
+  color: var(--ink-600);
+}
+
+.surface-inset {
+  background: var(--surface-0);
+  border: 1px solid var(--surface-border);
+}

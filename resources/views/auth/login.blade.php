@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Iskolar ng Bayan</title>
@@ -47,7 +48,10 @@
             </div>
 
             <!-- Right: form -->
-            <div class="col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5">
+            <div class="col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5 position-relative">
+                <div class="position-absolute top-0 end-0 p-3 p-md-4">
+                    @include('partials.theme-toggle')
+                </div>
                 <div style="width: 100%; max-width: 420px;">
 
                     <div class="d-lg-none text-center mb-4">
@@ -94,7 +98,7 @@
                                 <input class="form-check-input" type="checkbox" name="remember" id="remember">
                                 <label class="form-check-label small text-muted-soft" for="remember">Remember me</label>
                             </div>
-                            <a href="{{ route('password.request') }}" class="small fw-semibold" style="color: var(--ink-700);">Forgot Password?</a>
+                            <a href="{{ route('password.request') }}" class="small fw-semibold link-brand">Forgot Password?</a>
                         </div>
 
                         <button type="submit" class="btn btn-navy w-100 py-2">Login to Your Space</button>
@@ -109,6 +113,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/theme.js') }}"></script>
     <script>
         function togglePassword() {
             const field = document.getElementById('passwordField');

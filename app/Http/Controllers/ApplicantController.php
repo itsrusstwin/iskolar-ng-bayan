@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Applicant;
 use App\Models\Requirement;
 use App\Models\User;
+use App\Services\AdminDashboardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,10 +43,19 @@ class ApplicantController extends Controller
             ->with('success', 'Application submitted successfully!');
     }
 
-    public function index()
+    public function index(AdminDashboardService $dashboard)
     {
-        $applicants = Applicant::latest()->get()->groupBy('status');
-        return view('admin.dashboard', compact('applicants'));
+        $data = $dashboard->getDashboardData();
+
+        return view('admin.dashboard', [
+            'stats' => $data['stats'],
+            'progressChart' => $data['progressChart'],
+            'programChart' => $data['programChart'],
+            'recentApplicants' => $data['recentApplicants'],
+            'recentActivity' => $data['recentActivity'],
+            'applicants' => $data['applicantsByStatus'],
+            'dashboard' => $dashboard,
+        ]);
     }
 
     public function show(Applicant $applicant)

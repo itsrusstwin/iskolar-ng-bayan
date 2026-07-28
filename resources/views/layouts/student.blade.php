@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'My Dashboard - Iskolar ng Bayan')</title>
@@ -34,7 +35,10 @@
                     <li class="nav-item"><a href="{{ route('guides') }}" class="nav-link text-white-50 fw-semibold">Guides</a></li>
                 </ul>
 
-                <ul class="navbar-nav mt-3 mt-lg-0">
+                <ul class="navbar-nav mt-3 mt-lg-0 align-items-lg-center gap-lg-2">
+                    <li class="nav-item">
+                        @include('partials.theme-toggle', ['class' => 'theme-toggle-nav'])
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white" href="#" role="button" data-bs-toggle="dropdown">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold"
@@ -51,12 +55,12 @@
                             </li>
                             @if($applicant)
                                 <li><hr class="dropdown-divider"></li>
-                                <li class="small text-muted-soft d-flex justify-content-between mb-1"><span>Course</span><span class="text-dark fw-semibold">{{ $applicant->course ?? '—' }}</span></li>
-                                <li class="small text-muted-soft d-flex justify-content-between mb-1"><span>Year Level</span><span class="text-dark fw-semibold">{{ $applicant->year_level ?? '—' }}</span></li>
-                                <li class="small text-muted-soft d-flex justify-content-between"><span>School</span><span class="text-dark fw-semibold text-end">{{ $applicant->school_name ?? '—' }}</span></li>
+                                <li class="small text-muted-soft d-flex justify-content-between mb-1"><span>Course</span><span class="fw-semibold">{{ $applicant->course ?? '—' }}</span></li>
+                                <li class="small text-muted-soft d-flex justify-content-between mb-1"><span>Year Level</span><span class="fw-semibold">{{ $applicant->year_level ?? '—' }}</span></li>
+                                <li class="small text-muted-soft d-flex justify-content-between"><span>School</span><span class="fw-semibold text-end">{{ $applicant->school_name ?? '—' }}</span></li>
                             @endif
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item small fw-semibold" href="{{ route('profile.edit') }}" style="color: var(--ink-700);">View / Edit Full Profile</a></li>
+                            <li><a class="dropdown-item small fw-semibold link-brand" href="{{ route('profile.edit') }}">View / Edit Full Profile</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -103,6 +107,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/theme.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

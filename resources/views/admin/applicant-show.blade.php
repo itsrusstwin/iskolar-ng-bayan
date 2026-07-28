@@ -300,7 +300,7 @@
             <p class="small mb-2">Stage: {{ $dq->stage }} — Reason: {{ $dq->reason }}</p>
 
             @forelse ($dq->appeals as $appeal)
-                <div class="card-flat p-3 mb-2" style="background: #fff;">
+                <div class="card-flat p-3 mb-2">
                     <p class="small text-muted-soft mb-1">
                         Appeal filed {{ $appeal->filed_at?->format('M d, Y g:ia') }}
                     </p>

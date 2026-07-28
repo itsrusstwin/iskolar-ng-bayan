@@ -288,7 +288,7 @@
             <p class="small mb-3">{{ $latestDisqualification->reason }}</p>
 
             @if ($existingAppeal)
-                <div class="p-3 rounded-md" style="background: #fff; border: 1px solid var(--surface-border);">
+                <div class="p-3 rounded-md surface-inset">
                     <p class="small text-muted-soft mb-1">
                         Your appeal, filed {{ $existingAppeal->filed_at?->format('M d, Y') }}:
                     </p>

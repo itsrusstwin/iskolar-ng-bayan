@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Iskolar ng Bayan')</title>
@@ -37,7 +38,8 @@
                     <li class="nav-item">
                         <a href="{{ route('guides') }}" class="nav-link fw-semibold {{ request()->routeIs('guides') ? 'text-white border-bottom border-2' : 'text-white-50' }}" style="border-color: var(--gold-500) !important;">Guides</a>
                     </li>
-                    <li class="nav-item mt-2 mt-lg-0">
+                    <li class="nav-item d-flex align-items-center mt-2 mt-lg-0 gap-2">
+                        @include('partials.theme-toggle', ['class' => 'theme-toggle-nav'])
                         @auth
                             <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="btn btn-brand btn-sm px-3">Dashboard</a>
                         @else
@@ -58,6 +60,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/theme.js') }}"></script>
     @stack('scripts')
 </body>
 </html>
