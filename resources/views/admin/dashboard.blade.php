@@ -93,10 +93,10 @@
 @endif
 
 <!-- Charts + Recent Applications -->
-<div class="row g-4 mb-4 align-items-start">
+<div class="row g-4 mb-4">
     <!-- Recent Applications -->
-    <div class="col-lg-7">
-        <div class="admin-panel">
+    <div class="col-lg-7 d-flex">
+        <div class="admin-panel d-flex flex-column h-100 w-100">
             <div class="admin-panel__header d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
                     <h2 class="h6 fw-bold mb-0">Recent Applications</h2>
@@ -109,9 +109,9 @@
                     </div>
                 </div>
             </div>
-            <div class="admin-panel__body admin-panel__body--flush">
+            <div class="admin-panel__body admin-panel__body--flush flex-grow-1 d-flex flex-column">
                 @if ($recentApplicants->isNotEmpty())
-                <div class="admin-table-scroll admin-table-scroll--y">
+                <div class="admin-table-scroll admin-table-scroll--y flex-grow-1">
                     <table class="table admin-table admin-table--compact mb-0">
                         <thead>
                             <tr>
@@ -156,7 +156,7 @@
                     </table>
                 </div>
                 @else
-                <div class="text-center text-muted-soft py-5">
+                <div class="text-center text-muted-soft py-5 flex-grow-1 d-flex flex-column align-items-center justify-content-center">
                     <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
                     No applications yet.
                 </div>
@@ -166,7 +166,7 @@
     </div>
 
     <!-- Charts -->
-    <div class="col-lg-5">
+    <div class="col-lg-5 d-flex flex-column">
         <div class="admin-panel mb-4">
             <div class="admin-panel__header">
                 <h2 class="h6 fw-bold mb-0">Application Progress</h2>
@@ -179,13 +179,13 @@
             </div>
         </div>
 
-        <div class="admin-panel">
+        <div class="admin-panel flex-grow-1 d-flex flex-column">
             <div class="admin-panel__header">
                 <h2 class="h6 fw-bold mb-0">Applications by Program</h2>
                 <p class="small text-muted-soft mb-0">New vs renewal applicants</p>
             </div>
-            <div class="admin-panel__body">
-                <div class="admin-chart-wrap admin-chart-wrap--sm">
+            <div class="admin-panel__body flex-grow-1 d-flex flex-column">
+                <div class="admin-chart-wrap admin-chart-wrap--sm flex-grow-1">
                     <canvas id="programChart"></canvas>
                 </div>
             </div>
@@ -350,127 +350,101 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const chartFont = "'Inter', system-ui, sans-serif";
+    const inkColor = '#14213D';
+    const mutedColor = '#6B7A93';
 
-    function themeColors() {
-        return window.getThemeColors ? window.getThemeColors() : {
-            ink: '#14213D',
-            muted: '#6B7A93',
-            surface: '#ffffff',
-            grid: '#E9EFF7',
-            tooltip: '#0A2647',
-        };
-    }
+    Chart.defaults.font.family = chartFont;
+    Chart.defaults.color = mutedColor;
 
-    let progressChartInstance = null;
-    let programChartInstance = null;
-
-    function destroyCharts() {
-        if (progressChartInstance) {
-            progressChartInstance.destroy();
-            progressChartInstance = null;
-        }
-        if (programChartInstance) {
-            programChartInstance.destroy();
-            programChartInstance = null;
-        }
-    }
-
-    function buildCharts() {
-        destroyCharts();
-        const colors = themeColors();
-        Chart.defaults.font.family = chartFont;
-        Chart.defaults.color = colors.muted;
-
-        const progressCtx = document.getElementById('progressChart');
-        if (progressCtx) {
-            progressChartInstance = new Chart(progressCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: {!! json_encode($progressChart['labels']) !!},
-                    datasets: [{
-                        data: {!! json_encode($progressChart['values']) !!},
-                        backgroundColor: {!! json_encode($progressChart['chartColors']) !!},
-                        borderWidth: 2,
-                        borderColor: colors.surface,
-                        hoverOffset: 6,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '62%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 16,
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                font: { size: 12, weight: '500' },
-                                color: colors.ink,
-                            },
+    // Progress pie chart
+    const progressCtx = document.getElementById('progressChart');
+    if (progressCtx) {
+        new Chart(progressCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @json($progressChart['labels']),
+                datasets: [{
+                    data: @json($progressChart['values']),
+                    backgroundColor: @json($progressChart['chartColors']),
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 6,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '62%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 16,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: { size: 12, weight: '500' },
+                            color: inkColor,
                         },
-                        tooltip: {
-                            backgroundColor: colors.tooltip,
-                            titleFont: { weight: '600' },
-                            padding: 12,
-                            callbacks: {
-                                label: function (ctx) {
-                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                    const pct = total > 0 ? Math.round((ctx.raw / total) * 100) : 0;
-                                    return ' ' + ctx.label + ': ' + ctx.raw + ' (' + pct + '%)';
-                                },
+                    },
+                    tooltip: {
+                        backgroundColor: '#0A2647',
+                        titleFont: { weight: '600' },
+                        padding: 12,
+                        callbacks: {
+                            label: function (ctx) {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct = total > 0 ? Math.round((ctx.raw / total) * 100) : 0;
+                                return ' ' + ctx.label + ': ' + ctx.raw + ' (' + pct + '%)';
                             },
                         },
                     },
                 },
-            });
-        }
-
-        const programCtx = document.getElementById('programChart');
-        if (programCtx) {
-            programChartInstance = new Chart(programCtx, {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($programChart['labels']) !!},
-                    datasets: [{
-                        label: 'Applications',
-                        data: {!! json_encode($programChart['values']) !!},
-                        backgroundColor: ['#2c65ac', '#E8A33D', '#1E6B3C', '#6B7A93'],
-                        borderRadius: 6,
-                        borderSkipped: false,
-                        maxBarThickness: 48,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: colors.tooltip,
-                            padding: 12,
-                        },
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 11, weight: '500' }, color: colors.ink },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: { stepSize: 1, precision: 0, color: colors.muted },
-                            grid: { color: colors.grid },
-                        },
-                    },
-                },
-            });
-        }
+            },
+        });
     }
 
-    buildCharts();
-    window.addEventListener('themechange', buildCharts);
+    // Program bar chart
+    const programCtx = document.getElementById('programChart');
+    if (programCtx) {
+        new Chart(programCtx, {
+            type: 'bar',
+            data: {
+                labels: @json($programChart['labels']),
+                datasets: [{
+                    label: 'Applications',
+                    data: @json($programChart['values']),
+                    backgroundColor: ['#2c65ac', '#E8A33D', '#1E6B3C', '#6B7A93'],
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    maxBarThickness: 48,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0A2647',
+                        padding: 12,
+                    },
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11, weight: '500' }, color: inkColor },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, precision: 0 },
+                        grid: { color: '#E9EFF7' },
+                    },
+                },
+            },
+        });
+    }
 
+    // Search filter
     const searchInput = document.getElementById('applicant-search');
     if (searchInput) {
         searchInput.addEventListener('input', function (e) {

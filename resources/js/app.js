@@ -1,26 +1,6 @@
 import './bootstrap';
 
 /**
- * Dark mode
- */
-function applyStoredTheme() {
-    if (
-        localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
-}
-applyStoredTheme();
-
-window.toggleDarkMode = function () {
-    document.documentElement.classList.toggle('dark');
-    localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-};
-
-/**
  * Requirement upload — PDF-only validation before auto-submitting
  */
 window.validateAndSubmit = function (input, reqId) {

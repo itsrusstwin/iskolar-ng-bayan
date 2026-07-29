@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'My Dashboard - Iskolar ng Bayan')</title>
@@ -36,9 +35,6 @@
                 </ul>
 
                 <ul class="navbar-nav mt-3 mt-lg-0 align-items-lg-center gap-lg-2">
-                    <li class="nav-item">
-                        @include('partials.theme-toggle', ['class' => 'theme-toggle-nav'])
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white" href="#" role="button" data-bs-toggle="dropdown">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold"
@@ -107,7 +103,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/theme.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

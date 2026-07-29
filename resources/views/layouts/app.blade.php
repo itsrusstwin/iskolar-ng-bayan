@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin - Iskolar ng Bayan')</title>
@@ -19,7 +18,7 @@
 <div class="d-flex" style="min-height: 100vh;">
 
     <!-- Sidebar -->
-    <div class="d-none d-lg-flex flex-column bg-brand-navy text-white p-3" style="width: 250px; flex-shrink: 0;">
+    <div class="d-none d-lg-flex flex-column bg-brand-navy text-white p-3" style="width: 250px; flex-shrink: 0; height: 100vh; position: sticky; top: 0; overflow-y: auto;">
         <a href="{{ route('home') }}" class="d-flex align-items-center gap-2 mb-4 px-1">
             <span class="logo-chip"><img src="{{ asset('images/stc-logo.jpg') }}" class="logo-mark" alt="Santa Cruz Logo"></span>
             <span class="logo-chip"><img src="{{ asset('images/iskolar-logo.jpg') }}" class="logo-mark" alt="Iskolar ng Bayan Logo"></span>
@@ -71,7 +70,7 @@
     </div>
 
     <!-- Main -->
-    <div class="flex-grow-1 overflow-hidden">
+    <div class="flex-grow-1" style="height: 100vh; overflow-y: auto;">
         <div class="theme-header-bar border-bottom px-4 py-3 d-flex align-items-center justify-content-between">
             <button class="btn btn-sm d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarMobile">
                 <i class="bi bi-list fs-4"></i>
@@ -83,7 +82,6 @@
                 @endif
             </div>
             <div class="d-flex align-items-center gap-2">
-                @include('partials.theme-toggle')
                 @yield('header_actions')
             </div>
         </div>
@@ -143,7 +141,6 @@
 @endauth
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ asset('js/theme.js') }}"></script>
 @stack('scripts')
 </body>
-</html> 
+</html>

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    @include('partials.theme-init')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Iskolar ng Bayan</title>
@@ -15,9 +14,6 @@
 <body class="bg-surface">
 
     <div class="container py-5 position-relative">
-        <div class="position-absolute top-0 end-0">
-            @include('partials.theme-toggle')
-        </div>
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8">
 
@@ -79,6 +75,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/theme.js') }}"></script>
 </body>
 </html>
