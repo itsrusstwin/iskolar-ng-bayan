@@ -75,10 +75,25 @@
                         <label class="form-label">Sitio</label>
                         <input type="text" name="sitio" value="{{ old('sitio', $applicant->sitio) }}" class="form-control text-uppercase">
                     </div>
-                    <div class="col-md-4">
+                                        <div class="col-md-4">
                         <label class="form-label">Barangay</label>
-                        <input type="text" name="barangay" value="{{ old('barangay', $applicant->barangay) }}" placeholder="e.g. Barangay Poblacion I" class="form-control text-uppercase" required>
+                        <select name="barangay" class="form-select" required>
+                            <option value="">-- Select --</option>
+                            @foreach ([
+                                'Brgy. Alipit', 'Brgy. Bagumbayan', 'Brgy. I (Poblacion)', 'Brgy. II (Poblacion)',
+                                'Brgy. III (Poblacion)', 'Brgy. IV (Poblacion)', 'Brgy. V (Poblacion)',
+                                'Brgy. Bubukal', 'Brgy. Calios', 'Brgy. Duhat', 'Brgy. Gatid',
+                                'Brgy. Jasaan', 'Brgy. Labuin', 'Brgy. Malinao', 'Brgy. Oogong',
+                                'Brgy. Pagsawitan', 'Brgy. Palasan', 'Brgy. Patimbao',
+                                'Brgy. San Jose', 'Brgy. San Juan', 'Brgy. San Pablo Norte',
+                                'Brgy. San Pablo Sur', 'Brgy. Santisima Cruz',
+                                'Brgy. Santo Angel Central', 'Brgy. Santo Angel Norte', 'Brgy. Santo Angel Sur',
+                            ] as $brgy)
+                                <option value="{{ $brgy }}" {{ old('barangay', $applicant->barangay) === $brgy ? 'selected' : '' }}>{{ $brgy }}</option>
+                            @endforeach
+                        </select>
                     </div>
+
                 </div>
 
                 <h2 class="small fw-bold text-uppercase text-muted-soft mt-4 mb-3 pt-3 border-top">Family Information</h2>

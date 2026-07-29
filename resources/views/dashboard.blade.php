@@ -3,6 +3,37 @@
 
 @section('content')
 
+@php
+    $schoolCourses = [
+        'ACTS COMPUTER COLLEGE' => [
+            'Bachelor of Science in Computer Science (BSCS)',
+            'Bachelor of Science in Information Technology (BSIT)',
+            'Bachelor of Science in Information Systems (BSIS)',
+            'Bachelor of Science in Entertainment and Multimedia Computing (BSEMC)',
+            'Associate in Computer Technology (ACT)',
+            'Computer System Servicing NCII',
+        ],
+        'AMA COLLEGE' => [
+            'Bachelor of Science in Information Technology (BSIT)',
+            'Bachelor of Science in Computer Science (BSCS)',
+            'Bachelor of Science in Information Systems (BSIS)',
+            'Bachelor of Science in Accountancy (BSA)',
+            'Bachelor of Science in Business Administration (BSBA)',
+            'Bachelor of Science in Psychology (BSP)',
+            'Bachelor of Science in Hospitality Management (BSHM)',
+            'Bachelor of Science in Tourism Management (BSTM)',
+        ],
+        @foreach ([
+                                'ACTS COMPUTER COLLEGE', 'AMA COLLEGE', 'LAGUNA STATE POLYTECHNIC UNIVERSITY',
+                                'LAGUNA UNIVERSITY', 'STI COLLEGE', 'PHINMA UNION COLLEGE',
+                                'SOUTHBAY MONTESSORI SCHOOL', "PHILIPPINE WOMEN'S UNIVERSITY",
+                            ] as $school)
+                                <option value="{{ $school }}" {{ old('school_name') === $school ? 'selected' : '' }}>{{ $school }}</option>
+                            @endforeach
+    ];
+@endphp
+
+
 @if (!$applicant)
 
     {{-- Profile not yet completed --}}
@@ -79,10 +110,25 @@
                             <label class="form-label">Sitio</label>
                             <input type="text" name="sitio" value="{{ old('sitio') }}" class="form-control text-uppercase">
                         </div>
-                        <div class="col-md-4">
+                                                <div class="col-md-4">
                             <label class="form-label">Barangay</label>
-                            <input type="text" name="barangay" value="{{ old('barangay') }}" placeholder="e.g. Barangay Poblacion I" class="form-control text-uppercase" required>
+                            <select name="barangay" class="form-select" required>
+                                <option value="">-- Select --</option>
+                                @foreach ([
+                                    'Brgy. Alipit', 'Brgy. Bagumbayan', 'Brgy. I (Poblacion)', 'Brgy. II (Poblacion)',
+                                    'Brgy. III (Poblacion)', 'Brgy. IV (Poblacion)', 'Brgy. V (Poblacion)',
+                                    'Brgy. Bubukal', 'Brgy. Calios', 'Brgy. Duhat', 'Brgy. Gatid',
+                                    'Brgy. Jasaan', 'Brgy. Labuin', 'Brgy. Malinao', 'Brgy. Oogong',
+                                    'Brgy. Pagsawitan', 'Brgy. Palasan', 'Brgy. Patimbao',
+                                    'Brgy. San Jose', 'Brgy. San Juan', 'Brgy. San Pablo Norte',
+                                    'Brgy. San Pablo Sur', 'Brgy. Santisima Cruz',
+                                    'Brgy. Santo Angel Central', 'Brgy. Santo Angel Norte', 'Brgy. Santo Angel Sur',
+                                ] as $brgy)
+                                    <option value="{{ $brgy }}" {{ old('barangay') === $brgy ? 'selected' : '' }}>{{ $brgy }}</option>
+                                @endforeach
+                            </select>
                         </div>
+
                     </div>
 
                     <h2 class="small fw-bold text-uppercase text-muted-soft mt-4 mb-3 pt-3 border-top">Family Information</h2>
@@ -95,22 +141,38 @@
                             <label class="form-label">Mother's Full Maiden Name</label>
                             <input type="text" name="mother_maiden_name" value="{{ old('mother_maiden_name') }}" class="form-control text-uppercase">
                         </div>
-                    </div>
+                   <div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <label class="form-label">Year</label>
+        <select name="year_level" class="form-select" required>
+            <option value="">-- Select --</option>
+            <option value="1st Year" {{ old('year_level') === '1st Year' ? 'selected' : '' }}>1st Year</option>
+            <option value="2nd Year" {{ old('year_level') === '2nd Year' ? 'selected' : '' }}>2nd Year</option>
+            <option value="3rd Year" {{ old('year_level') === '3rd Year' ? 'selected' : '' }}>3rd Year</option>
+            <option value="4th Year" {{ old('year_level') === '4th Year' ? 'selected' : '' }}>4th Year</option>
+        </select>
+    </div>
+    <div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <label class="form-label">Year</label>
+        <select name="year_level" class="form-select" required>
+            <option value="">-- Select --</option>
+            <option value="1st Year" {{ old('year_level') === '1st Year' ? 'selected' : '' }}>1st Year</option>
+            <option value="2nd Year" {{ old('year_level') === '2nd Year' ? 'selected' : '' }}>2nd Year</option>
+            <option value="3rd Year" {{ old('year_level') === '3rd Year' ? 'selected' : '' }}>3rd Year</option>
+            <option value="4th Year" {{ old('year_level') === '4th Year' ? 'selected' : '' }}>4th Year</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Full Course</label>
+        <select name="course" id="courseSelect" class="form-select" required>
+            <option value="">-- Select School First --</option>
+        </select>
+    </div>
+</div>
 
-                    <h2 class="small fw-bold text-uppercase text-muted-soft mt-4 mb-3 pt-3 border-top">Educational Background</h2>
-                    <div class="mb-2">
-                        <label class="form-label">School Enrolled</label>
-                        <select name="school_name" class="form-select" required>
-                            <option value="">-- Select --</option>
-                            @foreach ([
-                                'ACTS COMPUTER COLLEGE', 'AMA COLLEGE', 'LAGUNA STATE POLYTECHNIC UNIVERSITY',
-                                'LAGUNA UNIVERSITY', 'STI COLLEGE', 'PHINMA UNION COLLEGE',
-                                'SOUTHBAY MONTESSORI SCHOOL', "PHILIPPINE WOMEN'S UNIVERSITY",
-                            ] as $school)
-                                <option value="{{ $school }}" {{ old('school_name') === $school ? 'selected' : '' }}>{{ $school }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+</div>
+
 
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
