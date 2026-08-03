@@ -26,7 +26,7 @@
                         </p>
                     @endif
                 </div>
-                <span class="admin-kpi-icon admin-kpi-icon--navy"><i class="bi bi-people"></i></span>
+                <span class="admin-kpi-icon admin-kpi-icon--grad-navy"><i class="bi bi-folder2-open"></i></span>
             </div>
         </div>
     </div>
@@ -35,10 +35,10 @@
             <div class="d-flex align-items-start justify-content-between gap-2">
                 <div>
                     <p class="small text-muted-soft mb-1">In Progress</p>
-                    <p class="h3 fw-bold mb-0" style="color: var(--gold-600);">{{ number_format($stats['in_progress']) }}</p>
+                    <p class="h3 fw-bold mb-0 kpi-value-gold">{{ number_format($stats['in_progress']) }}</p>
                     <p class="small text-muted-soft mb-0 mt-1">Under review & assessment</p>
                 </div>
-                <span class="admin-kpi-icon admin-kpi-icon--gold"><i class="bi bi-hourglass-split"></i></span>
+                <span class="admin-kpi-icon admin-kpi-icon--grad-gold"><i class="bi bi-hourglass-split"></i></span>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
                     <p class="h3 fw-bold mb-0 text-success">{{ number_format($stats['qualified']) }}</p>
                     <p class="small text-muted-soft mb-0 mt-1">Passed exam & compliance</p>
                 </div>
-                <span class="admin-kpi-icon admin-kpi-icon--green"><i class="bi bi-patch-check"></i></span>
+                <span class="admin-kpi-icon admin-kpi-icon--grad-green"><i class="bi bi-patch-check-fill"></i></span>
             </div>
         </div>
     </div>
@@ -59,10 +59,10 @@
             <div class="d-flex align-items-start justify-content-between gap-2">
                 <div>
                     <p class="small text-muted-soft mb-1">Scholarship Released</p>
-                    <p class="h3 fw-bold mb-0" style="color: var(--ink-700);">{{ number_format($stats['released']) }}</p>
+                    <p class="h3 fw-bold mb-0 kpi-value-blue">{{ number_format($stats['released']) }}</p>
                     <p class="small text-muted-soft mb-0 mt-1">Completed payouts</p>
                 </div>
-                <span class="admin-kpi-icon admin-kpi-icon--blue"><i class="bi bi-cash-stack"></i></span>
+                <span class="admin-kpi-icon admin-kpi-icon--grad-blue"><i class="bi bi-wallet2"></i></span>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
                     <p class="h3 fw-bold mb-0 text-danger">{{ number_format($stats['disqualified']) }}</p>
                     <p class="small text-muted-soft mb-0 mt-1">Did not meet criteria</p>
                 </div>
-                <span class="admin-kpi-icon admin-kpi-icon--red"><i class="bi bi-x-circle"></i></span>
+                <span class="admin-kpi-icon admin-kpi-icon--grad-red"><i class="bi bi-x-octagon-fill"></i></span>
             </div>
         </div>
     </div>
@@ -146,8 +146,8 @@
                                 </td>
                                 <td class="text-muted-soft">{{ $applicant->created_at?->format('M j, Y') ?? '—' }}</td>
                                 <td class="text-end pe-3">
-                                    <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-sm btn-outline-navy py-0 px-2" style="font-size: .75rem;">
-                                        View
+                                    <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-sm btn-navy d-inline-flex align-items-center gap-1" style="padding:.35rem .85rem;">
+                                        <i class="bi bi-eye"></i> View
                                     </a>
                                 </td>
                             </tr>
@@ -205,6 +205,7 @@
                 <a href="{{ route('admin.audit-log.index') }}" class="small fw-semibold" style="color: var(--ink-700);">View all</a>
             </div>
             <div class="admin-panel__body">
+                <div class="admin-activity-scroll" style="max-height: 320px; overflow-y: auto;">
                 @forelse ($recentActivity as $log)
                 <div class="admin-activity-item">
                     <div class="d-flex gap-2">
@@ -223,6 +224,7 @@
                 @empty
                 <p class="text-muted-soft small mb-0 text-center py-3">No activity recorded yet.</p>
                 @endforelse
+                </div>
             </div>
         </div>
     </div>
@@ -350,40 +352,99 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const chartFont = "'Inter', system-ui, sans-serif";
-    const inkColor = '#14213D';
-    const mutedColor = '#6B7A93';
+    let progressChart = null;
+    let programChart = null;
+
+    function getChartColors() {
+        const c = (window.getThemeColors && window.getThemeColors()) || {};
+        return {
+            ink: c.ink || '#14213D',
+            muted: c.muted || '#5C6A84',
+            grid: c.grid || '#E9EFF7',
+            surface: c.surface || '#ffffff',
+            tooltip: c.tooltip || '#0A2647',
+        };
+    }
+
+    function applyChartTheme() {
+        const colors = getChartColors();
+        Chart.defaults.color = colors.muted;
+
+        if (progressChart) {
+            progressChart.data.datasets[0].borderColor = colors.surface;
+            progressChart.options.plugins.legend.labels.color = colors.ink;
+            progressChart.options.plugins.tooltip.backgroundColor = colors.tooltip;
+            progressChart.update();
+        }
+        if (programChart) {
+            programChart.options.plugins.tooltip.backgroundColor = colors.tooltip;
+            programChart.options.scales.x.ticks.color = colors.ink;
+            programChart.options.scales.y.ticks.color = colors.muted;
+            programChart.options.scales.y.grid.color = colors.grid;
+            programChart.update();
+        }
+    }
 
     Chart.defaults.font.family = chartFont;
-    Chart.defaults.color = mutedColor;
 
     // Progress pie chart
     const progressCtx = document.getElementById('progressChart');
     if (progressCtx) {
-        new Chart(progressCtx, {
+        const progressData = @json($progressChart['values']);
+        const progressTotal = progressData.reduce((a, b) => a + b, 0);
+
+        // Center label plugin
+        const centerTextPlugin = {
+            id: 'centerText',
+            afterDraw(chart) {
+                if (chart.config.type !== 'doughnut') return;
+                const ctx = chart.ctx;
+                const meta = chart.getDatasetMeta(0);
+                if (!meta.data.length) return;
+                const x = meta.data[0].x;
+                const y = meta.data[0].y;
+                const colors = getChartColors();
+                ctx.save();
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = "700 30px 'Poppins', sans-serif";
+                ctx.fillStyle = colors.ink;
+                ctx.fillText(progressTotal, x, y - 6);
+                ctx.font = "500 11px 'Inter', sans-serif";
+                ctx.fillStyle = colors.muted;
+                ctx.fillText('Total applicants', x, y + 20);
+                ctx.restore();
+            }
+        };
+        Chart.register(centerTextPlugin);
+
+        progressChart = new Chart(progressCtx, {
             type: 'doughnut',
             data: {
                 labels: @json($progressChart['labels']),
                 datasets: [{
-                    data: @json($progressChart['values']),
+                    data: progressData,
                     backgroundColor: @json($progressChart['chartColors']),
-                    borderWidth: 2,
-                    borderColor: '#ffffff',
-                    hoverOffset: 6,
+                    borderWidth: 0,
+                    borderRadius: 8,
+                    hoverOffset: 10,
                 }],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '62%',
+                cutout: '70%',
                 plugins: {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            padding: 16,
+                            padding: 14,
                             usePointStyle: true,
                             pointStyle: 'circle',
-                            font: { size: 12, weight: '500' },
-                            color: inkColor,
+                            boxWidth: 9,
+                            boxHeight: 9,
+                            font: { size: 11, weight: '500' },
+                            color: '#14213D',
                         },
                     },
                     tooltip: {
@@ -406,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Program bar chart
     const programCtx = document.getElementById('programChart');
     if (programCtx) {
-        new Chart(programCtx, {
+        programChart = new Chart(programCtx, {
             type: 'bar',
             data: {
                 labels: @json($programChart['labels']),
@@ -432,7 +493,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 scales: {
                     x: {
                         grid: { display: false },
-                        ticks: { font: { size: 11, weight: '500' }, color: inkColor },
+                        ticks: { font: { size: 11, weight: '500' }, color: '#14213D' },
                     },
                     y: {
                         beginAtZero: true,
@@ -443,6 +504,9 @@ document.addEventListener('DOMContentLoaded', function () {
             },
         });
     }
+
+    applyChartTheme();
+    window.addEventListener('themechange', applyChartTheme);
 
     // Search filter
     const searchInput = document.getElementById('applicant-search');

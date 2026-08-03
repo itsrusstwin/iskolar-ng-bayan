@@ -24,6 +24,7 @@ class User extends Authenticatable
     'role',
     'provider',
     'provider_id',
+    'terms_accepted_at',
 ];
 
     /**
@@ -63,5 +64,21 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Check if this user has accepted the scholarship terms/guidelines.
+     */
+    public function hasAcceptedTerms(): bool
+    {
+        return $this->terms_accepted_at !== null;
+    }
+
+    /**
+     * Mark the scholarship terms/guidelines as accepted (first login).
+     */
+    public function acceptTerms(): void
+    {
+        $this->update(['terms_accepted_at' => now()]);
     }
 }

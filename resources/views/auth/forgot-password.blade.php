@@ -10,10 +10,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
+    @include('partials.theme-init')
 </head>
 <body class="bg-surface d-flex align-items-center" style="min-height: 100vh;">
 
     <div class="container position-relative">
+        <div class="position-absolute top-0 end-0 p-3">
+            @include('partials.theme-toggle')
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-5 col-sm-8">
 
@@ -55,5 +59,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/theme.js') }}"></script>
 </body>
 </html>

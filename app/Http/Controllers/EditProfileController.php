@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class EditProfileController extends Controller
 {
+    public function show()
+    {
+        $applicant = Auth::user()->applicant;
+        return view('applicants.profile', compact('applicant'));
+    }
+
     public function edit()
     {
         $applicant = Auth::user()->applicant;
@@ -23,6 +29,6 @@ class EditProfileController extends Controller
             'name' => $request->first_name . ' ' . $request->last_name,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Profile updated!');
+        return redirect()->route('profile.show')->with('success', 'Profile updated!');
     }
 }

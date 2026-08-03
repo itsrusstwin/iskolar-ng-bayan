@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
+    @include('partials.theme-init')
     @stack('styles')
 </head>
 <body class="bg-surface">
@@ -38,6 +39,7 @@
                         <a href="{{ route('guides') }}" class="nav-link fw-semibold {{ request()->routeIs('guides') ? 'text-white border-bottom border-2' : 'text-white-50' }}" style="border-color: var(--gold-500) !important;">Guides</a>
                     </li>
                     <li class="nav-item d-flex align-items-center mt-2 mt-lg-0 gap-2">
+                        @include('partials.theme-toggle')
                         @auth
                             <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="btn btn-brand btn-sm px-3">Dashboard</a>
                         @else
@@ -58,6 +60,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/theme.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

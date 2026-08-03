@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\Applicant;
 use App\Models\Requirement;
 use App\Http\Requests\StoreApplicantRequest;
@@ -14,9 +15,13 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $applicant = $user->applicant;
+        if ($applicant) {
+            $applicant->load(['requirements.requirement', 'disqualifications.appeals', 'wasteCompliance', 'payouts']);
+        }
         $requirements = Requirement::all();
+        $announcements = Announcement::where('is_published', true)->latest()->take(4)->get();
 
-        return view('dashboard', compact('applicant', 'requirements'));
+        return view('dashboard', compact('applicant', 'requirements', 'announcements'));
     }
 
     public function store(StoreApplicantRequest $request)

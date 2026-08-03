@@ -16,6 +16,11 @@ class Payout extends Model
         'reference_no',
     ];
 
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'released_at' => 'datetime',
+    ];
+
     public function applicant()
     {
         return $this->belongsTo(Applicant::class);

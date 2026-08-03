@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SiteContent;
+
 class HomeController extends Controller
 {
     public function index()
@@ -12,11 +14,13 @@ class HomeController extends Controller
 
     public function about()
     {
-        return view('about');
+        $content = SiteContent::allContent();
+        return view('about', compact('content'));
     }
 
     public function guides()
     {
-        return view('guides');
+        $content = SiteContent::allContent();
+        return view('guides', compact('content'));
     }
 }

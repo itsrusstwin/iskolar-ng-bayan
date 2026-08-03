@@ -35,6 +35,7 @@
                 {{ $initials }}
             </div>
             <div>
+                <p class="small text-muted-soft mb-0 fw-semibold" style="letter-spacing:.04em;">Application ID: {{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}</p>
                 <p class="fw-bold fs-5 mb-0">{{ $applicant->first_name }} {{ $applicant->last_name }}</p>
                 <p class="small text-muted-soft mb-1">
                     Student ID: {{ $applicant->school_id ?? 'N/A' }}
@@ -79,6 +80,39 @@
     </div>
 </div>
 
+@if ($applicant->exam_scheduled_at || $applicant->orientation_scheduled_at)
+    <!-- Upcoming schedules -->
+    <div class="card-elevated p-4 mb-4">
+        <p class="fw-bold mb-3">Upcoming Schedules</p>
+
+        @if ($applicant->exam_scheduled_at)
+            <div class="d-flex align-items-center justify-content-between py-2 border-bottom flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-calendar-event fs-5 text-muted-soft"></i>
+                    <div>
+                        <p class="mb-0 fw-semibold small">Qualifying Exam</p>
+                        <p class="small text-muted-soft mb-0">{{ $applicant->exam_scheduled_at->format('F j, Y \a\t g:ia') }}</p>
+                    </div>
+                </div>
+                <span class="admin-badge-released">Scheduled</span>
+            </div>
+        @endif
+
+        @if ($applicant->orientation_scheduled_at)
+            <div class="d-flex align-items-center justify-content-between py-2 flex-wrap gap-2 {{ $applicant->exam_scheduled_at ? 'pt-3' : '' }}">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-mortarboard fs-5 text-muted-soft"></i>
+                    <div>
+                        <p class="mb-0 fw-semibold small">Orientation</p>
+                        <p class="small text-muted-soft mb-0">{{ $applicant->orientation_scheduled_at->format('F j, Y \a\t g:ia') }}</p>
+                    </div>
+                </div>
+                <span class="admin-badge-released">Scheduled</span>
+            </div>
+        @endif
+    </div>
+@endif
+
 <!-- Assessment & Exam Records -->
 @if ($applicant->mswdoAssessment || $applicant->examResults->count())
     <div class="card-elevated p-4 mb-4">
@@ -96,7 +130,7 @@
                     </p>
                 </div>
                 @if ($applicant->mswdoAssessment->social_case_study_report_path)
-                    <a href="{{ asset('storage/' . $applicant->mswdoAssessment->social_case_study_report_path) }}" target="_blank" class="link-brand small">View Report</a>
+                    <a href="javascript:void(0)" onclick="previewFile('{{ asset('storage/' . $applicant->mswdoAssessment->social_case_study_report_path) }}', 'Social Case Study Report')" class="link-brand small">View Report</a>
                 @else
                     <span class="small text-muted-soft">No file uploaded</span>
                 @endif
@@ -115,7 +149,7 @@
                     </p>
                 </div>
                 @if ($result->file_path)
-                    <a href="{{ asset('storage/' . $result->file_path) }}" target="_blank" class="link-brand small">View Exam File</a>
+                    <a href="javascript:void(0)" onclick="previewFile('{{ asset('storage/' . $result->file_path) }}', 'Exam File')" class="link-brand small">View Exam File</a>
                 @else
                     <span class="small text-muted-soft">No file uploaded</span>
                 @endif

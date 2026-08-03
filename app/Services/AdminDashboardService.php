@@ -176,12 +176,14 @@ class AdminDashboardService
 
     public function statusBadgeClass(string $status): string
     {
-        return match ($this->categorizeProgress($status)) {
-            'qualified' => 'admin-badge-success',
-            'released' => 'admin-badge-released',
-            'disqualified' => 'admin-badge-danger',
-            'appealed' => 'admin-badge-muted',
-            default => 'admin-badge-warning',
+        return match (true) {
+            str_starts_with($status, 'disqualified'), $status === 'exam_failed' => 'admin-badge-danger',
+            $status === 'paid_out' => 'admin-badge-released',
+            $status === 'exam_passed', $status === 'oriented', $status === 'compliance_met' => 'admin-badge-success',
+            $status === 'exam_scheduled' => 'admin-badge-exam',
+            $status === 'submitted', $status === 'incomplete' => 'admin-badge-muted',
+            $status === 'appealed' => 'admin-badge-exam',
+            default => 'admin-badge-pending',
         };
     }
 

@@ -6,7 +6,12 @@
 <div class="row justify-content-center">
     <div class="col-xl-8">
         <div class="card-elevated p-4 p-md-5">
-            <h1 class="h3 fw-bold mb-4">Update Your Profile</h1>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 fw-bold mb-0">Edit Profile</h1>
+                <a href="{{ route('profile.show') }}" class="small fw-semibold link-brand d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-arrow-left"></i> Back to profile
+                </a>
+            </div>
 
             @if ($errors->any())
                 <div class="alert-brand-danger p-3 mb-4 small">
@@ -21,6 +26,10 @@
                 @method('PUT')
 
                 <h2 class="small fw-bold text-uppercase text-muted-soft mb-3">Personal Information</h2>
+                <div class="mb-3">
+                    <label class="form-label">Application ID</label>
+                    <input type="text" value="{{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}" class="form-control bg-surface" readonly>
+                </div>
                 <div class="row g-3 mb-2">
                     <div class="col-md-4">
                         <label class="form-label">Last Name</label>
@@ -111,7 +120,7 @@
                 <h2 class="small fw-bold text-uppercase text-muted-soft mt-4 mb-3 pt-3 border-top">Educational Background</h2>
                 <div class="mb-2">
                     <label class="form-label">School Enrolled</label>
-                    <select name="school_name" class="form-select" required>
+                    <select name="school_name" id="school_name" class="form-select" required>
                         <option value="">-- Select --</option>
                         @foreach ([
                             'ACTS COMPUTER COLLEGE', 'AMA COLLEGE', 'LAGUNA STATE POLYTECHNIC UNIVERSITY',
@@ -136,7 +145,9 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Full Course</label>
-                        <input type="text" name="course" value="{{ old('course', $applicant->course) }}" placeholder="e.g. Bachelor of Science in Computer Science" class="form-control" required>
+                        <select name="course" id="course" class="form-select" required>
+                            <option value="">-- Select a school first --</option>
+                        </select>
                     </div>
                 </div>
 
@@ -153,6 +164,132 @@
             this.value = this.value.toUpperCase();
             this.setSelectionRange(cursorPos, cursorPos);
         });
+    });
+
+    const schoolCourses = {
+        'ACTS COMPUTER COLLEGE': [
+            'Bachelor of Science in Computer Science (BSCS)',
+            'Bachelor of Science in Information Technology (BSIT)',
+            'Bachelor of Science in Information Management (BSIM)',
+            'Bachelor of Science in Business Administration (BSBA)',
+            'Bachelor of Science in Secretarial Administration / Office Administration',
+        ],
+        'AMA COLLEGE': [
+            'Bachelor of Science in Information Technology (BSIT)',
+            'Bachelor of Science in Computer Science (BSCS)',
+            'Bachelor of Science in Computer Engineering (BSCPE)',
+            'Bachelor of Science in Electronics Engineering (BSECE)',
+            'Bachelor of Science in Accountancy (BSA)',
+            'Bachelor of Science in Business Administration (BSBA)',
+            'Bachelor of Science in Psychology (BSPsy)',
+        ],
+        'LAGUNA STATE POLYTECHNIC UNIVERSITY': [
+            'BS in Civil Engineering',
+            'BS in Mechanical Engineering',
+            'BS in Electrical Engineering',
+            'BS in Electronics Engineering',
+            'BS in Computer Engineering',
+            'Bachelor of Secondary Education',
+            'Bachelor of Elementary Education',
+            'Technical Vocational Teacher Education',
+            'Bachelor of Physical Education',
+            'BS in Information Technology',
+            'BS in Computer Science',
+            'BS in Biology',
+            'BS in Psychology',
+            'BS in Mathematics',
+            'BS in Chemistry',
+            'BS in Broadcasting',
+            'BS in Accountancy',
+            'BS in Entrepreneurship',
+            'BS in Office Administration',
+            'BS in Hospitality Management',
+            'BS in Tourism Management',
+            'BS in Nursing',
+            'BS in Industrial Technology',
+        ],
+        'LAGUNA UNIVERSITY': [
+            'Bachelor of Elementary Education',
+            'Bachelor of Secondary Education major in English',
+            'Bachelor of Secondary Education major in Math',
+            'Bachelor of Secondary Education major in Science',
+            'BA in Communication',
+            'BA in Psychology',
+            'BS in Psychology',
+            'BS in Accountancy (BSA)',
+            'BS in Accounting Information System (BSAIS)',
+            'BS in Entrepreneurship',
+            'BS in Tourism Management',
+            'BS in Information Technology',
+            'BS in Computer Science',
+            'BS in Mechanical Engineering',
+        ],
+        'STI COLLEGE': [
+            'BS in Information Technology (BSIT)',
+            'BS in Computer Science (BSCS)',
+            'BS in Business Administration (BSBA)',
+            'BS in Office Management',
+        ],
+        'PHINMA UNION COLLEGE': [
+            'BS in Information Technology',
+            'BS in Business Administration (Marketing Management)',
+            'BS in Hospitality Management',
+            'BS in Tourism Management',
+            'BS in Accountancy',
+            'BS in Computer Science',
+        ],
+        'SOUTHBAY MONTESSORI SCHOOL': [
+            'Bachelor of Science in Accountancy',
+            'Bachelor of Science in Psychology',
+            'Bachelor of Science in Social Work',
+            'Food and Beverages Services NCII (356 hours)',
+            'Housekeeping NCII (436 hours)',
+            'Bread and Pastry Production NCII (141 hours)',
+            'Computer System Servicing NCII',
+        ],
+        "PHILIPPINE WOMEN'S UNIVERSITY": [
+            'Bachelor of Science in Information Technology (BSIT)',
+            'Bachelor of Science in Hospitality Management',
+            'Bachelor of Science in Tourism Management',
+            'Bachelor of Science in Business Administration',
+        ],
+    };
+
+    const savedCourse = @json(old('course', $applicant->course));
+
+    function populateCourses(selectedSchool, selectedCourse) {
+        const courseSelect = document.getElementById('course');
+        courseSelect.innerHTML = '';
+
+        if (!selectedSchool || !schoolCourses[selectedSchool]) {
+            courseSelect.innerHTML = '<option value="">-- Select a school first --</option>';
+            return;
+        }
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = '-- Select a course --';
+        courseSelect.appendChild(placeholder);
+
+        schoolCourses[selectedSchool].forEach(function (course) {
+            const option = document.createElement('option');
+            option.value = course;
+            option.textContent = course;
+            if (course === selectedCourse) {
+                option.selected = true;
+            }
+            courseSelect.appendChild(option);
+        });
+    }
+
+    const schoolSelect = document.getElementById('school_name');
+
+    // Populate on page load with the saved values
+    populateCourses(schoolSelect.value, savedCourse);
+
+    // Re-populate when school changes
+    schoolSelect.addEventListener('change', function () {
+        populateCourses(this.value, null);
     });
 </script>
 

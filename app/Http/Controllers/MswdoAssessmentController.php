@@ -20,12 +20,15 @@ class MswdoAssessmentController extends Controller
     {
         $validated = $request->validate([
             'referral_slip_no' => 'nullable|string|max:50',
-            'is_qualified' => 'required|boolean',
+            'is_qualified' => 'nullable|boolean',
+            'is_disqualified' => 'nullable|boolean',
             'social_case_study_report' => 'nullable|file|mimes:pdf|max:5120', // 5MB, PDF only
             'disqualification_reason' => 'nullable|string|max:1000',
         ], [
             'social_case_study_report.mimes' => 'Only PDF files are allowed for the social case study report.',
         ]);
+
+        $qualified = $request->boolean('is_qualified') && !$request->boolean('is_disqualified');
 
         $filePath = null;
         if ($request->hasFile('social_case_study_report')) {
@@ -35,13 +38,13 @@ class MswdoAssessmentController extends Controller
         $assessment = $applicant->mswdoAssessment()->updateOrCreate([], [
             'referral_slip_no' => $validated['referral_slip_no'] ?? null,
             'social_case_study_report_path' => $filePath,
-            'is_qualified' => $validated['is_qualified'],
+            'is_qualified' => $qualified,
             'assessed_at' => now(),
         ]);
 
         $this->workflow->assessPoverty(
             $applicant,
-            (bool) $validated['is_qualified'],
+            $qualified,
             $validated['disqualification_reason'] ?? null
         );
 

@@ -55,4 +55,16 @@ class AuthController extends Controller
 
         return redirect()->route('login')->with('success', 'Logged out successfully.');
     }
+
+    public function acceptTerms()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user && !$user->isAdmin()) {
+            $user->acceptTerms();
+        }
+
+        return redirect()->back();
+    }
 }

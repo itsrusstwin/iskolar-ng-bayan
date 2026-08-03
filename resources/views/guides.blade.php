@@ -5,9 +5,9 @@
 
 <section class="bg-brand-navy text-white py-5">
     <div class="container py-3">
-        <span class="badge-soft-gold mb-3 d-inline-block">Step-by-step</span>
-        <h1 class="display-6 fw-bold text-white mb-2">Application Guide</h1>
-        <p class="fs-6 text-white-50 mb-0">Follow these four steps to complete your scholarship application.</p>
+        <span class="badge-soft-gold mb-3 d-inline-block">{{ $content['guides_hero_badge'] }}</span>
+        <h1 class="display-6 fw-bold text-white mb-2">{{ $content['guides_hero_title'] }}</h1>
+        <p class="fs-6 text-white-50 mb-0">{{ $content['guides_hero_subtitle'] }}</p>
     </div>
 </section>
 
@@ -17,24 +17,7 @@
         <!-- Steps -->
         <div class="col-lg-7">
             @php
-                $steps = [
-                    [
-                        'en' => 'Register on the iskolar.ng.bayan website. Click Login/Sign up above and it will take you to the login page — then click Create new account. If you already have an account, just log in.',
-                        'fil' => 'Magrehistro sa website na iskolar.ng.bayan. I-click ang Login/Sign up sa itaas, at dadalhin ka nito sa login page. Pagkatapos, i-click ang Create new account kung wala ka pang account. Kung mayroon ka nang account, mag-login na lamang.',
-                    ],
-                    [
-                        'en' => 'Fill up the scholar profile and upload the CERTIFIED TRUE COPIES of the required documents as a PDF file.',
-                        'fil' => 'Magfill-up ng scholar profile at i-upload ang mga CERTIFIED TRUE COPIES ng mga kinakailangang dokumento na naka-PDF.',
-                    ],
-                    [
-                        'en' => 'Wait for the verification of your submitted requirements. You will be notified through your account status if you qualify to proceed to the next step.',
-                        'fil' => 'Hintayin ang beripikasyon ng iyong mga isinumiteng requirements. Ikaw ay mapapabatid sa pamamagitan ng iyong account status kung ikaw ay kwalipikado upang magpatuloy sa susunod na hakbang.',
-                    ],
-                    [
-                        'en' => 'Once qualified, take the scholarship exam on the scheduled date. Results will be posted on your account.',
-                        'fil' => 'Kapag kwalipikado, kunin ang scholarship exam sa naka-iskedyul na petsa. Ang mga resulta ay ipo-post sa iyong account.',
-                    ],
-                ];
+                $steps = json_decode($content['guides_steps'] ?? '[]', true) ?: [];
             @endphp
 
             @foreach ($steps as $i => $step)

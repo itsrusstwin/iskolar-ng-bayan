@@ -20,11 +20,15 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\StudentAccountController;
 use App\Http\Controllers\RequirementReviewController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\ContentController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\SupportController;
 
 
 
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profile', [EditProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [EditProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [EditProfileController::class, 'update'])->name('profile.update');
 });
@@ -76,6 +80,11 @@ Route::post('/appeals', [AppealController::class, 'store'])->name('appeals.store
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard', [DashboardController::class, 'store'])->name('applicants.store');
+    Route::post('/accept-terms', [AuthController::class, 'acceptTerms'])->name('terms.accept');
+
+    // Student <-> Admin support messaging
+    Route::get('/support', [SupportController::class, 'index'])->name('support.index');
+    Route::post('/support', [SupportController::class, 'store'])->name('support.store');
 });
 
 // -----------------------------
@@ -83,6 +92,9 @@ Route::middleware('auth')->group(function () {
 // -----------------------------
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [ApplicantController::class, 'index'])->name('admin.dashboard');
+
+    Route::get('/applicants', [ApplicantController::class, 'manage'])->name('admin.applicants.index');
+    Route::delete('/applicants/{applicant}', [ApplicantController::class, 'destroy'])->name('admin.applicants.destroy');
 
     Route::get('/students/create', [StudentAccountController::class, 'create'])->name('admin.students.create');
     Route::post('/students', [StudentAccountController::class, 'store'])->name('admin.students.store');
@@ -103,6 +115,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/applicants/{applicant}/exam-result', [ExamResultController::class, 'store'])
         ->name('admin.exam-result');
 
+    Route::post('/applicants/{applicant}/schedule-exam', [ScheduleController::class, 'scheduleExam'])
+        ->name('admin.applicants.schedule-exam');
+
+    Route::post('/applicants/{applicant}/schedule-orientation', [ScheduleController::class, 'scheduleOrientation'])
+        ->name('admin.applicants.schedule-orientation');
+
+    Route::post('/applicants/schedule-bulk', [ScheduleController::class, 'scheduleBulk'])
+        ->name('admin.applicants.schedule-bulk');
+
     Route::post('/applicants/{applicant}/orientation', [OrientationController::class, 'complete'])
         ->name('admin.orientation');
 
@@ -122,4 +143,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     // Audit log
     Route::get('/audit-log', [AuditLogController::class, 'index'])
         ->name('admin.audit-log.index');
+    Route::post('/audit-log/delete', [AuditLogController::class, 'destroy'])
+        ->name('admin.audit-log.destroy');
+
+    // Page content (About Us / Guides)
+    Route::get('/content', [ContentController::class, 'index'])->name('admin.content.index');
+    Route::put('/content', [ContentController::class, 'update'])->name('admin.content.update');
+
+    // Support messaging
+    Route::get('/support', [SupportController::class, 'inbox'])->name('admin.support.index');
+    Route::get('/support/{user}', [SupportController::class, 'show'])->name('admin.support.show');
+    Route::post('/support/{user}/reply', [SupportController::class, 'reply'])->name('admin.support.reply');
 });

@@ -95,7 +95,7 @@
             @elseif ($req->is_submitted)
                 <div class="d-flex align-items-center gap-3 flex-wrap">
                     @if ($req->file_path)
-                        <a href="{{ asset('storage/' . $req->file_path) }}" target="_blank" class="small fw-semibold" style="color: var(--ink-700);">View file</a>
+                        <a href="javascript:void(0)" onclick="previewFile('{{ asset('storage/' . $req->file_path) }}', '{{ $req->requirement->name }}')" class="small fw-semibold" style="color: var(--ink-700);">View file</a>
                     @endif
 
                     @if ($req->approval_status === 'approved')
@@ -167,9 +167,16 @@
             @if ($applicant->mswdoAssessment)
                 <p class="small text-muted-soft mb-3">Already recorded.</p>
                 <p class="small mb-1">Referral slip: {{ $applicant->mswdoAssessment->referral_slip_no ?? 'N/A' }}</p>
-                <p class="small mb-2">Qualified: {{ $applicant->mswdoAssessment->is_qualified ? 'Yes' : 'No' }}</p>
+                <p class="small mb-2">
+                    Result:
+                    @if ($applicant->mswdoAssessment->is_qualified)
+                        <span class="badge-soft-gold">Qualified</span>
+                    @else
+                        <span class="badge bg-danger-subtle text-danger-emphasis">Disqualified</span>
+                    @endif
+                </p>
                 @if ($applicant->mswdoAssessment->social_case_study_report_path)
-                    <a href="{{ asset('storage/' . $applicant->mswdoAssessment->social_case_study_report_path) }}" target="_blank" class="small fw-semibold" style="color: var(--ink-700);">
+                    <a href="javascript:void(0)" onclick="previewFile('{{ asset('storage/' . $applicant->mswdoAssessment->social_case_study_report_path) }}', 'Social Case Study Report')" class="small fw-semibold" style="color: var(--ink-700);">
                         <i class="bi bi-file-earmark-pdf"></i> View Social Case Study Report
                     </a>
                 @else
@@ -184,12 +191,16 @@
                         <input type="file" name="social_case_study_report" accept=".pdf" class="form-control form-control-sm">
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="is_qualified" value="1" id="isQualified">
-                        <label class="form-check-label small" for="isQualified">Qualified (meets poverty threshold)</label>
+                        <input class="form-check-input" type="checkbox" name="is_qualified" value="1" id="isQualified" {{ old('is_qualified') ? 'checked' : '' }}>
+                        <label class="form-check-label small" for="isQualified">Qualified — meets poverty threshold</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="is_disqualified" value="1" id="isDisqualified" {{ old('is_disqualified') ? 'checked' : '' }}>
+                        <label class="form-check-label small text-danger-emphasis" for="isDisqualified">Disqualified — did not meet poverty threshold</label>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small text-muted-soft mb-1">
-                            Reason if disqualified <span class="fst-italic">(optional — only used if left unchecked above)</span>
+                            Reason if disqualified <span class="fst-italic">(optional)</span>
                         </label>
                         <textarea name="disqualification_reason" rows="2" class="form-control form-control-sm" placeholder="e.g. Household income exceeds the poverty threshold set by MSWDO"></textarea>
                     </div>
@@ -199,16 +210,34 @@
         </div>
     </div>
 
-    <!-- Step 8: Exam result -->
+    <!-- Step 7-8: Exam schedule + result -->
     <div class="col-lg-6">
         <div class="card-flat p-4 h-100">
-            <p class="fw-bold mb-1">Qualifying Exam Result</p>
+            <p class="fw-bold mb-1">Qualifying Exam</p>
+
+            <form method="POST" action="{{ route('admin.applicants.schedule-exam', $applicant) }}" class="mt-3 mb-3 pb-3 border-bottom">
+                @csrf
+                <label class="form-label small fw-semibold d-block mb-1">
+                    @if ($applicant->exam_scheduled_at)
+                        Exam date — <span class="text-success">{{ $applicant->exam_scheduled_at->format('M d, Y g:ia') }}</span>
+                    @else
+                        Exam schedule
+                    @endif
+                </label>
+                <div class="d-flex gap-2 flex-wrap">
+                    <input type="datetime-local" name="exam_scheduled_at" value="{{ $applicant->exam_scheduled_at?->format('Y-m-d\TH:i') }}" class="form-control form-control-sm" style="max-width: 240px;" required>
+                    <button type="submit" class="btn btn-sm btn-navy px-3">
+                        {{ $applicant->exam_scheduled_at ? 'Update Schedule' : 'Set Schedule' }}
+                    </button>
+                </div>
+            </form>
+
             @if ($applicant->examResults->count())
-                <p class="small text-muted-soft mb-3">Already recorded.</p>
+                <p class="small text-muted-soft mb-3">Result already recorded.</p>
                 @foreach ($applicant->examResults as $result)
                     <p class="small mb-1">{{ $result->passed ? 'Passed' : 'Failed' }}</p>
                     @if ($result->file_path)
-                        <a href="{{ asset('storage/' . $result->file_path) }}" target="_blank" class="small fw-semibold d-inline-block mb-2" style="color: var(--ink-700);">
+                        <a href="javascript:void(0)" onclick="previewFile('{{ asset('storage/' . $result->file_path) }}', 'Exam File')" class="small fw-semibold d-inline-block mb-2" style="color: var(--ink-700);">
                             <i class="bi bi-file-earmark-pdf"></i> View Exam File
                         </a>
                     @else
@@ -243,6 +272,24 @@
     <div class="col-lg-6">
         <div class="card-flat p-4 h-100">
             <p class="fw-bold mb-1">Orientation</p>
+
+            <form method="POST" action="{{ route('admin.applicants.schedule-orientation', $applicant) }}" class="mt-3 mb-3 pb-3 border-bottom">
+                @csrf
+                <label class="form-label small fw-semibold d-block mb-1">
+                    @if ($applicant->orientation_scheduled_at)
+                        Orientation date — <span class="text-success">{{ $applicant->orientation_scheduled_at->format('M d, Y g:ia') }}</span>
+                    @else
+                        Orientation schedule
+                    @endif
+                </label>
+                <div class="d-flex gap-2 flex-wrap">
+                    <input type="datetime-local" name="orientation_scheduled_at" value="{{ $applicant->orientation_scheduled_at?->format('Y-m-d\TH:i') }}" class="form-control form-control-sm" style="max-width: 240px;" required>
+                    <button type="submit" class="btn btn-sm btn-navy px-3">
+                        {{ $applicant->orientation_scheduled_at ? 'Update Schedule' : 'Set Schedule' }}
+                    </button>
+                </div>
+            </form>
+
             @if ($applicant->orientation && $applicant->orientation->attended)
                 <p class="small text-success mb-0">Marked as attended.</p>
             @else

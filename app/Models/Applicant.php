@@ -31,7 +31,15 @@ class Applicant extends Model
     'school_name',
     'province',
     'city_municipality',
+    'exam_scheduled_at',
+    'orientation_scheduled_at',
 ];
+
+    protected $casts = [
+        'exam_scheduled_at' => 'datetime',
+        'orientation_scheduled_at' => 'datetime',
+        'date_of_birth' => 'datetime',
+    ];
 
     public function user()
     {
