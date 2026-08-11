@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ApplicantRequirement;
 use App\Models\AuditLog;
+use App\Notifications\ApplicationStatusChanged;
 use Illuminate\Support\Facades\Auth;
 
 class RequirementReviewController extends Controller
@@ -21,6 +22,11 @@ class RequirementReviewController extends Controller
             $requirement
         );
 
+        $requirement->applicant?->user?->notify(new ApplicationStatusChanged(
+            'Requirement approved',
+            "Your \"{$requirement->requirement->name}\" has been approved."
+        ));
+
         return redirect()->back()->with('success', 'Requirement approved.');
     }
 
@@ -36,6 +42,11 @@ class RequirementReviewController extends Controller
             $requirement->applicant,
             $requirement
         );
+
+        $requirement->applicant?->user?->notify(new ApplicationStatusChanged(
+            'Requirement not approved',
+            "Your \"{$requirement->requirement->name}\" was not approved. Please re-upload a valid document."
+        ));
 
         return redirect()->back()->with('success', 'Requirement marked as not approved.');
     }

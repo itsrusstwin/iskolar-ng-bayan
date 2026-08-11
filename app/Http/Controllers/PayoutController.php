@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Applicant;
 use App\Models\AuditLog;
+use App\Models\Payout;
 use App\Services\ApplicationWorkflowService;
 use Illuminate\Http\Request;
 
@@ -42,5 +43,21 @@ class PayoutController extends Controller
         return redirect()
             ->route('applicants.show', $applicant)
             ->with('success', 'Payout released.');
+    }
+
+    public function destroy(Request $request, Payout $payout)
+    {
+        $applicant = $payout->applicant;
+
+        $payout->delete();
+
+        AuditLog::record(
+            'payout_deleted',
+            "Deleted payout of ₱" . number_format($payout->amount, 2)
+                . " for {$applicant->first_name} {$applicant->last_name}",
+            $applicant
+        );
+
+        return back()->with('success', 'Payout deleted.');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SupportMessage;
 use App\Models\User;
+use App\Notifications\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,6 +41,16 @@ class SupportController extends Controller
             'message' => $validated['message'],
             'is_read' => false,
         ]);
+
+        $student = $user->applicant;
+        AdminNotification::sendToAdmins(new AdminNotification(
+            title: 'New support message',
+            body: $student
+                ? "{$student->first_name} {$student->last_name} sent a new support message."
+                : ($user->name . ' sent a new support message.'),
+            url: route('admin.support.show', $user),
+            studentName: $student ? "{$student->first_name} {$student->last_name}" : $user->name,
+        ));
 
         return redirect()
             ->route('support.index')
@@ -115,6 +126,11 @@ class SupportController extends Controller
             'message' => $validated['message'],
             'is_read' => true,
         ]);
+
+        $user->notify(new ApplicationStatusChanged(
+            'New reply from admin',
+            'The administrator replied to your support message.'
+        ));
 
         return redirect()
             ->route('admin.support.show', $user)

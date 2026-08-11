@@ -9,7 +9,8 @@ use Illuminate\Notifications\Notification;
 /**
  * Sent to an applicant's User account whenever their Applicant->status changes
  * (verification, MSWDO assessment, exam result, orientation, waste compliance,
- * payout, disqualification, or appeal resolution).
+ * payout, disqualification, or appeal resolution). Delivered both by email and
+ * as an in-app notification shown in the student panel.
  */
 class ApplicationStatusChanged extends Notification
 {
@@ -26,7 +27,20 @@ class ApplicationStatusChanged extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'title' => 'Application update',
+            'body' => $this->statusLabel . ($this->detail ? ' — ' . $this->detail : ''),
+            'url' => '/dashboard#application-status',
+            'status_label' => $this->statusLabel,
+        ];
     }
 
     public function toMail(object $notifiable): MailMessage

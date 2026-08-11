@@ -23,11 +23,13 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ApplicantExportController;
 
 
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'last_seen'])->group(function () {
     Route::get('/profile', [EditProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [EditProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [EditProfileController::class, 'update'])->name('profile.update');
@@ -77,7 +79,7 @@ Route::post('/appeals', [AppealController::class, 'store'])->name('appeals.store
 // -----------------------------
 // Complete Profile — requires login (Step 2, after admin creates the account)
 // -----------------------------
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'last_seen'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard', [DashboardController::class, 'store'])->name('applicants.store');
     Route::post('/accept-terms', [AuthController::class, 'acceptTerms'])->name('terms.accept');
@@ -85,19 +87,31 @@ Route::middleware('auth')->group(function () {
     // Student <-> Admin support messaging
     Route::get('/support', [SupportController::class, 'index'])->name('support.index');
     Route::post('/support', [SupportController::class, 'store'])->name('support.store');
+
+    // Student notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::get('/notifications/{id}/open', [NotificationController::class, 'markRead'])->name('notifications.open');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 });
 
 // -----------------------------
 // Admin side — requires login
 // -----------------------------
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin', 'last_seen'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [ApplicantController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/applicants', [ApplicantController::class, 'manage'])->name('admin.applicants.index');
     Route::delete('/applicants/{applicant}', [ApplicantController::class, 'destroy'])->name('admin.applicants.destroy');
 
+    // Applicant export to Excel (step 1: select, step 2: pick fields, download CSV)
+    Route::get('/export/applicants', [ApplicantExportController::class, 'select'])->name('admin.export.applicants');
+    Route::post('/export/applicants/fields', [ApplicantExportController::class, 'fields'])->name('admin.export.fields');
+    Route::post('/export/applicants/download', [ApplicantExportController::class, 'download'])->name('admin.export.download');
+
     Route::get('/students/create', [StudentAccountController::class, 'create'])->name('admin.students.create');
     Route::post('/students', [StudentAccountController::class, 'store'])->name('admin.students.store');
+    Route::delete('/students/created/{createdAccount}', [StudentAccountController::class, 'destroy'])->name('admin.students.created-account.destroy');
 
     Route::get('/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
     Route::get('/announcements/create', [AnnouncementController::class, 'create'])->name('admin.announcements.create');
@@ -133,6 +147,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/applicants/{applicant}/payout', [PayoutController::class, 'release'])
         ->name('admin.payout');
 
+    Route::delete('/payouts/{payout}', [PayoutController::class, 'destroy'])
+        ->name('admin.payout.destroy');
+
     // Appeal resolution
     Route::post('/appeals/{appeal}/approve', [AppealController::class, 'approve'])
         ->name('admin.appeals.approve');
@@ -154,4 +171,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/support', [SupportController::class, 'inbox'])->name('admin.support.index');
     Route::get('/support/{user}', [SupportController::class, 'show'])->name('admin.support.show');
     Route::post('/support/{user}/reply', [SupportController::class, 'reply'])->name('admin.support.reply');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('admin.notifications.read-all');
+    Route::get('/notifications/{id}/open', [NotificationController::class, 'markRead'])->name('admin.notifications.open');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('admin.notifications.read');
+    Route::delete('/notifications', [NotificationController::class, 'destroyMany'])->name('admin.notifications.destroy-many');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('admin.notifications.destroy');
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicantRequirement;
+use App\Notifications\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -34,6 +35,16 @@ class RequirementUploadController extends Controller
         'submitted_at' => now(),
         'approval_status' => 'pending',
     ]);
+
+    $applicant = $requirement->applicant;
+    AdminNotification::sendToAdmins(new AdminNotification(
+        title: 'Requirement submitted',
+        body: $applicant
+            ? "{$applicant->first_name} {$applicant->last_name} uploaded \"{$requirement->requirement->name}\" for review."
+            : 'A student uploaded a requirement for review.',
+        url: $applicant ? route('applicants.show', $applicant) : null,
+        studentName: $applicant ? "{$applicant->first_name} {$applicant->last_name}" : null,
+    ));
 
     return redirect()->route('dashboard')->with('success', 'Requirement uploaded successfully.');
 }

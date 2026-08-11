@@ -27,17 +27,18 @@
         @forelse ($messages as $message)
             @php $isMine = $message->sender_id === auth()->id(); @endphp
             <div class="d-flex {{ $isMine ? 'justify-content-end' : 'justify-content-start' }} mb-3">
-                <div class="chat-bubble {{ $isMine ? 'chat-bubble--mine' : 'chat-bubble--theirs' }}">
+                <div class="chat-bubble thread-message {{ $isMine ? 'chat-bubble--mine thread-message--outgoing' : 'chat-bubble--theirs thread-message--incoming' }}">
                     <p class="mb-1" style="white-space: pre-line;">{{ $message->message }}</p>
                     <div class="d-flex align-items-center gap-1 {{ $isMine ? 'justify-content-end' : 'justify-content-start' }}">
-                        <small class="text-muted-soft opacity-75">{{ $message->created_at->format('M d, g:ia') }}</small>
+                        <small class="{{ $isMine ? 'text-white-50' : 'text-muted-soft' }} opacity-75">{{ $message->created_at->format('M d, g:ia') }}</small>
                     </div>
                 </div>
             </div>
         @empty
-            <div class="text-center text-muted-soft py-5">
-                <i class="bi bi-chat-dots fs-2 d-block mb-2 opacity-50"></i>
-                No messages yet.
+            <div class="empty-state">
+                <span class="empty-state__icon"><i class="bi bi-chat-dots"></i></span>
+                <h6>Start the conversation</h6>
+                <p>No messages yet. Send the student a reply below.</p>
             </div>
         @endforelse
     </div>

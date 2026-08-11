@@ -29,6 +29,19 @@ class DashboardController extends Controller
         $validated = $request->validated();
         $user = Auth::user();
 
+        $validated['school_name'] = $validated['school_name'] === '__other__'
+            ? strtoupper($validated['school_name_other'])
+            : strtoupper($validated['school_name']);
+        $validated['course'] = $validated['course'] === '__other__'
+            ? strtoupper($validated['course_other'] ?? '')
+            : strtoupper($validated['course']);
+
+        foreach (['last_name', 'first_name', 'middle_name', 'father_name', 'mother_maiden_name'] as $field) {
+            if (!empty($validated[$field])) {
+                $validated[$field] = strtoupper($validated[$field]);
+            }
+        }
+
         $applicant = Applicant::create(array_merge($validated, [
             'user_id' => $user->id,
         ]));

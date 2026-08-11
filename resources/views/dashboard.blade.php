@@ -123,7 +123,13 @@
                             ] as $school)
                                 <option value="{{ $school }}" {{ old('school_name') === $school ? 'selected' : '' }}>{{ $school }}</option>
                             @endforeach
+                            <option value="__other__" {{ old('school_name') === '__other__' ? 'selected' : '' }}>-- Other (type your school) --</option>
                         </select>
+                        <div id="dashboard_other_school_wrap" class="mt-2 d-none">
+                            <input type="text" name="school_name_other" id="dashboard_school_name_other"
+                                   value="{{ old('school_name_other') }}" class="form-control text-uppercase"
+                                   placeholder="Type your school">
+                        </div>
                     </div>
 
                     <div class="row g-3 mb-4">
@@ -142,6 +148,11 @@
                             <select name="course" id="dashboard_course" class="form-select" required>
                                 <option value="">-- Select a school first --</option>
                             </select>
+                            <div id="dashboard_other_course_wrap" class="mt-2 d-none">
+                                <input type="text" name="course_other" id="dashboard_course_other"
+                                       value="{{ old('course_other') }}" class="form-control text-uppercase"
+                                       placeholder="Type your course">
+                            </div>
                         </div>
                     </div>
 
@@ -161,12 +172,14 @@
         });
 
         const schoolCourses = {
-            'ACTS COMPUTER COLLEGE': [
+              'ACTS COMPUTER COLLEGE': [
                 'Bachelor of Science in Computer Science (BSCS)',
                 'Bachelor of Science in Information Technology (BSIT)',
-                'Bachelor of Science in Information Management (BSIM)',
                 'Bachelor of Science in Business Administration (BSBA)',
-                'Bachelor of Science in Secretarial Administration / Office Administration',
+                'Bachelor of Science in Entreprenuership (BSEntrep)',
+                'Bachelor of Science in Office Administration (BSOA)',
+                'Bachelor of Technical-Vocational Teacher Education (BTVTed)',
+                'Bachelor of Science in Accounting Information System (BSAIS)',
             ],
             'AMA COLLEGE': [
                 'Bachelor of Science in Information Technology (BSIT)',
@@ -178,74 +191,100 @@
                 'Bachelor of Science in Psychology (BSPsy)',
             ],
             'LAGUNA STATE POLYTECHNIC UNIVERSITY': [
-                'BS in Civil Engineering',
-                'BS in Mechanical Engineering',
-                'BS in Electrical Engineering',
-                'BS in Electronics Engineering',
-                'BS in Computer Engineering',
-                'Bachelor of Secondary Education',
-                'Bachelor of Elementary Education',
-                'Technical Vocational Teacher Education',
-                'Bachelor of Physical Education',
-                'BS in Information Technology',
-                'BS in Computer Science',
-                'BS in Biology',
-                'BS in Psychology',
-                'BS in Mathematics',
-                'BS in Chemistry',
-                'BS in Broadcasting',
-                'BS in Accountancy',
-                'BS in Entrepreneurship',
-                'BS in Office Administration',
-                'BS in Hospitality Management',
-                'BS in Tourism Management',
-                'BS in Nursing',
-                'BS in Industrial Technology',
+                'Bachelor of Science in Nursing (BSN)',
+                'Bachelor of Science in Biology (BS Biology)',
+                'Bachelor of Science in Chemistry (BS Chemistry)',
+                'Bachelor of Science in Mathematics (BS Mathematics)',
+                'Bachelor of Science in Psychology (BS Psychology)',
+                'Bachelor of Science in Civil Engineering (BSCE)',
+                'Bachelor of Science in Computer Engineering (BSCpE)',
+                'Bachelor of Science in Electrical Engineering (BSEE)',
+                'Bachelor of Science in Electronics Engineering (BSECE)',
+                'Bachelor of Science in Mechanical Engineering (BSME)',
+                'Bachelor of Science in Computer Science (BSCS)',
+                'Bachelor of Science in Information Technology (BSIT)',
+                'Bachelor of Science in Hospitality Management (BSHM)',
+                'Bachelor of Science in Tourism Management (BSTM)',
+                'Bachelor of Science in Industrial Technology Major in Automotive Technology (BSIndTech-Auto)',
+                'Bachelor of Science in Industrial Technology Major in Electrical Technology (BSIndTech-Elec)',
+                'Bachelor of Science in Industrial Technology Major in Electronics Technology (BSIndTech-Electronics)',
+                'Bachelor of Science in Industrial Technology Major in Food Technology (BSIndTech-Food Tech)',
+                'Bachelor of Science in Industrial Technology Major in Garments/Fashion and Apparel Technology (BSIndTech-GFAT)',
+                'Bachelor of Science in Industrial Technology Major in Drafting Technology (BSIndTech-Drafting)',
+                'Bachelor of Science in Industrial Technology Major in Refrigeration and Air Conditioning Technology (BSIndTech-RAC)',
+                'Bachelor of Elementary Education (BEEd)',
+                'Bachelor of Physical Education (BPEd)',
+                'Bachelor of Secondary Education (BSEd)',
+                'Bachelor of Technical Teacher Education (BTTE)',
+                'Bachelor of Technology and Livelihood Education (BTLEd)',
+                'Bachelor of Science in Entrepreneurship (BSEntrep)',
+                'Bachelor of Science in Office Administration (BSOA)',
+                'Bachelor of Science in Criminology (BSCrim)',
             ],
             'LAGUNA UNIVERSITY': [
-                'Bachelor of Elementary Education',
-                'Bachelor of Secondary Education major in English',
-                'Bachelor of Secondary Education major in Math',
-                'Bachelor of Secondary Education major in Science',
-                'BA in Communication',
-                'BA in Psychology',
-                'BS in Psychology',
-                'BS in Accountancy (BSA)',
-                'BS in Accounting Information System (BSAIS)',
-                'BS in Entrepreneurship',
-                'BS in Tourism Management',
-                'BS in Information Technology',
-                'BS in Computer Science',
-                'BS in Mechanical Engineering',
+                'Bachelor of Elementary Education (BEEd)',
+                'Bachelor of Secondary Education Major in English (BSEd-English)',
+                'Bachelor of Secondary Education Major in Mathematics (BSEd-Math)',
+                'Bachelor of Secondary Education Major in Science (BSEd-Science)',
+                'Bachelor of Arts in Communication (BA Communication)',
+                'Bachelor of Arts in Psychology (AB Psychology)',
+                'Bachelor of Science in Psychology (BSPsych)',
+                'Bachelor of Science in Accountancy (BSA)',
+                'Bachelor of Science in Accounting Information System (BSAIS)',
+                'Bachelor of Science in Entrepreneurship (BSEntrep)',
+                'Bachelor of Science in Tourism Management (BSTM)',
+                'Bachelor of Science in Information Technology (BSIT)',
+                'Bachelor of Science in Computer Science (BSCS)',
+                'Bachelor of Science in Mechanical Engineering (BSME)',
             ],
             'STI COLLEGE': [
-                'BS in Information Technology (BSIT)',
-                'BS in Computer Science (BSCS)',
-                'BS in Business Administration (BSBA)',
-                'BS in Office Management',
+                'Bachelor of Science in Information Technology (BSIT)',
+                'Bachelor of Science in Computer Science (BSCS)',
+                'Bachelor of Science in Information Systems (BSSI)',
+                'Bachelor of Science in Business Administration (BSBA)',
+                'Bachelor of Science in Accounting Information System (BSAIS)',
+                'Bachelor of Science in Management Accounting (BSMA)',
+                'Bachelor of Science in Retail Technology and Consumer Science (BSRTCS)',
+                'Bachelor of Science in Hospitality Management (BSHM)',
+                'Bachelor of Science in Tourism Management (BSTM)',
+                'Bachelor of Science in Computer Engineering (BSCpE)',
+                'Bachelor of Arts in Communication (BACOMM)',
+                'Bachelor of Multimedia Arts (BMMA)',
+                'Bachelor of Arts in Psychology(AB Psy)', 
+
             ],
             'PHINMA UNION COLLEGE': [
-                'BS in Information Technology',
-                'BS in Business Administration (Marketing Management)',
-                'BS in Hospitality Management',
-                'BS in Tourism Management',
-                'BS in Accountancy',
-                'BS in Computer Science',
+                'Bachelor of Science in Criminology (BSCrim)',
+                'Bachelor of Science in Tourism Management (BSTM)',
+                'Bachelor of Science in Psychology (BSPsych)',
+                'Bachelor of Science in Accountancy (BSA)',
+                'Bachelor of Science in Management Accounting (BSMA)',
+                'Bachelor of Secondary Education Major in English (BSEd-English)',
+                'Bachelor of Secondary Education Major in Filipino (BSEd-Filipino)',
+                'Bachelor of Science in Business Administration Major in Marketing Management (BSBA-MM)',
+                'Bachelor of Science in Business Administration Major in Financial Management (BSBA-FM)',
+                'Bachelor of Elementary Education (BEEd)',
+                'Bachelor of Science in Hospitality Management (BSHM)',
+                'Bachelor of Science in Information Technology (BSIT)',
             ],
             'SOUTHBAY MONTESSORI SCHOOL': [
                 'Bachelor of Science in Accountancy',
                 'Bachelor of Science in Psychology',
                 'Bachelor of Science in Social Work',
-                'Food and Beverages Services NCII (356 hours)',
-                'Housekeeping NCII (436 hours)',
-                'Bread and Pastry Production NCII (141 hours)',
-                'Computer System Servicing NCII',
             ],
             "PHILIPPINE WOMEN'S UNIVERSITY": [
+                'Bachelor of Science in Business Administration (Specialization: Operations Management) (BSBA-OM)',
+                'Bachelor of Science in Office Administration (BSOA)',
+                'Bachelor of Science in Business Administration Major in Financial Management (BSBA-FM)',
+                'Bachelor of Science in Business Administration Major in Marketing Management (BSBA-MM)',
+                'Bachelor of Elementary Education (BEEd)',
+                'Bachelor of Secondary Education Major in English (BSEd-English)',
+                'Bachelor of Fine Arts Major in Visual Communication (BFA)',
+                'Bachelor of Science in Hotel and Restaurant Management (BSHRM)',
+                'Bachelor of Science in Hospitality Management (BSHM)',
+                'Bachelor of Science in Tourism Management (BSTM)',
+                'Bachelor of Science in Information Systems (BSIS)',
                 'Bachelor of Science in Information Technology (BSIT)',
-                'Bachelor of Science in Hospitality Management',
-                'Bachelor of Science in Tourism Management',
-                'Bachelor of Science in Business Administration',
             ],
         };
 
@@ -255,7 +294,7 @@
             const courseSelect = document.getElementById('dashboard_course');
             courseSelect.innerHTML = '';
 
-            if (!selectedSchool || !schoolCourses[selectedSchool]) {
+            if (!selectedSchool) {
                 courseSelect.innerHTML = '<option value="">-- Select a school first --</option>';
                 return;
             }
@@ -265,26 +304,63 @@
             placeholder.textContent = '-- Select a course --';
             courseSelect.appendChild(placeholder);
 
-            schoolCourses[selectedSchool].forEach(function (course) {
-                const option = document.createElement('option');
-                option.value = course;
-                option.textContent = course;
-                if (course === selectedCourse) {
-                    option.selected = true;
-                }
-                courseSelect.appendChild(option);
-            });
+            if (schoolCourses[selectedSchool]) {
+                schoolCourses[selectedSchool].forEach(function (course) {
+                    const option = document.createElement('option');
+                    option.value = course;
+                    option.textContent = course;
+                    if (course === selectedCourse) {
+                        option.selected = true;
+                    }
+                    courseSelect.appendChild(option);
+                });
+            }
+
+            const otherCourse = document.createElement('option');
+            otherCourse.value = '__other__';
+            otherCourse.textContent = '-- Other (type your course) --';
+            if (selectedCourse === '__other__') {
+                otherCourse.selected = true;
+            }
+            courseSelect.appendChild(otherCourse);
         }
 
         const schoolSelect = document.getElementById('dashboard_school_name');
+        const otherSchoolWrap = document.getElementById('dashboard_other_school_wrap');
+        const otherSchoolInput = document.getElementById('dashboard_school_name_other');
+        const otherCourseWrap = document.getElementById('dashboard_other_course_wrap');
+        const otherCourseInput = document.getElementById('dashboard_course_other');
+
+        function toggleOtherInputs() {
+            if (schoolSelect.value === '__other__') {
+                otherSchoolWrap.classList.remove('d-none');
+                otherSchoolInput.required = true;
+            } else {
+                otherSchoolWrap.classList.add('d-none');
+                otherSchoolInput.required = false;
+            }
+
+            const courseSelect = document.getElementById('dashboard_course');
+            if (courseSelect.value === '__other__') {
+                otherCourseWrap.classList.remove('d-none');
+                otherCourseInput.required = true;
+            } else {
+                otherCourseWrap.classList.add('d-none');
+                otherCourseInput.required = false;
+            }
+        }
 
         // Populate on page load (handles old() value after validation failure)
         populateDashboardCourses(schoolSelect.value, savedCourse);
+        toggleOtherInputs();
 
         // Re-populate when school changes
         schoolSelect.addEventListener('change', function () {
             populateDashboardCourses(this.value, null);
+            toggleOtherInputs();
         });
+
+        document.getElementById('dashboard_course').addEventListener('change', toggleOtherInputs);
     </script>
 
 @else
@@ -346,10 +422,33 @@
         $addressParts = array_filter([$applicant->landmark, $applicant->sitio, $applicant->barangay]);
     @endphp
 
-    <!-- Welcome banner -->
-    <div class="alert-brand-success p-3 mb-4 d-flex align-items-center gap-2">
-        <i class="bi bi-check-circle-fill"></i>
-        <span class="fw-semibold">Welcome back{{ $applicant->first_name ? ', ' . $applicant->first_name : '' }}!</span>
+    <!-- Welcome hero -->
+    <div class="rounded-4 p-4 p-xl-5 mb-4 text-white position-relative overflow-hidden d-flex align-items-center gap-4 flex-wrap"
+         style="background:
+           radial-gradient(80% 140% at 100% 0%, rgba(232,163,61,0.32), transparent 55%),
+           radial-gradient(60% 120% at 0% 100%, rgba(44,101,172,0.5), transparent 60%),
+           linear-gradient(120deg, #081c36 0%, #123a6b 100%);">
+        <span class="avatar-wrap d-none d-md-block flex-shrink-0">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold fs-3"
+                  style="width:76px;height:76px;background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);">
+                {{ $initials }}
+            </span>
+            @if (auth()->user()->isOnline())
+                <span class="online-dot online-dot--lg" title="You are online"></span>
+            @endif
+        </span>
+        <div style="min-width:0;">
+            <p class="small fw-semibold mb-1" style="color: var(--gold-500); letter-spacing:.08em; text-transform:uppercase;">
+                Iskolar ng Bayan · Santa Cruz
+            </p>
+            <h1 class="h3 fw-bold mb-1 text-white">Welcome back{{ $applicant->first_name ? ', ' . $applicant->first_name : '' }}!</h1>
+            <p class="text-white-50 mb-0 small">Track your scholarship application right here — {{ now()->format('F j, Y') }}.</p>
+        </div>
+        <div class="ms-auto">
+            <span class="online-live text-white" style="font-size:.8rem;font-weight:600; background: rgba(255,255,255,.1); padding:.45rem .9rem; border-radius:50px; border:1px solid rgba(255,255,255,.2);">
+                <span class="pulse"></span> You are online
+            </span>
+        </div>
     </div>
 
     @if ($applicant->status === 'exam_passed')
@@ -378,10 +477,15 @@
             <div id="status" class="card-elevated p-4 h-100">
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                     <div class="d-flex gap-3">
-                        <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold fs-4"
-                             style="width:64px;height:64px;background: var(--surface-100); color: var(--ink-800); flex-shrink:0;">
-                            {{ $initials }}
-                        </div>
+                        <span class="avatar-wrap flex-shrink-0">
+                            <span class="d-flex align-items-center justify-content-center rounded-circle fw-bold fs-4"
+                                 style="width:64px;height:64px;background: var(--surface-100); color: var(--ink-800);">
+                                {{ $initials }}
+                            </span>
+                            @if (auth()->user()->isOnline())
+                                <span class="online-dot" title="You are online"></span>
+                            @endif
+                        </span>
                         <div>
                             <p class="small text-muted-soft mb-0 fw-semibold" style="letter-spacing:.04em;">Application ID: {{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}</p>
                             <p class="fw-bold fs-5 mb-0">{{ $applicant->first_name }} {{ $applicant->last_name }}</p>
@@ -539,23 +643,17 @@
                             <thead>
                                 <tr class="small text-muted-soft">
                                     <th>Semester</th>
-                                    <th class="text-center">Required</th>
-                                    <th class="text-center">Submitted</th>
-                                    <th class="text-end">Status</th>
+                                    <th class="text-end">Submitted</th>
+                                    <th class="text-end">Date recorded</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($applicant->wasteCompliance->sortByDesc('semester') as $wc)
                                     <tr>
                                         <td class="small">{{ $wc->semester }}</td>
-                                        <td class="small text-center">{{ number_format($wc->kilos_required, 1) }} kg</td>
-                                        <td class="small text-center">{{ number_format($wc->kilos_submitted, 1) }} kg</td>
-                                        <td class="text-end">
-                                            @if ($wc->is_compliant)
-                                                <span class="badge-soft-gold">Compliant</span>
-                                            @else
-                                                <span class="badge bg-danger-subtle text-danger-emphasis">Not compliant</span>
-                                            @endif
+                                        <td class="small text-end">{{ number_format($wc->kilos_submitted, 1) }} kg</td>
+                                        <td class="small text-end text-muted-soft">
+                                            {{ $wc->created_at?->format('M d, Y') ?? '—' }}
                                         </td>
                                     </tr>
                                 @endforeach

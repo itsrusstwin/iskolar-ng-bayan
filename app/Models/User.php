@@ -25,6 +25,7 @@ class User extends Authenticatable
     'provider',
     'provider_id',
     'terms_accepted_at',
+    'last_seen_at',
 ];
 
     /**
@@ -47,6 +48,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_seen_at' => 'datetime',
         ];
     }
 
@@ -64,6 +66,15 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Whether the user is currently online (active within the last 5 minutes).
+     */
+    public function isOnline(): bool
+    {
+        return $this->last_seen_at !== null
+            && $this->last_seen_at->gt(now()->subMinutes(5));
     }
 
     /**

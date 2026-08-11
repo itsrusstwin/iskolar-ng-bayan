@@ -46,16 +46,27 @@ class AdminDashboardService
 
     public function getDashboardData(): array
     {
-        $all = Applicant::latest()->get();
+        $all = Applicant::with('user')->latest()->get();
 
         return [
             'stats' => $this->getStats($all),
             'progressChart' => $this->getProgressChartData($all),
             'programChart' => $this->getProgramChartData($all),
-            'recentApplicants' => $all->take(10),
+            'recentApplicants' => $this->onlineFirst($all->take(10)),
             'recentActivity' => AuditLog::with(['user', 'applicant'])->latest()->take(8)->get(),
             'applicantsByStatus' => $all->groupBy('status'),
         ];
+    }
+
+    /**
+     * Re-order a collection of applicants so that users currently online
+     * appear at the top of the list.
+     */
+    public function onlineFirst(Collection $applicants): Collection
+    {
+        return $applicants->sortByDesc(function (Applicant $applicant) {
+            return $applicant->user?->isOnline() ? 1 : 0;
+        })->values();
     }
 
     /** @return array<string, mixed> */

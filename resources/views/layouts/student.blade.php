@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/theme.css') . '?v=' . (file_exists(public_path('css/theme.css')) ? filemtime(public_path('css/theme.css')) : '1') }}" rel="stylesheet">
     @include('partials.theme-init')
     @stack('styles')
 </head>
@@ -31,7 +31,7 @@
             <div class="collapse navbar-collapse" id="studentNav">
                 <ul class="navbar-nav mx-auto gap-lg-4 mt-3 mt-lg-0">
                     <li class="nav-item"><a href="{{ route('home') }}" class="nav-link text-white-50 fw-semibold">Home</a></li>
-                    <li class="nav-item"><a href="{{ route('dashboard') }}" class="nav-link text-white fw-semibold border-bottom border-2" style="border-color: var(--gold-500) !important;">Dashboard</a></li>
+                    <li class="nav-item"><a href="{{ route('dashboard') }}" class="nav-link text-white fw-semibold" style="border-bottom: 2px solid var(--gold-500); padding-bottom: .35rem;">Dashboard</a></li>
                     <li class="nav-item"><a href="{{ route('guides') }}" class="nav-link text-white-50 fw-semibold">Guides</a></li>
                 </ul>
 
@@ -39,11 +39,64 @@
                     <li class="nav-item d-flex align-items-center">
                         @include('partials.theme-toggle', ['class' => 'text-white-50'])
                     </li>
+                    <li class="nav-item d-flex align-items-center">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-icon text-white position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Notifications">
+                                <i class="bi bi-bell fs-5"></i>
+                                @if (auth()->user()->unreadNotifications->count())
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                          style="font-size:.6rem;">
+                                        {{ auth()->user()->unreadNotifications->count() > 9 ? '9+' : auth()->user()->unreadNotifications->count() }}
+                                    </span>
+                                @endif
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end shadow" style="width: 340px; max-height: 420px; overflow-y: auto;">
+                                <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+                                    <p class="fw-bold small mb-0">Notifications</p>
+                                    <a href="{{ route('notifications.index') }}" class="small fw-semibold" style="color: var(--ink-700);">View all</a>
+                                </div>
+                                @php $recentNotifs = auth()->user()->notifications()->latest()->take(8)->get(); @endphp
+                                @forelse ($recentNotifs as $notification)
+                                    @php $data = $notification->data; @endphp
+                                    <a href="{{ !empty($data['url']) ? route('notifications.open', ['id' => $notification->id, 'redirect' => $data['url']]) : route('notifications.open', $notification->id) }}"
+                                       class="dropdown-item d-flex gap-2 align-items-start py-2 {{ $notification->read_at === null ? 'bg-surface' : '' }}">
+                                        <span class="admin-kpi-icon {{ $notification->read_at === null ? 'admin-kpi-icon--navy' : 'admin-kpi-icon--muted' }}"
+                                              style="width:30px;height:30px;font-size:.8rem;flex-shrink:0;">
+                                            <i class="bi bi-bell-fill"></i>
+                                        </span>
+                                        <span style="min-width:0;">
+                                            <span class="d-block small fw-semibold text-truncate" style="color: var(--text-900);">{{ $data['title'] ?? 'Update' }}</span>
+                                            <span class="d-block text-muted-soft text-truncate" style="font-size:.72rem;">{{ $data['body'] ?? '' }}</span>
+                                            <span class="d-block text-muted-soft" style="font-size:.65rem;">{{ $notification->created_at?->diffForHumans() }}</span>
+                                        </span>
+                                    </a>
+                                @empty
+                                    <div class="text-center text-muted-soft py-4">
+                                        <i class="bi bi-bell-slash d-block mb-1 opacity-50"></i>
+                                        <span class="small">No notifications yet.</span>
+                                    </div>
+                                @endforelse
+                                <div class="border-top px-3 py-2">
+                                    <form method="POST" action="{{ route('notifications.read-all') }}">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-navy w-100 small">
+                                            <i class="bi bi-check2-all"></i> Mark all as read
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white" href="#" role="button" data-bs-toggle="dropdown">
-                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold"
-                                  style="width:32px;height:32px;background:rgba(255,255,255,.15);font-size:.85rem;">
-                                {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                            <span class="avatar-wrap">
+                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold"
+                                      style="width:32px;height:32px;background:rgba(255,255,255,.15);font-size:.85rem;">
+                                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                                </span>
+                                @if (auth()->user()->isOnline())
+                                    <span class="online-dot" title="You are online"></span>
+                                @endif
                             </span>
                             <span class="d-none d-md-inline small">{{ auth()->user()->name ?? 'User' }}</span>
                         </a>
@@ -92,8 +145,14 @@
                         <a href="{{ route('dashboard') }}#requirements" class="student-nav-item">
                             <i class="bi bi-file-earmark-arrow-up-fill"></i> Requirements
                         </a>
+                        <a href="{{ route('notifications.index') }}" class="student-nav-item {{ request()->routeIs('notifications.*') ? 'student-nav-item--active' : '' }}">
+                            <i class="bi bi-bell-fill"></i> Notifications
+                            @if (auth()->user()->unreadNotifications->count())
+                                <span class="badge rounded-pill bg-danger ms-auto" style="font-size:.6rem;">{{ auth()->user()->unreadNotifications->count() }}</span>
+                            @endif
+                        </a>
                         <a href="{{ route('home') }}" class="student-nav-item">
-                            <i class="bi bi-bell-fill"></i> Announcements
+                            <i class="bi bi-megaphone-fill"></i> Announcements
                         </a>
                         <a href="{{ route('dashboard') }}#application-status" class="student-nav-item">
                             <i class="bi bi-clock-history"></i> Application status

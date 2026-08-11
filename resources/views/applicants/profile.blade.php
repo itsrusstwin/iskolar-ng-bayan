@@ -12,13 +12,25 @@
 <div class="card-elevated p-4 mb-4">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
         <div class="d-flex gap-3">
-            <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold fs-4"
-                 style="width:64px;height:64px;background: var(--surface-100); color: var(--ink-800); flex-shrink:0;">
-                {{ $initials }}
+            <div class="avatar-wrap">
+                <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold fs-4"
+                     style="width:64px;height:64px;background: var(--surface-100); color: var(--ink-800); flex-shrink:0;">
+                    {{ $initials }}
+                </div>
+                @if (auth()->user()->isOnline())
+                    <span class="online-dot online-dot--lg" title="You are online"></span>
+                @endif
             </div>
             <div>
                 <p class="small text-muted-soft mb-0 fw-semibold" style="letter-spacing:.04em;">Application ID: {{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}</p>
-                <p class="fw-bold fs-5 mb-0">{{ $applicant->first_name }} {{ $applicant->middle_name ? $applicant->middle_name . ' ' : '' }}{{ $applicant->last_name }}</p>
+                <p class="fw-bold fs-5 mb-0 d-flex align-items-center gap-2">
+                    {{ $applicant->first_name }} {{ $applicant->middle_name ? $applicant->middle_name . ' ' : '' }}{{ $applicant->last_name }}
+                    @if (auth()->user()->isOnline())
+                        <span class="online-live" style="font-size:.75rem;font-weight:600;">
+                            <span class="pulse"></span> Online
+                        </span>
+                    @endif
+                </p>
                 <p class="small text-muted-soft mb-0">
                     Student ID: {{ $applicant->school_id ?? 'N/A' }}
                     @if ($applicant->course_year)

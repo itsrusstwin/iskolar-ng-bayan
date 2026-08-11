@@ -11,6 +11,37 @@
 
 @section('content')
 
+<!-- Welcome hero strip -->
+<div class="rounded-4 p-4 p-xl-5 mb-4 text-white position-relative overflow-hidden"
+     style="background:
+       radial-gradient(80% 140% at 100% 0%, rgba(232,163,61,0.35), transparent 55%),
+       radial-gradient(60% 120% at 0% 100%, rgba(44,101,172,0.55), transparent 60%),
+       linear-gradient(120deg, #081c36 0%, #123a6b 100%);">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <p class="small fw-semibold mb-1" style="color: var(--gold-500); letter-spacing:.08em; text-transform:uppercase;">
+                Iskolar ng Bayan · Santa Cruz
+            </p>
+            <h1 class="h3 fw-bold mb-1 text-white">Welcome back, {{ auth()->user()->name ? explode(' ', trim(auth()->user()->name))[0] : 'Admin' }}!</h1>
+            <p class="text-white-50 mb-0 small" style="max-width: 560px;">
+                Here's an overview of scholarship applications and program activity across the municipality.
+            </p>
+        </div>
+        <div class="col-lg-4">
+            <div class="d-flex gap-3 justify-content-lg-end">
+                <a href="{{ route('admin.students.create') }}" class="btn text-white px-4 border-0 d-inline-flex align-items-center gap-2"
+                   style="background: var(--gold-500); color: var(--ink-900) !important; font-weight:700;">
+                    <i class="bi bi-person-plus-fill"></i> New Student
+                </a>
+                <a href="{{ route('admin.export.applicants') }}" class="btn px-4 d-inline-flex align-items-center gap-2 text-white"
+                   style="background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Export
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- KPI Cards -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-xl">
@@ -80,17 +111,114 @@
     </div>
 </div>
 
-@if ($stats['total_payout'] > 0)
-<div class="alert border-0 mb-4 py-2 px-3 d-flex align-items-center gap-2"
-     style="background: var(--surface-100); border-radius: var(--radius-sm);">
-    <i class="bi bi-wallet2" style="color: var(--ink-700);"></i>
-    <span class="small">
-        <strong>Total disbursed:</strong>
-        ₱{{ number_format($stats['total_payout'], 2) }}
-        across all scholarship releases
-    </span>
+<!-- Disbursements -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-5">
+        <div class="admin-panel h-100">
+            <div class="admin-panel__header">
+                <h2 class="h6 fw-bold mb-0">Disbursements</h2>
+                <p class="small text-muted-soft mb-0">Scholarship payouts released</p>
+            </div>
+            <div class="admin-panel__body d-flex flex-column">
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="mb-3">
+                    <label class="form-label small fw-semibold mb-1" for="disbursementMonth">View a month</label>
+                    <div class="input-group input-group-sm">
+                        <input type="month" id="disbursementMonth" name="month" value="{{ $selectedMonth }}"
+                               class="form-control" max="{{ now()->format('Y-m') }}">
+                        <button class="btn btn-navy d-inline-flex align-items-center gap-1" type="submit">
+                            <i class="bi bi-funnel"></i> View
+                        </button>
+                    </div>
+                </form>
+
+                <div class="rounded-md p-4 text-center mb-3"
+                     style="background: linear-gradient(135deg, var(--ink-800), var(--ink-600));">
+                    <p class="small text-white-50 mb-1">Total disbursed in
+                        {{ \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}</p>
+                    <p class="h3 fw-bold mb-0 text-white">₱{{ number_format($monthTotal, 2) }}</p>
+                </div>
+
+                <div class="d-flex justify-content-between small text-muted-soft pt-2 border-top">
+                    <span>All-time disbursed</span>
+                    <span class="fw-semibold" style="color: var(--ink-700);">₱{{ number_format($stats['total_payout'], 2) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="admin-panel h-100">
+            <div class="admin-panel__header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <h2 class="h6 fw-bold mb-0">Payouts in
+                        {{ \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}</h2>
+                    <p class="small text-muted-soft mb-0">Individual releases for the selected month</p>
+                </div>
+                @if ($monthPayouts->isNotEmpty())
+                    <span class="badge-soft-navy">{{ $monthPayouts->count() }} release{{ $monthPayouts->count() > 1 ? 's' : '' }}</span>
+                @endif
+            </div>
+            <div class="admin-panel__body admin-panel__body--flush">
+                @if ($monthPayouts->isNotEmpty())
+                    <div class="admin-table-scroll admin-table-scroll--y" style="max-height: 300px;">
+                        <table class="table admin-table admin-table--compact mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3">Scholar</th>
+                                    <th>Released</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-end pe-3">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($monthPayouts as $payout)
+                                <tr>
+                                    <td class="ps-3">
+                                        <div class="d-flex align-items-center gap-2" style="min-width:0;">
+                                            <span class="admin-avatar">
+                                                {{ strtoupper(substr(optional($payout->applicant)->first_name, 0, 1) . substr(optional($payout->applicant)->last_name, 0, 1)) }}
+                                            </span>
+                                            <div style="min-width:0;">
+                                                <div class="fw-semibold admin-table__name">
+                                                    {{ optional($payout->applicant)->first_name }} {{ optional($payout->applicant)->last_name ?? '—' }}
+                                                </div>
+                                                @if ($payout->reference_no)
+                                                    <span class="text-muted-soft admin-table__meta" style="font-size: .72rem;">
+                                                        Ref: {{ $payout->reference_no }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-muted-soft">{{ $payout->released_at?->format('M d, Y') ?? '—' }}</td>
+                                    <td class="text-end fw-semibold">₱{{ number_format($payout->amount, 2) }}</td>
+                                    <td class="text-end pe-3">
+                                        <form method="POST" action="{{ route('admin.payout.destroy', $payout) }}"
+                                              onsubmit="return confirm('Delete this payout of ₱{{ number_format($payout->amount, 2) }}? This cannot be undone.');" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1"
+                                                    style="padding:.25rem .6rem; font-size:.75rem;" title="Delete payout">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="text-center text-muted-soft py-5">
+                        <i class="bi bi-wallet2 fs-2 d-block mb-2 opacity-50"></i>
+                        No payouts released in
+                        {{ \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}.
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
-@endif
 
 <!-- Charts + Recent Applications -->
 <div class="row g-4 mb-4">
@@ -126,8 +254,13 @@
                             <tr class="applicant-row">
                                 <td class="ps-3">
                                     <div class="d-flex align-items-center gap-2" style="min-width:0;">
-                                        <span class="admin-avatar">
-                                            {{ strtoupper(substr($applicant->first_name, 0, 1) . substr($applicant->last_name, 0, 1)) }}
+                                        <span class="avatar-wrap">
+                                            <span class="admin-avatar">
+                                                {{ strtoupper(substr($applicant->first_name, 0, 1) . substr($applicant->last_name, 0, 1)) }}
+                                            </span>
+                                            @if ($applicant->user?->isOnline())
+                                                <span class="online-dot" title="Online now"></span>
+                                            @endif
                                         </span>
                                         <div style="min-width:0;">
                                             <div class="applicant-name fw-semibold admin-table__name">{{ $applicant->first_name }} {{ $applicant->last_name }}</div>

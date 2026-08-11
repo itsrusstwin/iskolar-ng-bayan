@@ -25,7 +25,7 @@
                 @csrf
                 @method('PUT')
 
-                <h2 class="small fw-bold text-uppercase text-muted-soft mb-3">Personal Information</h2>
+                <p class="section-eyebrow mb-3 mt-2">Personal Information</p>
                 <div class="mb-3">
                     <label class="form-label">Application ID</label>
                     <input type="text" value="{{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}" class="form-control bg-surface" readonly>
@@ -105,7 +105,7 @@
 
                 </div>
 
-                <h2 class="small fw-bold text-uppercase text-muted-soft mt-4 mb-3 pt-3 border-top">Family Information</h2>
+                <p class="section-eyebrow mt-4 mb-3 pt-3 border-top">Family Information</p>
                 <div class="row g-3 mb-2">
                     <div class="col-md-6">
                         <label class="form-label">Father's Full Name</label>
@@ -117,7 +117,7 @@
                     </div>
                 </div>
 
-                <h2 class="small fw-bold text-uppercase text-muted-soft mt-4 mb-3 pt-3 border-top">Educational Background</h2>
+                <p class="section-eyebrow mt-4 mb-3 pt-3 border-top">Educational Background</p>
                 <div class="mb-2">
                     <label class="form-label">School Enrolled</label>
                     <select name="school_name" id="school_name" class="form-select" required>
@@ -151,7 +151,9 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-navy px-4 py-2">Save Changes</button>
+                <button type="submit" class="btn btn-navy px-4 py-2 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-check2-circle"></i> Save Changes
+                </button>
             </form>
         </div>
     </div>

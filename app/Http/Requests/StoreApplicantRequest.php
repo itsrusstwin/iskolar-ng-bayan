@@ -34,9 +34,11 @@ class StoreApplicantRequest extends FormRequest
             'barangay' => 'required|string|max:100',
             'father_name' => 'nullable|string|max:150',
             'mother_maiden_name' => 'nullable|string|max:150',
-            'school_name' => 'required|in:'.implode(',', self::schoolOptions()),
+            'school_name' => 'required|in:'.implode(',', self::schoolOptions()).',__other__',
+            'school_name_other' => 'nullable|required_if:school_name,__other__|string|max:100',
             'year_level' => 'required|string|max:20',
             'course' => 'required|string|max:150',
+            'course_other' => 'nullable|required_if:course,__other__|string|max:150',
         ];
     }
 

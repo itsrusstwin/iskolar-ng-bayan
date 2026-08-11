@@ -102,6 +102,10 @@ a { text-decoration: none; }
   box-shadow: var(--shadow-soft);
   background: var(--surface-0);
 }
+.card-elevated--highlight {
+  border: 1px solid var(--ink-600);
+  box-shadow: 0 0 0 1px var(--ink-600);
+}
 
 .card-flat {
   border: 1px solid var(--surface-border);
@@ -223,7 +227,25 @@ a { text-decoration: none; }
   font-size: 1.25rem;
   flex-shrink: 0;
 }
+.btn-icon {
+  background: var(--surface-100);
+  border: 1px solid var(--surface-border);
+  color: var(--ink-700);
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all .15s ease;
+}
+.btn-icon:hover {
+  background: var(--surface-50);
+  color: var(--ink-900);
+  border-color: var(--ink-600);
+}
 .admin-kpi-icon--navy { background: var(--surface-100); color: var(--ink-700); }
+.admin-kpi-icon--muted { background: var(--surface-100); color: var(--text-500); }
 .admin-kpi-icon--gold { background: var(--gold-100); color: var(--gold-600); }
 .admin-kpi-icon--green { background: #EAF7EF; color: #1E6B3C; }
 .admin-kpi-icon--red { background: #FDECEC; color: #C0392B; }
@@ -309,6 +331,34 @@ a { text-decoration: none; }
   flex-shrink: 0;
   background: linear-gradient(135deg, var(--ink-800), var(--ink-600));
   color: #fff;
+}
+
+/* Presence indicator (green = online) */
+.avatar-wrap { position: relative; flex-shrink: 0; }
+.online-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid var(--surface, #fff);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, .25);
+}
+.online-dot--lg { width: 16px; height: 16px; border-width: 3px; }
+.online-live {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  color: #16a34a;
+}
+.online-live .pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, .25);
 }
 
 .admin-activity-item {
@@ -438,6 +488,26 @@ a { text-decoration: none; }
   white-space: nowrap;
 }
 
+/* Export tables (select applicants / preview) — fixed layout keeps the
+   columns aligned with their headers; long emails/schools truncate and
+   status badges wrap instead of overflowing. */
+.admin-table--export tbody td,
+.admin-table--export thead th {
+  overflow: hidden;
+}
+.admin-table--export tbody td .admin-badge-success,
+.admin-table--export tbody td .admin-badge-warning,
+.admin-table--export tbody td .admin-badge-danger,
+.admin-table--export tbody td .admin-badge-released,
+.admin-table--export tbody td .admin-badge-muted,
+.admin-table--export tbody td .admin-badge-exam,
+.admin-table--export tbody td .admin-badge-pending {
+  display: inline-block;
+  white-space: normal;
+  line-height: 1.25;
+  text-align: center;
+}
+
 @media (max-width: 991.98px) {
   .admin-table-scroll {
     overflow-x: auto;
@@ -450,10 +520,11 @@ a { text-decoration: none; }
   border-radius: 4px;
 }
 
-/* Cap Recent Applications to a fixed height (matching the chart column
-   next to it) and scroll internally instead of pushing the page down. */
+/* Let Recent Applications fill its panel height and scroll internally
+   when there are many rows, instead of clipping against a fixed height. */
 .admin-table-scroll--y {
-  max-height: 452px;
+  min-height: 0;
+  max-height: none;
   overflow-y: auto;
 }
 .admin-table-scroll--y .admin-table thead th {
@@ -1278,4 +1349,445 @@ a { text-decoration: none; }
 .theme-icon-light { display: none; }
 [data-theme="dark"] .theme-icon-dark { display: none; }
 [data-theme="dark"] .theme-icon-light { display: inline; }
+
+/* =========================================================
+   MODERN UI REFRESH (admin + student)
+   Cleaner, more professional look. Overrides the older
+   neumorphic "embossed" button treatment.
+   ========================================================= */
+
+:root {
+  --app-radius-lg: 1.25rem;
+  --app-radius-md: .75rem;
+  --app-radius-sm: .55rem;
+  --app-shadow-sm: 0 1px 2px rgba(10, 38, 71, .06), 0 1px 3px rgba(10, 38, 71, .08);
+  --app-shadow-md: 0 4px 16px -6px rgba(10, 38, 71, .14);
+  --app-shadow-lg: 0 18px 40px -18px rgba(10, 38, 71, .25);
+  --app-grad-navy: linear-gradient(135deg, #0A2647 0%, #1c4f8f 100%);
+  --app-grad-gold: linear-gradient(135deg, #f2b65a 0%, #e8a33d 100%);
+}
+
+/* ---------- Modern buttons ---------- */
+.btn {
+  border-radius: var(--app-radius-sm);
+  box-shadow: var(--app-shadow-sm);
+  font-weight: 600;
+  letter-spacing: .005em;
+  transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.btn:hover, .btn:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: var(--app-shadow-md);
+}
+.btn:active { transform: translateY(0); box-shadow: var(--app-shadow-sm); }
+.btn:disabled, .btn.disabled { box-shadow: none; }
+
+.btn-navy {
+  background: var(--app-grad-navy);
+  border: none;
+  color: #fff;
+}
+.btn-navy:hover, .btn-navy:focus-visible {
+  background: linear-gradient(135deg, #0f3260 0%, #24639f 100%);
+  color: #fff;
+}
+.btn-navy:disabled, .btn-navy.disabled { background: var(--surface-100); color: var(--text-500); }
+
+.btn-outline-navy {
+  border: 1px solid var(--ink-700);
+  color: var(--ink-700);
+  background: transparent;
+}
+.btn-outline-navy:hover, .btn-outline-navy:focus-visible {
+  background: var(--ink-700);
+  color: #fff;
+  border-color: var(--ink-700);
+}
+
+.btn-brand {
+  background: var(--app-grad-gold);
+  border: none;
+  color: var(--ink-900);
+}
+.btn-brand:hover, .btn-brand:focus-visible {
+  background: linear-gradient(135deg, #f6c578 0%, #e8a33d 100%);
+  color: var(--ink-900);
+}
+
+.btn-icon {
+  border-radius: var(--app-radius-sm);
+  background: var(--surface-100);
+  border: 1px solid transparent;
+  color: var(--ink-700);
+  box-shadow: none;
+}
+.btn-icon:hover { background: var(--ink-700); color: #fff; border-color: var(--ink-700); }
+
+.btn-sm { border-radius: .5rem; }
+.btn-lg { border-radius: .75rem; padding: .75rem 1.75rem; }
+
+/* Input groups: keep the submit button flush with the input */
+.input-group .btn { box-shadow: none; }
+
+/* ---------- Modern cards / panels ---------- */
+.card-elevated, .admin-kpi-card {
+  border: 1px solid rgba(10, 38, 71, .06);
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-md);
+}
+
+.admin-panel {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-sm);
+  background: var(--surface-0);
+}
+.admin-panel__header {
+  padding: 1.1rem 1.35rem;
+  background: transparent;
+  border-bottom: 1px solid var(--surface-border);
+}
+.admin-panel__body { padding: 1.35rem; }
+
+/* KPI cards: soft tinted icon blocks, subtle hover lift */
+.admin-kpi-card {
+  padding: 1.35rem;
+}
+.admin-kpi-card:hover {
+  box-shadow: var(--app-shadow-lg);
+  transform: translateY(-2px);
+}
+.admin-kpi-icon {
+  border-radius: .65rem;
+}
+
+/* ---------- Modern form controls ---------- */
+.form-control, .form-select {
+  border-radius: var(--app-radius-sm);
+  border: 1px solid var(--surface-border);
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--ink-600);
+  box-shadow: 0 0 0 3px rgba(44, 101, 172, .16);
+}
+
+/* ---------- Modern tables ---------- */
+.admin-table thead th {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-500);
+  background: var(--surface-50);
+  border-bottom: 1px solid var(--surface-border);
+}
+.admin-table tbody tr {
+  transition: background-color .12s ease;
+}
+
+/* ---------- Modern admin sidebar ---------- */
+.admin-sidebar {
+  background: linear-gradient(180deg, #081c36 0%, #0a2647 55%, #123a6b 100%);
+}
+.admin-sidebar__link {
+  border-radius: .7rem;
+  gap: .8rem;
+  padding: .7rem 1rem;
+}
+.admin-sidebar__link.active {
+  background: var(--app-grad-gold);
+  color: var(--ink-900);
+  font-weight: 700;
+  box-shadow: 0 8px 20px -8px rgba(232, 163, 61, .7);
+}
+.admin-sidebar__avatar {
+  background: var(--app-grad-gold);
+  color: var(--ink-900);
+}
+
+/* ---------- Modern admin header ---------- */
+.admin-header {
+  background: rgba(255, 255, 255, .82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--surface-border);
+}
+
+/* ---------- Modern badges ---------- */
+.admin-badge-success, .admin-badge-warning, .admin-badge-danger,
+.admin-badge-released, .admin-badge-muted, .admin-badge-exam, .admin-badge-pending {
+  font-weight: 600;
+  padding: .42em .85em;
+  letter-spacing: .005em;
+}
+
+/* ---------- Modern quick actions ---------- */
+.admin-quick-action {
+  border-radius: var(--app-radius-lg);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--app-shadow-sm);
+  padding: 1.35rem 1.2rem;
+  transition: all .2s ease;
+}
+.admin-quick-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--app-shadow-lg);
+  border-color: var(--ink-600);
+}
+.admin-quick-action__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: .75rem;
+  background: var(--surface-100);
+  color: var(--ink-700);
+  font-size: 1.25rem;
+}
+
+/* ---------- Student sidebar / nav (modern) ---------- */
+.student-sidebar-panel {
+  border-radius: var(--app-radius-lg);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--app-shadow-md);
+  padding: 1.15rem;
+}
+.student-nav-item {
+  border-radius: .65rem;
+  font-weight: 500;
+}
+.student-nav-item--active {
+  background: linear-gradient(135deg, rgba(232, 163, 61, .2), rgba(232, 163, 61, .12));
+  color: var(--ink-800);
+  border: 1px solid rgba(232, 163, 61, .45);
+}
+
+/* ---------- Modern student navbar ---------- */
+.navbar.bg-brand-navy {
+  background:
+    radial-gradient(90% 160% at 88% -20%, rgba(232,163,61,0.22), transparent 55%),
+    linear-gradient(120deg, #081c36 0%, #123a6b 100%) !important;
+  box-shadow: 0 4px 24px -10px rgba(10, 38, 71, .45);
+}
+
+/* ---------- Status tracker (modern) ---------- */
+.status-tracker__node {
+  border-radius: 50%;
+  border: 2px solid var(--surface-border);
+  box-shadow: 0 3px 10px -4px rgba(10, 38, 71, .2);
+}
+
+/* ---------- Chat bubbles (slightly softer) ---------- */
+.chat-bubble { border-radius: 1.15rem; }
+
+/* ---------- Alerts (modern) ---------- */
+.alert-brand-success, .alert-brand-danger {
+  border-radius: var(--app-radius-md);
+  border-left: 4px solid;
+  box-shadow: var(--app-shadow-sm);
+}
+.alert-brand-success { border-left-color: #28a745; }
+.alert-brand-danger { border-left-color: #dc3545; }
+
+/* Dark-mode tweaks for the refresh */
+[data-theme="dark"] .btn {
+  box-shadow: none;
+}
+[data-theme="dark"] .btn-navy {
+  background: linear-gradient(135deg, #16345c 0%, #2c65ac 100%);
+}
+[data-theme="dark"] .admin-header {
+  background: rgba(26, 29, 46, .85);
+}
+[data-theme="dark"] .admin-panel,
+[data-theme="dark"] .admin-kpi-card,
+[data-theme="dark"] .card-elevated {
+  box-shadow: none;
+  border-color: var(--surface-border);
+}
+
+/* ---------- Modern component library (phase 2) ---------- */
+
+/* Ghost / quiet buttons */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-500);
+}
+.btn-ghost:hover {
+  background: var(--surface-100);
+  color: var(--ink-900);
+  border-color: var(--surface-border);
+}
+
+/* Soft-count badge (next to section titles) */
+.badge-soft-navy {
+  display: inline-block;
+  background: var(--surface-100);
+  color: var(--ink-700);
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .25em .7em;
+  border-radius: 50px;
+  vertical-align: middle;
+}
+
+/* Section eyebrow label used on detail pages */
+.section-eyebrow {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-500);
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.section-eyebrow::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--surface-border);
+}
+
+/* Empty states */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  color: var(--text-500);
+}
+.empty-state__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--surface-100);
+  color: var(--ink-600);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+.empty-state h6 { color: var(--ink-900); font-weight: 700; }
+.empty-state p { font-size: .875rem; max-width: 340px; margin-bottom: 1rem; }
+
+/* Filter chips */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .38rem .85rem;
+  border-radius: 50px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-0);
+  color: var(--ink-700);
+  font-size: .82rem;
+  font-weight: 600;
+  transition: all .15s ease;
+}
+.filter-chip:hover {
+  border-color: var(--ink-600);
+  color: var(--ink-900);
+}
+.filter-chip.active {
+  background: linear-gradient(135deg, #123a6b, #2c65ac);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px -5px rgba(28, 79, 143, .5);
+}
+
+/* Mobile-friendly table cards */
+@media (max-width: 767.98px) {
+  .table-cardify thead { display: none; }
+  .table-cardify tbody,
+  .table-cardify tr,
+  .table-cardify td { display: block; width: 100%; }
+  .table-cardify tr {
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-md);
+    margin-bottom: .85rem;
+    background: var(--surface-0);
+    padding: .75rem .5rem;
+  }
+  .table-cardify td {
+    border: 0;
+    padding: .35rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    text-align: right;
+  }
+  .table-cardify td::before {
+    content: attr(data-label);
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-500);
+    text-align: left;
+  }
+  .table-cardify td.text-end,
+  .table-cardify td.text-center { justify-content: space-between; }
+}
+
+/* Detail definition list */
+.detail-list dt {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-500);
+  margin-bottom: .15rem;
+}
+.detail-list dd {
+  font-size: .9rem;
+  color: var(--ink-900);
+  margin-bottom: 1rem;
+}
+
+/* Timeline (audit log) */
+.audit-timeline { list-style: none; padding: 0; margin: 0; }
+.audit-timeline li {
+  position: relative;
+  padding: 0 0 1.5rem 1.75rem;
+  border-left: 2px solid var(--surface-border);
+  margin-left: .55rem;
+}
+.audit-timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.audit-timeline li::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #123a6b, #2c65ac);
+  border: 2px solid var(--surface-0);
+  box-shadow: 0 2px 6px -2px rgba(28, 79, 143, .5);
+}
+.audit-timeline li.audit-timeline--gold::before {
+  background: linear-gradient(135deg, #b9770f, #E8A33D);
+}
+.audit-timeline li.audit-timeline--red::before {
+  background: linear-gradient(135deg, #9c2f1f, #d95a3c);
+}
+
+/* Chat thread polish */
+.thread-message {
+  border-radius: 1rem;
+  box-shadow: var(--app-shadow-sm);
+  border: 1px solid var(--surface-border);
+}
+.thread-message--incoming { border-bottom-left-radius: .25rem; }
+.thread-message--outgoing {
+  background: linear-gradient(135deg, #123a6b, #2c65ac);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Muted text helper */
+.text-muted-soft { color: var(--text-500) !important; }
 

@@ -45,9 +45,22 @@ class ApplicantController extends Controller
             ->with('success', 'Application submitted successfully!');
     }
 
-    public function index(AdminDashboardService $dashboard)
+    public function index(AdminDashboardService $dashboard, Request $request)
     {
         $data = $dashboard->getDashboardData();
+
+        $selectedMonth = $request->input('month', now()->format('Y-m'));
+        $monthPayouts = collect();
+        $monthTotal = 0;
+
+        if (preg_match('/^\d{4}-\d{2}$/', (string) $selectedMonth)) {
+            $monthPayouts = \App\Models\Payout::with('applicant')
+                ->whereMonth('released_at', substr($selectedMonth, 5, 2))
+                ->whereYear('released_at', substr($selectedMonth, 0, 4))
+                ->latest('released_at')
+                ->get();
+            $monthTotal = $monthPayouts->sum('amount');
+        }
 
         return view('admin.dashboard', [
             'stats' => $data['stats'],
@@ -57,6 +70,9 @@ class ApplicantController extends Controller
             'recentActivity' => $data['recentActivity'],
             'applicants' => $data['applicantsByStatus'],
             'dashboard' => $dashboard,
+            'monthPayouts' => $monthPayouts,
+            'monthTotal' => $monthTotal,
+            'selectedMonth' => $selectedMonth,
         ]);
     }
 
@@ -86,12 +102,25 @@ class ApplicantController extends Controller
         }
 
         if ($request->filled('status') && $request->input('status') !== 'all') {
-            $query->where('status', $request->input('status'));
+            if ($request->input('status') === 'scholars') {
+                $query->whereIn('status', [
+                    'exam_passed',
+                    'oriented',
+                    'compliance_pending',
+                    'compliance_met',
+                    'paid_out',
+                ]);
+            } else {
+                $query->where('status', $request->input('status'));
+            }
         }
 
-        $applicants = $query->orderByDesc('created_at')->get();
+        $applicants = $dashboard->onlineFirst($query->orderByDesc('created_at')->get());
 
-        $statuses = array_merge(['all' => 'All statuses'], AdminDashboardService::STATUS_LABELS);
+        $statuses = array_merge(
+            ['all' => 'All statuses', 'scholars' => 'Scholars (passed / active)'],
+            AdminDashboardService::STATUS_LABELS
+        );
 
         return view('admin.applicants.index', [
             'applicants' => $applicants,
@@ -128,6 +157,7 @@ class ApplicantController extends Controller
     public function show(Applicant $applicant)
 {
     $applicant->load([
+        'user',
         'requirements.requirement',
         'verification',
         'mswdoAssessment',

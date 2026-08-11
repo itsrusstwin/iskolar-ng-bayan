@@ -8,9 +8,20 @@ use Illuminate\Support\Str;
 
 class AuditLogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $logs = AuditLog::with(['user', 'applicant'])->latest()->paginate(30);
+        $query = AuditLog::with(['user', 'applicant']);
+
+        if ($request->filled('date')) {
+            try {
+                $date = \Illuminate\Support\Carbon::parse($request->input('date'));
+                $query->whereDate('created_at', $date);
+            } catch (\Throwable $e) {
+                // ignore invalid date input
+            }
+        }
+
+        $logs = $query->latest()->paginate(30)->withQueryString();
 
         return view('admin.audit-log.index', compact('logs'));
     }

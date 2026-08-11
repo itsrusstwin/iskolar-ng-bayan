@@ -22,15 +22,30 @@
 </a>
 
 <!-- Header card -->
-<div class="card-flat p-4 mb-4">
+<div class="card-flat p-4 mb-4" style="border: none; background:
+    radial-gradient(120% 200% at 100% -20%, rgba(232,163,61,.14), transparent 55%),
+    linear-gradient(135deg, var(--surface-0), var(--surface-50));
+    box-shadow: var(--app-shadow-md);">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
         <div class="d-flex gap-3">
-            <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold fs-4 flex-shrink-0"
-                 style="width:64px;height:64px; background: var(--surface-100); color: var(--ink-800);">
-                {{ strtoupper(substr($applicant->first_name, 0, 1) . substr($applicant->last_name, 0, 1)) }}
+            <div class="avatar-wrap">
+                <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold fs-4 flex-shrink-0"
+                     style="width:64px;height:64px; background: linear-gradient(135deg, #123a6b, #2c65ac); color: #fff; box-shadow: 0 8px 18px -8px rgba(28,79,143,.6);">
+                    {{ strtoupper(substr($applicant->first_name, 0, 1) . substr($applicant->last_name, 0, 1)) }}
+                </div>
+                @if ($applicant->user?->isOnline())
+                    <span class="online-dot online-dot--lg" title="Online now"></span>
+                @endif
             </div>
             <div>
-                <p class="fw-bold fs-5 mb-0">{{ $applicant->first_name }} {{ $applicant->last_name }}</p>
+                <p class="fw-bold fs-5 mb-0 d-flex align-items-center gap-2">
+                    {{ $applicant->first_name }} {{ $applicant->last_name }}
+                    @if ($applicant->user?->isOnline())
+                        <span class="online-live" style="font-size:.75rem;font-weight:600;">
+                            <span class="pulse"></span> Online
+                        </span>
+                    @endif
+                </p>
                 @if ($applicant->course || $applicant->year_level)
                     <p class="small text-muted-soft mb-0">{{ $applicant->course }}{{ $applicant->course && $applicant->year_level ? ', ' : '' }}{{ $applicant->year_level }}</p>
                 @endif
@@ -40,52 +55,108 @@
             </div>
         </div>
         <span class="{{ $isDisqualified ? 'badge bg-danger-subtle text-danger-emphasis px-3 py-2' : 'badge-soft-gold' }}">
-            {{ $isDisqualified ? $currentStatusLabel : $currentStatusLabel }}
+            {{ $currentStatusLabel }}
         </span>
     </div>
 
-    <div class="row g-3 mt-2 pt-3 border-top">
-        <div class="col-md-3 col-6">
-            <p class="small text-muted-soft mb-0">Email</p>
-            <p class="mb-0">{{ $applicant->user->email ?? 'N/A' }}</p>
+    <div class="row g-4 mt-2 pt-3 border-top">
+        <div class="col-md-6 pe-md-4">
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex gap-3">
+                    <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:.95rem;flex-shrink:0;">
+                        <i class="bi bi-envelope"></i>
+                    </span>
+                    <div>
+                        <p class="small text-muted-soft mb-0">Email</p>
+                        <p class="mb-0 text-break">{{ $applicant->user->email ?? 'N/A' }}</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:.95rem;flex-shrink:0;">
+                        <i class="bi bi-telephone"></i>
+                    </span>
+                    <div>
+                        <p class="small text-muted-soft mb-0">Contact number</p>
+                        <p class="mb-0">{{ $applicant->contact_number ?? 'N/A' }}</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:.95rem;flex-shrink:0;">
+                        <i class="bi bi-geo-alt"></i>
+                    </span>
+                    <div>
+                        <p class="small text-muted-soft mb-0">Address</p>
+                        <p class="mb-0">
+                            @php
+                                $addressParts = array_filter([
+                                    $applicant->province,
+                                    $applicant->city_municipality,
+                                    $applicant->barangay,
+                                    $applicant->sitio,
+                                    $applicant->landmark,
+                                ]);
+                            @endphp
+                            {{ $addressParts ? implode(', ', $addressParts) : 'N/A' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:.95rem;flex-shrink:0;">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </span>
+                    <div>
+                        <p class="small text-muted-soft mb-0">Application type</p>
+                        <p class="mb-0">{{ $applicant->program_type ? ucfirst($applicant->program_type) : 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3 col-6">
-            <p class="small text-muted-soft mb-0">Contact number</p>
-            <p class="mb-0">{{ $applicant->contact_number ?? 'N/A' }}</p>
-        </div>
-        <div class="col-md-3 col-6">
-            <p class="small text-muted-soft mb-0">Date of birth</p>
-            <p class="mb-0">{{ optional($applicant->date_of_birth)->format('M d, Y') ?? 'N/A' }}</p>
-        </div>
-        <div class="col-md-3 col-6">
-            <p class="small text-muted-soft mb-0">Sex</p>
-            <p class="mb-0">{{ $applicant->sex ?? 'N/A' }}</p>
-        </div>
-        <div class="col-md-4 col-6">
-            <p class="small text-muted-soft mb-0">Address</p>
-            <p class="mb-0">
-                @php $addressParts = array_filter([$applicant->landmark, $applicant->sitio, $applicant->barangay]); @endphp
-                {{ $addressParts ? implode(', ', $addressParts) : 'N/A' }}
-            </p>
-        </div>
-        <div class="col-md-4 col-6">
-            <p class="small text-muted-soft mb-0">Application type</p>
-            <p class="mb-0">{{ ucfirst($applicant->program_type) }}</p>
-        </div>
-        <div class="col-md-2 col-6">
-            <p class="small text-muted-soft mb-0">Father's name</p>
-            <p class="mb-0">{{ $applicant->father_name ?? 'N/A' }}</p>
-        </div>
-        <div class="col-md-2 col-6">
-            <p class="small text-muted-soft mb-0">Mother's maiden name</p>
-            <p class="mb-0">{{ $applicant->mother_maiden_name ?? 'N/A' }}</p>
+        <div class="col-md-6 ps-md-4" style="border-left: 1px solid var(--surface-border);">
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex gap-3">
+                    <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:.95rem;flex-shrink:0;">
+                        <i class="bi bi-calendar2-heart"></i>
+                    </span>
+                    <div>
+                        <p class="small text-muted-soft mb-0">Date of birth</p>
+                        <p class="mb-0">{{ optional($applicant->date_of_birth)->format('M d, Y') ?? 'N/A' }}</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:.95rem;flex-shrink:0;">
+                        <i class="bi bi-gender-ambiguous"></i>
+                    </span>
+                    <div>
+                        <p class="small text-muted-soft mb-0">Sex</p>
+                        <p class="mb-0">{{ $applicant->sex ?? 'N/A' }}</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:.95rem;flex-shrink:0;">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <div>
+                        <p class="small text-muted-soft mb-0">Father's name</p>
+                        <p class="mb-0">{{ $applicant->father_name ?? 'N/A' }}</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:.95rem;flex-shrink:0;">
+                        <i class="bi bi-person-heart"></i>
+                    </span>
+                    <div>
+                        <p class="small text-muted-soft mb-0">Mother's maiden name</p>
+                        <p class="mb-0">{{ $applicant->mother_maiden_name ?? 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Requirements -->
 <div class="card-flat p-4 mb-4">
-    <p class="fw-bold mb-3">Requirements checklist</p>
+    <p class="section-eyebrow mb-3">Requirements checklist</p>
     @foreach ($applicant->requirements as $req)
         @php $isPersonalSubmission = str_contains(strtolower($req->requirement->name), 'brown envelope'); @endphp
         <div class="d-flex align-items-center justify-content-between py-3 border-top flex-wrap gap-2">
@@ -127,7 +198,7 @@
     <!-- Step 4: Policy verification -->
     <div class="col-lg-6">
         <div class="card-flat p-4 h-100">
-            <p class="fw-bold mb-1">Policy Verification</p>
+            <p class="section-eyebrow mb-3">Policy Verification</p>
             @if ($applicant->verification)
                 <p class="small text-muted-soft mb-3">Already recorded.</p>
                 <p class="small mb-1">SPES: {{ $applicant->verification->in_spes ? 'Yes' : 'No' }}</p>
@@ -163,7 +234,7 @@
     <!-- Step 5-6: MSWDO assessment -->
     <div class="col-lg-6">
         <div class="card-flat p-4 h-100">
-            <p class="fw-bold mb-1">MSWDO Assessment</p>
+            <p class="section-eyebrow mb-3">MSWDO Assessment</p>
             @if ($applicant->mswdoAssessment)
                 <p class="small text-muted-soft mb-3">Already recorded.</p>
                 <p class="small mb-1">Referral slip: {{ $applicant->mswdoAssessment->referral_slip_no ?? 'N/A' }}</p>
@@ -213,7 +284,7 @@
     <!-- Step 7-8: Exam schedule + result -->
     <div class="col-lg-6">
         <div class="card-flat p-4 h-100">
-            <p class="fw-bold mb-1">Qualifying Exam</p>
+            <p class="section-eyebrow mb-3">Qualifying Exam</p>
 
             <form method="POST" action="{{ route('admin.applicants.schedule-exam', $applicant) }}" class="mt-3 mb-3 pb-3 border-bottom">
                 @csrf
@@ -271,7 +342,7 @@
     <!-- Step 9: Orientation -->
     <div class="col-lg-6">
         <div class="card-flat p-4 h-100">
-            <p class="fw-bold mb-1">Orientation</p>
+            <p class="section-eyebrow mb-3">Orientation</p>
 
             <form method="POST" action="{{ route('admin.applicants.schedule-orientation', $applicant) }}" class="mt-3 mb-3 pb-3 border-bottom">
                 @csrf
@@ -304,7 +375,7 @@
     <!-- Step 10: Waste compliance -->
     <div class="col-lg-6">
         <div class="card-flat p-4 h-100">
-            <p class="fw-bold mb-1">Waste Compliance</p>
+            <p class="section-eyebrow mb-3">Waste Compliance</p>
             @if ($applicant->wasteCompliance->count())
                 @foreach ($applicant->wasteCompliance as $wc)
                     <p class="small mb-1">{{ $wc->semester }}: {{ $wc->kilos_submitted }}kg — {{ $wc->is_compliant ? 'Compliant' : 'Not compliant' }}</p>
@@ -322,19 +393,34 @@
     <!-- Step 11: Payout -->
     <div class="col-lg-6">
         <div class="card-flat p-4 h-100">
-            <p class="fw-bold mb-1">Payout</p>
+            <p class="section-eyebrow mb-3">Payout</p>
+
             @if ($applicant->payouts->count())
-                @foreach ($applicant->payouts as $payout)
-                    <p class="small mb-1">₱{{ number_format($payout->amount, 2) }} — Ref: {{ $payout->reference_no ?? 'N/A' }}</p>
+                @foreach ($applicant->payouts->sortByDesc('released_at') as $payout)
+                    <div class="d-flex align-items-center justify-content-between py-2 border-bottom flex-wrap gap-2">
+                        <div>
+                            <p class="mb-0 small fw-semibold">₱{{ number_format($payout->amount, 2) }}</p>
+                            <p class="small text-muted-soft mb-0">
+                                {{ $payout->released_at?->format('M d, Y') ?? '—' }}
+                                @if ($payout->reference_no)
+                                    &nbsp;•&nbsp; Ref: {{ $payout->reference_no }}
+                                @endif
+                            </p>
+                        </div>
+                        <span class="badge-soft-gold">Released</span>
+                    </div>
                 @endforeach
             @else
-                <form method="POST" action="{{ route('admin.payout', $applicant) }}">
-                    @csrf
-                    <input type="number" step="0.01" name="amount" placeholder="Amount" class="form-control form-control-sm mb-2" required>
-                    <input type="text" name="reference_no" placeholder="Reference no. (optional)" class="form-control form-control-sm mb-3">
-                    <button type="submit" class="btn btn-navy btn-sm px-3">Release Payout</button>
-                </form>
+                <p class="small text-muted-soft mb-3">No payouts released yet.</p>
             @endif
+
+            <form method="POST" action="{{ route('admin.payout', $applicant) }}" class="mt-3 pt-3 border-top">
+                @csrf
+                <label class="form-label small fw-semibold d-block mb-1">Add another payout</label>
+                <input type="number" step="0.01" name="amount" placeholder="Amount" class="form-control form-control-sm mb-2" required>
+                <input type="text" name="reference_no" placeholder="Reference no. (optional)" class="form-control form-control-sm mb-3">
+                <button type="submit" class="btn btn-navy btn-sm px-3">Release Payout</button>
+            </form>
         </div>
     </div>
 
@@ -342,28 +428,31 @@
 
 @if ($isDisqualified && $applicant->disqualifications->count())
     <div class="alert-brand-danger p-4 mt-4">
-        <p class="fw-bold small mb-2">Disqualification Record</p>
+        <p class="section-eyebrow mb-3">Disqualification Record</p>
         @foreach ($applicant->disqualifications as $dq)
-            <p class="small mb-2">Stage: {{ $dq->stage }} — Reason: {{ $dq->reason }}</p>
+            <div class="d-flex align-items-baseline gap-2 mb-3">
+                <span class="badge bg-danger-subtle text-danger-emphasis" style="font-size:.72rem;">Stage: {{ $dq->stage }}</span>
+                <p class="small mb-0">{{ $dq->reason }}</p>
+            </div>
 
             @forelse ($dq->appeals as $appeal)
-                <div class="card-flat p-3 mb-2">
+                <div class="card-flat p-3 mb-2" style="border-left: 3px solid var(--gold-500);">
                     <p class="small text-muted-soft mb-1">
                         Appeal filed {{ $appeal->filed_at?->format('M d, Y g:ia') }}
                     </p>
                     <p class="small mb-2">{{ $appeal->reconsideration_notes }}</p>
 
                     @if ($appeal->result === 'pending')
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 flex-wrap">
                             <form method="POST" action="{{ route('admin.appeals.approve', $appeal) }}"
                                   onsubmit="return confirm('Approve this appeal and reinstate the applicant?');">
                                 @csrf
-                                <button type="submit" class="btn btn-sm btn-outline-success">Approve &amp; Reinstate</button>
+                                <button type="submit" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1"><i class="bi bi-check2-circle"></i> Approve &amp; Reinstate</button>
                             </form>
                             <form method="POST" action="{{ route('admin.appeals.reject', $appeal) }}"
                                   onsubmit="return confirm('Deny this appeal? The disqualification will stand.');">
                                 @csrf
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Deny Appeal</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1"><i class="bi bi-x-circle"></i> Deny Appeal</button>
                             </form>
                         </div>
                     @elseif ($appeal->result === 'approved')
@@ -382,18 +471,18 @@
 <!-- Activity history -->
 @if ($applicant->auditLogs->count())
     <div class="card-flat p-4 mt-4">
-        <p class="fw-bold mb-3">History</p>
-        @foreach ($applicant->auditLogs as $log)
-            <div class="d-flex align-items-start justify-content-between gap-3 py-2 border-top flex-wrap">
-                <div>
+        <p class="section-eyebrow mb-3">History</p>
+        <ul class="audit-timeline">
+            @foreach ($applicant->auditLogs as $log)
+                <li>
                     <p class="small mb-0">
                         <span class="fw-semibold">{{ $log->user->name ?? 'Unknown / system' }}</span>
                         — {{ $log->description }}
                     </p>
-                </div>
-                <span class="small text-muted-soft flex-shrink-0">{{ $log->created_at->format('M d, Y g:ia') }}</span>
-            </div>
-        @endforeach
+                    <span class="small text-muted-soft">{{ $log->created_at->format('M d, Y g:ia') }}</span>
+                </li>
+            @endforeach
+        </ul>
     </div>
 @endif
 

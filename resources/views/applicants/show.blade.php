@@ -30,13 +30,25 @@
 <div id="status" class="card-elevated p-4 mb-4">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
         <div class="d-flex gap-3">
-            <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold fs-4"
-                 style="width:64px;height:64px;background: var(--surface-100); color: var(--ink-800); flex-shrink:0;">
-                {{ $initials }}
+            <div class="avatar-wrap">
+                <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold fs-4"
+                     style="width:64px;height:64px;background: linear-gradient(135deg, #123a6b, #2c65ac); color: #fff; box-shadow: 0 8px 18px -8px rgba(28,79,143,.6); flex-shrink:0;">
+                    {{ $initials }}
+                </div>
+                @if ($applicant->user?->isOnline())
+                    <span class="online-dot online-dot--lg" title="Online now"></span>
+                @endif
             </div>
             <div>
                 <p class="small text-muted-soft mb-0 fw-semibold" style="letter-spacing:.04em;">Application ID: {{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}</p>
-                <p class="fw-bold fs-5 mb-0">{{ $applicant->first_name }} {{ $applicant->last_name }}</p>
+                <p class="fw-bold fs-5 mb-0 d-flex align-items-center gap-2">
+                    {{ $applicant->first_name }} {{ $applicant->last_name }}
+                    @if ($applicant->user?->isOnline())
+                        <span class="online-live" style="font-size:.75rem;font-weight:600;">
+                            <span class="pulse"></span> Online
+                        </span>
+                    @endif
+                </p>
                 <p class="small text-muted-soft mb-1">
                     Student ID: {{ $applicant->school_id ?? 'N/A' }}
                     @if ($applicant->course_year)
@@ -76,14 +88,16 @@
     </div>
 
     <div class="mt-3 pt-3 border-top">
-        <a href="{{ route('profile.edit') }}" class="link-brand small">Edit Profile →</a>
+        <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-outline-navy d-inline-flex align-items-center gap-1">
+            <i class="bi bi-pencil"></i> Edit Profile
+        </a>
     </div>
 </div>
 
 @if ($applicant->exam_scheduled_at || $applicant->orientation_scheduled_at)
     <!-- Upcoming schedules -->
     <div class="card-elevated p-4 mb-4">
-        <p class="fw-bold mb-3">Upcoming Schedules</p>
+        <p class="section-eyebrow mb-3">Upcoming Schedules</p>
 
         @if ($applicant->exam_scheduled_at)
             <div class="d-flex align-items-center justify-content-between py-2 border-bottom flex-wrap gap-2">
@@ -116,7 +130,7 @@
 <!-- Assessment & Exam Records -->
 @if ($applicant->mswdoAssessment || $applicant->examResults->count())
     <div class="card-elevated p-4 mb-4">
-        <p class="fw-bold mb-3">Assessment &amp; Exam Records</p>
+        <p class="section-eyebrow mb-3">Assessment &amp; Exam Records</p>
 
         @if ($applicant->mswdoAssessment)
             <div class="d-flex align-items-center justify-content-between py-2 border-bottom flex-wrap gap-2">
@@ -190,12 +204,12 @@
 
 <!-- Requirements checklist -->
 <div id="requirements" class="card-elevated p-4">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <p class="fw-bold mb-0">Requirements checklist</p>
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <p class="section-eyebrow mb-0">Requirements checklist</p>
         <span class="small text-muted-soft">{{ $submittedReqs }} of {{ $totalReqs }} submitted</span>
     </div>
-    <div class="progress mb-4" style="height: 6px;">
-        <div class="progress-bar" role="progressbar" style="width: {{ $progressPercent }}%; background: var(--ink-700);"></div>
+    <div class="progress mb-4" style="height: 8px; background: var(--surface-100);">
+        <div class="progress-bar rounded-pill" role="progressbar" style="width: {{ $progressPercent }}%; background: linear-gradient(90deg, #123a6b, #2c65ac);"></div>
     </div>
 
     @foreach ($applicant->requirements as $req)

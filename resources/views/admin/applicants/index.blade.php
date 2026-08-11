@@ -74,35 +74,42 @@
 <div class="admin-panel">
     <div class="admin-panel__header d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 flex-wrap">
         <div>
-            <h2 class="h6 fw-bold mb-0">Applicants ({{ number_format($applicants->count()) }})</h2>
-            <p class="small text-muted-soft mb-0">Select applicants below to schedule the exam or orientation.</p>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="h6 fw-bold mb-0">Applicants <span class="badge-soft-navy ms-1">{{ number_format($applicants->count()) }}</span></h2>
+            </div>
+            <p class="small text-muted-soft mb-0 mt-1">Select applicants below to schedule the exam or orientation.</p>
         </div>
 
-        <form method="GET" action="{{ route('admin.applicants.index') }}" class="d-flex gap-2 flex-wrap">
+        <form method="GET" action="{{ route('admin.applicants.index') }}" class="d-flex gap-2 flex-wrap align-items-center">
             <div class="admin-search">
                 <div class="input-group input-group-sm">
                     <span class="input-group-text border-end-0"><i class="bi bi-search"></i></span>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, school, email..." class="form-control border-start-0" style="min-width: 220px;">
                 </div>
             </div>
-            <select name="status" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
-                @foreach ($statuses as $key => $label)
-                    <option value="{{ $key }}" {{ request('status', 'all') === $key ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
+            <div class="input-group input-group-sm" style="width: auto;">
+                <span class="input-group-text border-end-0"><i class="bi bi-funnel"></i></span>
+                <select name="status" class="form-select form-select-sm border-start-0" style="width: auto;" onchange="this.form.submit()">
+                    @foreach ($statuses as $key => $label)
+                        <option value="{{ $key }}" {{ request('status', 'all') === $key ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
         </form>
     </div>
 
     <!-- Bulk schedule bar -->
-    <div id="bulkBar" class="d-none align-items-center gap-2 px-3 py-2 border-bottom" style="background: var(--surface-100);">
-        <span class="small fw-semibold me-2" id="bulkCount">0 selected</span>
-        <button type="button" class="btn btn-sm btn-navy" onclick="openScheduleModal('exam')">
+    <div id="bulkBar" class="d-none align-items-center gap-2 px-3 py-2 border-bottom flex-wrap" style="background: linear-gradient(135deg, var(--surface-100), var(--surface-50));">
+        <i class="bi bi-check2-square text-muted-soft"></i>
+        <span class="small fw-semibold" id="bulkCount">0 selected</span>
+        <span class="text-muted-soft d-none d-md-inline small" style="font-size:.75rem;">— apply a schedule to all selected applicants</span>
+        <button type="button" class="btn btn-sm btn-navy ms-md-auto d-inline-flex align-items-center gap-1" onclick="openScheduleModal('exam')">
             <i class="bi bi-calendar-check"></i> Set Exam Schedule
         </button>
-        <button type="button" class="btn btn-sm btn-outline-navy" onclick="openScheduleModal('orientation')">
-            <i class="bi bi-mortarboard"></i> Set Orientation Schedule
+        <button type="button" class="btn btn-sm btn-outline-navy d-inline-flex align-items-center gap-1" onclick="openScheduleModal('orientation')">
+            <i class="bi bi-mortarboard"></i> Set Orientation
         </button>
-        <button type="button" class="btn btn-sm btn-link text-muted-soft ms-auto" onclick="clearSelection()">Clear</button>
+        <button type="button" class="btn btn-sm btn-ghost text-muted-soft" onclick="clearSelection()"><i class="bi bi-x-lg"></i> Clear</button>
     </div>
 
     <div class="admin-panel__body admin-panel__body--flush">
@@ -135,8 +142,13 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2" style="min-width:0;">
-                                <span class="admin-avatar">
-                                    {{ strtoupper(substr($applicant->first_name, 0, 1) . substr($applicant->last_name, 0, 1)) }}
+                                <span class="avatar-wrap">
+                                    <span class="admin-avatar">
+                                        {{ strtoupper(substr($applicant->first_name, 0, 1) . substr($applicant->last_name, 0, 1)) }}
+                                    </span>
+                                    @if ($applicant->user?->isOnline())
+                                        <span class="online-dot" title="Online now"></span>
+                                    @endif
                                 </span>
                                 <div style="min-width:0;">
                                     <div class="applicant-name fw-semibold admin-table__name">{{ $applicant->first_name }} {{ $applicant->last_name }}</div>
@@ -168,18 +180,18 @@
                             @endif
                         </td>
                         <td class="text-end pe-3">
-                            <div class="d-inline-flex align-items-center gap-2">
-                                <button type="button" class="btn btn-sm btn-outline-navy py-0 px-2" style="font-size: .75rem;" data-bs-toggle="collapse" data-bs-target="#detail-{{ $applicant->id }}">
-                                    <i class="bi bi-eye"></i> Details
+                            <div class="d-inline-flex align-items-center gap-1">
+                                <button type="button" class="btn btn-sm btn-ghost btn-icon" style="width:30px;height:30px;" data-bs-toggle="collapse" data-bs-target="#detail-{{ $applicant->id }}" title="Quick view">
+                                    <i class="bi bi-eye" style="font-size:.8rem;"></i>
                                 </button>
-                                <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-sm btn-outline-navy py-0 px-2" style="font-size: .75rem;">
+                                <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-sm btn-outline-navy d-inline-flex align-items-center gap-1" style="font-size:.75rem;">
                                     Manage
                                 </a>
                                 <form method="POST" action="{{ route('admin.applicants.destroy', $applicant) }}" onsubmit="return confirm('Delete this student account? This will permanently remove their application and all related records.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2" style="font-size: .75rem;">
-                                        <i class="bi bi-trash3"></i>
+                                    <button type="submit" class="btn btn-sm btn-ghost btn-icon text-danger" style="width:30px;height:30px;" title="Delete">
+                                        <i class="bi bi-trash3" style="font-size:.8rem;"></i>
                                     </button>
                                 </form>
                             </div>
@@ -244,9 +256,11 @@
             </table>
         </div>
         @else
-        <div class="text-center text-muted-soft py-5">
-            <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
-            No applicants match your filters.
+        <div class="empty-state">
+            <span class="empty-state__icon"><i class="bi bi-inbox"></i></span>
+            <h6>No applicants found</h6>
+            <p>No applicants match your current filters. Try a different search term or status.</p>
+            <a href="{{ route('admin.applicants.index') }}" class="btn btn-sm btn-navy d-inline-flex align-items-center gap-1"><i class="bi bi-arrow-counterclockwise"></i> Reset filters</a>
         </div>
         @endif
     </div>

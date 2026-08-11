@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appeal;
 use App\Models\AuditLog;
 use App\Models\Disqualification;
+use App\Notifications\AdminNotification;
 use App\Notifications\ApplicationStatusChanged;
 use App\Services\ApplicationWorkflowService;
 use Illuminate\Http\Request;
@@ -46,6 +47,14 @@ class AppealController extends Controller
         $disqualification->applicant?->user?->notify(
             new ApplicationStatusChanged('Appeal filed', 'We have received your appeal and it is now under review.')
         );
+
+        $student = $disqualification->applicant;
+        AdminNotification::sendToAdmins(new AdminNotification(
+            title: 'New appeal filed',
+            body: $student ? "{$student->first_name} {$student->last_name} filed an appeal against their disqualification." : 'A student filed an appeal.',
+            url: $student ? route('applicants.show', $student) : null,
+            studentName: $student ? "{$student->first_name} {$student->last_name}" : null,
+        ));
 
         return redirect()->back()->with('success', 'Appeal filed successfully. Awaiting review.');
     }

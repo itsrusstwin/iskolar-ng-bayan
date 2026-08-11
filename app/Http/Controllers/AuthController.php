@@ -49,6 +49,13 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user) {
+            $user->forceFill(['last_seen_at' => null])->saveQuietly();
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
