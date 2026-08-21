@@ -729,11 +729,11 @@
             <p class="fw-bold mb-0">Important Reminders</p>
         </div>
         <ul class="mb-0 ps-3" style="line-height: 1.9;">
-            <li class="small">All applications must be submitted within the deadline.</li>
-            <li class="small">Only complete requirements will be processed.</li>
-            <li class="small">Applicant will undergo validation, exam, and orientation.</li>
-            <li class="small">Scholars must comply with academic and plastic waste submission requirements.</li>
-            <li class="small">Non-compliance may result in forfeiture of scholarship benefits.</li>
+            @forelse ($reminders as $reminder)
+                <li class="small">{{ $reminder->body }}</li>
+            @empty
+                <li class="small text-muted-soft">No reminders at this time.</li>
+            @endforelse
         </ul>
     </div>
 

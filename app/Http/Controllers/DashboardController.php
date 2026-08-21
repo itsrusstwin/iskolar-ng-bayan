@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Announcement;
 use App\Models\Applicant;
+use App\Models\Reminder;
 use App\Models\Requirement;
 use App\Http\Requests\StoreApplicantRequest;
 use Illuminate\Http\Request;
@@ -20,8 +21,9 @@ class DashboardController extends Controller
         }
         $requirements = Requirement::all();
         $announcements = Announcement::where('is_published', true)->latest()->take(4)->get();
+        $reminders = Reminder::active()->orderBy('sort_order')->get();
 
-        return view('dashboard', compact('applicant', 'requirements', 'announcements'));
+        return view('dashboard', compact('applicant', 'requirements', 'announcements', 'reminders'));
     }
 
     public function store(StoreApplicantRequest $request)

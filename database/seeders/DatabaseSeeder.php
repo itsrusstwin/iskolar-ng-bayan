@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RequirementSeeder::class,
             AnnouncementSeeder::class,
+            ReminderSeeder::class,
             SiteContentSeeder::class,
         ]);
     }

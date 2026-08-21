@@ -50,6 +50,9 @@
             <a href="{{ route('admin.announcements.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}">
                 <i class="bi bi-megaphone-fill"></i> <span>Announcements</span>
             </a>
+            <a href="{{ route('admin.reminders.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.reminders.*') ? 'active' : '' }}">
+                <i class="bi bi-exclamation-triangle-fill"></i> <span>Important Reminders</span>
+            </a>
             <a href="{{ route('admin.content.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.content.*') ? 'active' : '' }}">
                 <i class="bi bi-pencil-square"></i> <span>Page Content</span>
             </a>
@@ -196,6 +199,9 @@
             </a>
             <a href="{{ route('admin.announcements.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}">
                 <i class="bi bi-megaphone-fill"></i> <span>Announcements</span>
+            </a>
+            <a href="{{ route('admin.reminders.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.reminders.*') ? 'active' : '' }}">
+                <i class="bi bi-exclamation-triangle-fill"></i> <span>Important Reminders</span>
             </a>
             <a href="{{ route('admin.content.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.content.*') ? 'active' : '' }}">
                 <i class="bi bi-pencil-square"></i> <span>Page Content</span>

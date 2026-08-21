@@ -9,9 +9,7 @@
 
 <div class="row justify-content-start">
     <div class="col-lg-7">
-        <div class="card-flat p-4 p-md-5" style="border: none; box-shadow: var(--app-shadow-md); background:
-            radial-gradient(120% 180% at 100% -10%, rgba(232,163,61,.12), transparent 55%),
-            var(--surface-0);">
+        <div class="card-flat p-4 p-md-5">
             <h1 class="h5 fw-bold mb-4">New Announcement</h1>
 
             <form method="POST" action="{{ route('admin.announcements.store') }}">
@@ -32,9 +30,7 @@
                     <label class="form-check-label small" for="isPublished">Publish immediately (visible on the Home page)</label>
                 </div>
 
-                <button type="submit" class="btn btn-navy px-4 py-2 d-inline-flex align-items-center gap-2">
-                    <i class="bi bi-check2-circle"></i> Save Announcement
-                </button>
+                <button type="submit" class="btn btn-navy px-4 py-2">Save Announcement</button>
             </form>
         </div>
     </div>

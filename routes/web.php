@@ -25,6 +25,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ApplicantExportController;
+use App\Http\Controllers\ReminderController;
 
 
 
@@ -119,6 +120,16 @@ Route::middleware(['auth', 'admin', 'last_seen'])->prefix('admin')->group(functi
     Route::get('/announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('admin.announcements.edit');
     Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
+
+    Route::get('/reminders', [ReminderController::class, 'index'])->name('admin.reminders.index');
+    Route::get('/reminders/create', [ReminderController::class, 'create'])->name('admin.reminders.create');
+    Route::post('/reminders', [ReminderController::class, 'store'])->name('admin.reminders.store');
+    Route::get('/reminders/{reminder}/edit', [ReminderController::class, 'edit'])->name('admin.reminders.edit');
+    Route::put('/reminders/{reminder}', [ReminderController::class, 'update'])->name('admin.reminders.update');
+    Route::delete('/reminders/{reminder}', [ReminderController::class, 'destroy'])->name('admin.reminders.destroy');
+    Route::post('/reminders/{reminder}/toggle', [ReminderController::class, 'toggle'])->name('admin.reminders.toggle');
+    Route::post('/reminders/{reminder}/move-up', [ReminderController::class, 'moveUp'])->name('admin.reminders.move-up');
+    Route::post('/reminders/{reminder}/move-down', [ReminderController::class, 'moveDown'])->name('admin.reminders.move-down');
 
     Route::post('/applicants/{applicant}/verify-policy', [PolicyVerificationController::class, 'verify'])
         ->name('admin.verify-policy');
