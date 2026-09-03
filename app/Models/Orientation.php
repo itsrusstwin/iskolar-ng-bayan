@@ -16,6 +16,10 @@ class Orientation extends Model
         'attended_at',
     ];
 
+    protected $casts = [
+        'attended_at' => 'datetime',
+    ];
+
     public function applicant()
     {
         return $this->belongsTo(Applicant::class);

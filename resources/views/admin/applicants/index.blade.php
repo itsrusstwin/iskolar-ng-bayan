@@ -121,17 +121,17 @@
 
         @if ($applicants->isNotEmpty())
         <div class="admin-table-scroll admin-table-scroll--y">
-            <table class="table admin-table mb-0">
+            <table class="table admin-table admin-table--compact mb-0">
                 <thead>
                     <tr>
-                        <th class="ps-3" style="width: 40px;">
+                        <th class="ps-3 col-check">
                             <input type="checkbox" class="form-check-input" id="selectAll" onclick="toggleAll(this)">
                         </th>
-                        <th>Applicant</th>
-                        <th>Status</th>
-                        <th>Exam Schedule</th>
-                        <th>Orientation</th>
-                        <th class="text-end pe-3">Actions</th>
+                        <th class="col-applicant">Applicant</th>
+                        <th class="col-status">Status</th>
+                        <th class="col-exam">Exam Schedule</th>
+                        <th class="col-orientation">Orientation</th>
+                        <th class="text-end pe-3 col-actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -179,19 +179,19 @@
                                 <span class="text-muted-soft">—</span>
                             @endif
                         </td>
-                        <td class="text-end pe-3">
-                            <div class="d-inline-flex align-items-center gap-1">
-                                <button type="button" class="btn btn-sm btn-ghost btn-icon" style="width:30px;height:30px;" data-bs-toggle="collapse" data-bs-target="#detail-{{ $applicant->id }}" title="Quick view">
-                                    <i class="bi bi-eye" style="font-size:.8rem;"></i>
+                        <td class="text-end pe-3 col-actions">
+                            <div class="actions-wrap justify-content-end">
+                                <button type="button" class="btn-icon-sm" data-bs-toggle="collapse" data-bs-target="#detail-{{ $applicant->id }}" title="Quick view">
+                                    <i class="bi bi-eye"></i>
                                 </button>
-                                <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-sm btn-outline-navy d-inline-flex align-items-center gap-1" style="font-size:.75rem;">
-                                    Manage
+                                <a href="{{ route('applicants.show', $applicant) }}" class="btn-icon-sm" title="Manage">
+                                    <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <form method="POST" action="{{ route('admin.applicants.destroy', $applicant) }}" onsubmit="return confirm('Delete this student account? This will permanently remove their application and all related records.');">
+                                <form method="POST" action="{{ route('admin.applicants.destroy', $applicant) }}" onsubmit="return confirm('Delete this student account? This will permanently remove their application and all related records.');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-ghost btn-icon text-danger" style="width:30px;height:30px;" title="Delete">
-                                        <i class="bi bi-trash3" style="font-size:.8rem;"></i>
+                                    <button type="submit" class="btn-icon-sm btn-danger-outline" title="Delete">
+                                        <i class="bi bi-trash3"></i>
                                     </button>
                                 </form>
                             </div>

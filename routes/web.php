@@ -26,6 +26,7 @@ use App\Http\Controllers\SupportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ApplicantExportController;
 use App\Http\Controllers\ReminderController;
+use App\Http\Controllers\MasterListController;
 
 
 
@@ -104,6 +105,9 @@ Route::middleware(['auth', 'admin', 'last_seen'])->prefix('admin')->group(functi
 
     Route::get('/applicants', [ApplicantController::class, 'manage'])->name('admin.applicants.index');
     Route::delete('/applicants/{applicant}', [ApplicantController::class, 'destroy'])->name('admin.applicants.destroy');
+
+    // Master list — full applicant records with date / type filters
+    Route::get('/master-list', [MasterListController::class, 'index'])->name('admin.master-list.index');
 
     // Applicant export to Excel (step 1: select, step 2: pick fields, download CSV)
     Route::get('/export/applicants', [ApplicantExportController::class, 'select'])->name('admin.export.applicants');

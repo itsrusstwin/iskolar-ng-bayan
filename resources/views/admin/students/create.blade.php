@@ -80,11 +80,11 @@
                                     <p class="small text-muted-soft mb-0 text-truncate" style="font-size:.75rem; max-width:220px;">
                                         <i class="bi bi-envelope"></i> {{ $account->email }}
                                     </p>
-                                    <div class="d-flex align-items-center gap-1 mt-1">
-                                        <code class="small" style="font-size:.72rem; color: var(--text-500);" id="password-{{ $account->id }}">
+                                    <div class="d-flex align-items-center gap-1 mt-1" style="min-width:0; max-width:220px;">
+                                        <code class="small text-truncate" style="font-size:.72rem; color: var(--text-500); min-width:0; max-width:calc(100% - 24px);" id="password-{{ $account->id }}">
                                             {{ $account->password }}
                                         </code>
-                                        <button type="button" class="btn btn-link p-0 text-muted-soft small"
+                                        <button type="button" class="btn btn-link p-0 text-muted-soft small flex-shrink-0"
                                                 style="font-size:.75rem; text-decoration:none;"
                                                 onclick="togglePassword('{{ $account->id }}')" title="Show / hide password">
                                             <i class="bi bi-eye"></i>

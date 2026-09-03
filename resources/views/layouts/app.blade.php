@@ -39,6 +39,9 @@
             <a href="{{ route('admin.applicants.index', ['status' => 'scholars']) }}" class="admin-sidebar__link {{ request('status') === 'scholars' ? 'active' : '' }}">
                 <i class="bi bi-award-fill"></i> <span>Scholars</span>
             </a>
+            <a href="{{ route('admin.master-list.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.master-list.*') ? 'active' : '' }}">
+                <i class="bi bi-clipboard-data-fill"></i> <span>Master List</span>
+            </a>
 
             <span class="admin-sidebar__label mt-3">Management</span>
             <a href="{{ route('admin.students.create') }}" class="admin-sidebar__link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
@@ -189,6 +192,9 @@
             </a>
             <a href="{{ route('admin.applicants.index', ['status' => 'scholars']) }}" class="admin-sidebar__link {{ request('status') === 'scholars' ? 'active' : '' }}">
                 <i class="bi bi-award-fill"></i> <span>Scholars</span>
+            </a>
+            <a href="{{ route('admin.master-list.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.master-list.*') ? 'active' : '' }}">
+                <i class="bi bi-clipboard-data-fill"></i> <span>Master List</span>
             </a>
             <span class="admin-sidebar__label mt-3">Management</span>
             <a href="{{ route('admin.students.create') }}" class="admin-sidebar__link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
