@@ -74,13 +74,28 @@
 <div class="admin-panel">
     <div class="admin-panel__header d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 flex-wrap">
         <div>
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
                 <h2 class="h6 fw-bold mb-0">Applicants <span class="badge-soft-navy ms-1">{{ number_format($applicants->count()) }}</span></h2>
+                @if ($activeGroup)
+                    <a href="{{ route('admin.applicants.index') }}" class="badge-soft-gold text-decoration-none" title="Clear KPI filter">
+                        <i class="bi bi-funnel-fill me-1"></i>{{ \App\Services\AdminDashboardService::PROGRESS_LABELS[$activeGroup] ?? ucfirst($activeGroup) }}
+                        <i class="bi bi-x-lg ms-1"></i>
+                    </a>
+                @endif
             </div>
-            <p class="small text-muted-soft mb-0 mt-1">Select applicants below to schedule the exam or orientation.</p>
+            <p class="small text-muted-soft mb-0 mt-1">
+                @if ($activeGroup)
+                    Showing applicants in the <strong>{{ \App\Services\AdminDashboardService::PROGRESS_LABELS[$activeGroup] ?? $activeGroup }}</strong> group.
+                @else
+                    Select applicants below to schedule the exam or orientation.
+                @endif
+            </p>
         </div>
 
         <form method="GET" action="{{ route('admin.applicants.index') }}" class="d-flex gap-2 flex-wrap align-items-center">
+            @if ($activeGroup)
+                <input type="hidden" name="group" value="{{ $activeGroup }}">
+            @endif
             <div class="admin-search">
                 <div class="input-group input-group-sm">
                     <span class="input-group-text border-end-0"><i class="bi bi-search"></i></span>
@@ -187,7 +202,7 @@
                                 <a href="{{ route('applicants.show', $applicant) }}" class="btn-icon-sm" title="Manage">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <form method="POST" action="{{ route('admin.applicants.destroy', $applicant) }}" onsubmit="return confirm('Delete this student account? This will permanently remove their application and all related records.');" class="d-inline">
+                                <form method="POST" action="{{ route('admin.applicants.destroy', $applicant) }}" onsubmit="return confirm('Archive this student account? They will be kept in the Master List archive and can no longer log in.');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn-icon-sm btn-danger-outline" title="Delete">

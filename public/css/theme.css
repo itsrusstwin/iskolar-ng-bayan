@@ -600,11 +600,15 @@ a { text-decoration: none; }
   justify-content: space-between;
   gap: .85rem;
   align-items: flex-start;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 .ml-card2__list dt {
   font-size: .73rem;
   color: var(--text-500);
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 0;
   margin: 0;
   font-weight: 600;
 }
@@ -615,6 +619,7 @@ a { text-decoration: none; }
   margin: 0;
   text-align: right;
   overflow-wrap: anywhere;
+  min-width: 0;
 }
 .ml-card2__empty {
   font-size: .8rem;
@@ -628,6 +633,12 @@ a { text-decoration: none; }
 .ml-card2__empty i {
   color: var(--text-500);
   font-size: 1rem;
+}
+.ml-card2__note {
+  font-size: .72rem;
+  color: var(--text-500);
+  font-style: italic;
+  margin-top: .15rem;
 }
 
 /* Progress bar inside cards (Requirements) */
@@ -849,6 +860,19 @@ a { text-decoration: none; }
 .admin-badge-muted { background: var(--surface-100); color: var(--text-500); }
 .admin-badge-exam { background: #EDF2FA; color: #2c65ac; }
 .admin-badge-pending { background: var(--gold-100); color: #b9770f; }
+.admin-badge-archived { background: var(--surface-100); color: var(--text-600); border: 1px solid var(--surface-border); }
+
+/* Archived master-list rows */
+.ml-archived td { background: rgba(20, 33, 61, 0.03); }
+.ml-archived .applicant-name { color: var(--text-500); }
+.ml-archived .online-dot { display: none; }
+.ml-archived .ml-expand,
+.admin-table--master .ml-archived .btn-icon-sm { background: var(--surface-100); border-color: var(--surface-border); color: var(--text-900); }
+.ml-archived .ml-expand:hover,
+.admin-table--master .ml-archived .btn-icon-sm:hover { background: var(--surface-100); border-color: var(--text-500); color: var(--text-900); }
+.ml-archived + .ml-detail-row .ml-detail__inner { border-left-color: #9fb0c7; }
+
+.dot-sep { margin: 0 .35rem; color: var(--text-400); }
 
 .admin-avatar {
   width: 36px;
@@ -906,12 +930,13 @@ a { text-decoration: none; }
   background: var(--surface-0);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: .65rem;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
   color: var(--text-900);
+  text-align: center;
   transition: all .15s ease;
   height: 100%;
-  min-height: 128px;
 }
 .admin-quick-action:hover {
   border-color: var(--ink-600);
@@ -934,23 +959,29 @@ a { text-decoration: none; }
 .admin-quick-action__label {
   min-width: 0;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .1rem;
 }
 .admin-quick-action__label .d-block {
   white-space: normal;
   overflow-wrap: break-word;
-  line-height: 1.25;
+  line-height: 1.3;
+  color: var(--ink-800);
+}
+.admin-quick-action__label .text-muted-soft {
+  line-height: 1.4;
 }
 
-/* Quick Actions grid: 2-up on narrow panels, 4-up once there's real room.
-   Stacked icon-over-label cards mean each card gets the panel's full
-   column width for text, so titles never need to be clipped. */
+/* Quick Actions grid: fixed 2x2 so every row of cards fills the panel
+   height with no dead space below, and tall enough for centered content. */
 .admin-quick-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: 1rem;
-}
-@media (min-width: 860px) {
-  .admin-quick-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  height: 100%;
 }
 
 .admin-table thead th {
@@ -1765,6 +1796,10 @@ a { text-decoration: none; }
 [data-theme="dark"] .admin-badge-muted { background: var(--surface-100); color: var(--text-500); }
 [data-theme="dark"] .admin-badge-exam { background: #16273d; color: #8ab4e8; }
 [data-theme="dark"] .admin-badge-pending { color: var(--gold-500); }
+[data-theme="dark"] .admin-badge-archived { background: var(--surface-100); color: var(--text-500); border-color: var(--surface-border); }
+[data-theme="dark"] .ml-archived td { background: rgba(255, 255, 255, 0.02); }
+[data-theme="dark"] .ml-archived .applicant-name { color: var(--text-500); }
+[data-theme="dark"] .dot-sep { color: var(--text-500); }
 
 [data-theme="dark"] .admin-activity-item {
   border-color: var(--surface-border);
@@ -2522,4 +2557,398 @@ a { text-decoration: none; }
 
 /* Muted text helper */
 .text-muted-soft { color: var(--text-500) !important; }
+
+/* =========================================================
+   DARK MODE — BUTTON VISIBILITY PASS
+   Brighter fills, crisp borders, soft glows so every button
+   reads clearly against the dark surfaces.
+   ========================================================= */
+[data-theme="dark"] .btn { box-shadow: none; }
+
+/* Primary navy button — vivid royal-blue gradient + glow */
+[data-theme="dark"] .btn-navy {
+  background: linear-gradient(135deg, #1f4a86 0%, #3f7ac6 100%);
+  border: 1px solid rgba(138, 180, 232, .45);
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(63, 122, 198, .55);
+}
+[data-theme="dark"] .btn-navy:hover,
+[data-theme="dark"] .btn-navy:focus-visible {
+  background: linear-gradient(135deg, #2a5ba0 0%, #4c86d0 100%);
+  border-color: rgba(160, 200, 255, .65);
+  color: #fff;
+  box-shadow: 0 6px 20px -6px rgba(70, 135, 215, .7);
+}
+[data-theme="dark"] .btn-navy:active {
+  background: linear-gradient(135deg, #18406f 0%, #3567ab 100%);
+  box-shadow: 0 2px 8px -4px rgba(63, 122, 198, .5);
+}
+[data-theme="dark"] .btn-navy:disabled,
+[data-theme="dark"] .btn-navy.disabled {
+  background: var(--surface-100);
+  border-color: var(--surface-border);
+  color: var(--text-500);
+  box-shadow: none;
+}
+
+/* Gold/brand button — bright amber so it still shines on dark */
+[data-theme="dark"] .btn-brand {
+  background: linear-gradient(135deg, #f6c578 0%, #dfa13a 100%);
+  border: 1px solid rgba(255, 220, 150, .55);
+  color: #241a06;
+  box-shadow: 0 4px 14px -5px rgba(232, 163, 61, .55);
+}
+[data-theme="dark"] .btn-brand:hover,
+[data-theme="dark"] .btn-brand:focus-visible {
+  background: linear-gradient(135deg, #ffd48a 0%, #e8a83f 100%);
+  border-color: rgba(255, 230, 170, .75);
+  color: #241a06;
+  box-shadow: 0 6px 20px -6px rgba(232, 180, 80, .7);
+}
+[data-theme="dark"] .btn-brand:active {
+  box-shadow: 0 2px 8px -4px rgba(232, 180, 80, .5);
+}
+
+/* Outline navy — light-blue border/text instead of invisible dark navy */
+[data-theme="dark"] .btn-outline-navy {
+  border-color: #8ab4e8;
+  color: #a8c8ec;
+  background: rgba(138, 180, 232, .06);
+}
+[data-theme="dark"] .btn-outline-navy:hover,
+[data-theme="dark"] .btn-outline-navy:focus-visible {
+  background: linear-gradient(135deg, #1f4a86 0%, #3f7ac6 100%);
+  border-color: rgba(138, 180, 232, .55);
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(63, 122, 198, .55);
+}
+
+/* Icon buttons — visible border + bright glyph, glowing navy on hover */
+[data-theme="dark"] .btn-icon {
+  background: var(--surface-100);
+  border: 1px solid var(--surface-border);
+  color: #a8c8ec;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+}
+[data-theme="dark"] .btn-icon:hover {
+  background: linear-gradient(135deg, #1f4a86 0%, #3f7ac6 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(63, 122, 198, .6);
+}
+
+/* Icon buttons inside the master list */
+[data-theme="dark"] .admin-table--master .btn-icon-sm {
+  background: var(--surface-100);
+  border-color: var(--surface-border);
+  color: #a8c8ec;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+}
+[data-theme="dark"] .admin-table--master .btn-icon-sm:hover,
+[data-theme="dark"] .admin-table--master .btn-icon-sm.is-open {
+  background: linear-gradient(135deg, #1f4a86 0%, #3f7ac6 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(63, 122, 198, .6);
+}
+
+/* Icon buttons inside the compact tables (view/edit/delete rows) */
+[data-theme="dark"] .admin-table--compact .col-actions .btn-icon-sm {
+  background: var(--surface-100);
+  border-color: var(--surface-border);
+  color: #a8c8ec;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+}
+[data-theme="dark"] .admin-table--compact .col-actions .btn-icon-sm:hover {
+  background: linear-gradient(135deg, #1f4a86 0%, #3f7ac6 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(63, 122, 198, .6);
+}
+[data-theme="dark"] .admin-table--compact .col-actions .btn-icon-sm.btn-danger-outline {
+  background: rgba(224, 82, 82, .12);
+  border-color: rgba(240, 160, 160, .5);
+  color: #f0a0a0;
+}
+[data-theme="dark"] .admin-table--compact .col-actions .btn-icon-sm.btn-danger-outline:hover {
+  background: linear-gradient(135deg, #d64545, #ef5b5b);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(239, 91, 91, .6);
+}
+
+/* Ghost/quiet buttons — keep them subtle but discoverable */
+[data-theme="dark"] .btn-ghost { color: var(--text-500); }
+[data-theme="dark"] .btn-ghost:hover {
+  background: var(--surface-100);
+  color: var(--text-900);
+  border-color: var(--surface-border);
+}
+
+/* Bootstrap danger / success — brighter fills + glow so they stand out */
+[data-theme="dark"] .btn-danger {
+  background: linear-gradient(135deg, #d64545 0%, #ef5b5b 100%);
+  border: 1px solid rgba(255, 160, 160, .4);
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(239, 91, 91, .5);
+}
+[data-theme="dark"] .btn-danger:hover {
+  background: linear-gradient(135deg, #e05252 0%, #f56b6b 100%);
+  border-color: rgba(255, 180, 180, .6);
+  box-shadow: 0 6px 18px -6px rgba(245, 107, 107, .65);
+}
+[data-theme="dark"] .btn-success {
+  background: linear-gradient(135deg, #259252 0%, #33b26a 100%);
+  border: 1px solid rgba(140, 212, 168, .45);
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(51, 178, 106, .5);
+}
+[data-theme="dark"] .btn-success:hover {
+  background: linear-gradient(135deg, #2ca35c 0%, #3dbf77 100%);
+  border-color: rgba(160, 230, 190, .6);
+  box-shadow: 0 6px 18px -6px rgba(61, 191, 119, .65);
+}
+
+/* Bootstrap outline variants — light colored borders instead of dim ones */
+[data-theme="dark"] .btn-outline-danger {
+  border-color: #f0a0a0;
+  color: #f0a0a0;
+  background: rgba(224, 82, 82, .08);
+}
+[data-theme="dark"] .btn-outline-danger:hover {
+  background: linear-gradient(135deg, #d64545 0%, #ef5b5b 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(239, 91, 91, .55);
+}
+[data-theme="dark"] .btn-outline-success {
+  border-color: #8cd4a8;
+  color: #8cd4a8;
+  background: rgba(51, 178, 106, .08);
+}
+[data-theme="dark"] .btn-outline-success:hover {
+  background: linear-gradient(135deg, #259252 0%, #33b26a 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(51, 178, 106, .55);
+}
+
+/* =========================================================
+   SITE-WIDE MOTION
+   Light, professional movement: soft rise-ins, staggered
+   card entrances, and gentle hover micro-interactions.
+   Everything pauses for users who prefer reduced motion.
+   ========================================================= */
+@keyframes kfRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes kfPop {
+  0%   { opacity: 0; transform: scale(.9); }
+  60%  { transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes kfPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, .5); }
+  70%  { box-shadow: 0 0 0 9px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+@keyframes kfShine {
+  0%   { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(220%) skewX(-18deg); }
+}
+
+/* Page + panels drift in once, softly */
+body { animation: kfFadeIn .35s ease; }
+@keyframes kfFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.row > [class*="col-"] > .admin-panel,
+.row > [class*="col-"] > .admin-kpi-card,
+.row > [class*="col-"] > .card-flat {
+  animation: kfRise .5s cubic-bezier(.22, .61, .36, 1) both;
+}
+.row > [class*="col-"]:nth-child(1) > .admin-panel,
+.row > [class*="col-"]:nth-child(1) > .admin-kpi-card,
+.row > [class*="col-"]:nth-child(1) > .card-flat { animation-delay: .04s; }
+.row > [class*="col-"]:nth-child(2) > .admin-panel,
+.row > [class*="col-"]:nth-child(2) > .admin-kpi-card,
+.row > [class*="col-"]:nth-child(2) > .card-flat { animation-delay: .08s; }
+.row > [class*="col-"]:nth-child(3) > .admin-panel,
+.row > [class*="col-"]:nth-child(3) > .admin-kpi-card,
+.row > [class*="col-"]:nth-child(3) > .card-flat { animation-delay: .12s; }
+.row > [class*="col-"]:nth-child(4) > .admin-panel,
+.row > [class*="col-"]:nth-child(4) > .admin-kpi-card,
+.row > [class*="col-"]:nth-child(4) > .card-flat { animation-delay: .16s; }
+.row > [class*="col-"]:nth-child(5) > .admin-panel,
+.row > [class*="col-"]:nth-child(5) > .admin-kpi-card,
+.row > [class*="col-"]:nth-child(5) > .card-flat { animation-delay: .20s; }
+.row > [class*="col-"]:nth-child(6) > .admin-panel,
+.row > [class*="col-"]:nth-child(6) > .admin-kpi-card,
+.row > [class*="col-"]:nth-child(6) > .card-flat { animation-delay: .24s; }
+
+/* Quick Actions pop in left-to-right */
+.admin-quick-actions > .admin-quick-action { animation: kfRise .45s cubic-bezier(.22, .61, .36, 1) both; }
+.admin-quick-actions > .admin-quick-action:nth-child(1) { animation-delay: .10s; }
+.admin-quick-actions > .admin-quick-action:nth-child(2) { animation-delay: .18s; }
+.admin-quick-actions > .admin-quick-action:nth-child(3) { animation-delay: .26s; }
+.admin-quick-actions > .admin-quick-action:nth-child(4) { animation-delay: .34s; }
+
+/* Badges, chips, and avatars pop in on first paint */
+.badge-soft-navy,
+.badge-soft-gold,
+.admin-badge,
+.filter-chip,
+.avatar-wrap,
+.ml-card2__progress-fill {
+  animation: kfPop .3s ease both;
+}
+
+/* KPI cards lift + glow on hover, icon tilts playfully */
+.admin-kpi-card {
+  transition: transform .25s cubic-bezier(.22, .61, .36, 1),
+              box-shadow .25s ease, border-color .25s ease;
+}
+.admin-kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--app-shadow-lg);
+  border-color: rgba(28, 79, 143, .25);
+}
+.admin-kpi-icon { transition: transform .25s ease; }
+.admin-kpi-card:hover .admin-kpi-icon { transform: scale(1.12) rotate(-4deg); }
+
+/* Quick action cards deepen + icon nudges on hover */
+.admin-quick-action__icon { transition: transform .25s ease; }
+.admin-quick-action:hover .admin-quick-action__icon { transform: scale(1.12); }
+
+/* Sidebar links: icon slides right on hover */
+.admin-sidebar__link { transition: background-color .2s ease, color .2s ease; }
+.admin-sidebar__link i { transition: transform .2s ease; }
+.admin-sidebar__link:hover i { transform: translateX(3px); }
+
+/* Primary buttons get a subtle shine sweep on hover */
+.btn-navy, .btn-brand {
+  position: relative;
+  overflow: hidden;
+}
+.btn-navy::after, .btn-brand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .35), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+  pointer-events: none;
+}
+.btn-navy:hover::after, .btn-brand:hover::after {
+  animation: kfShine .7s ease;
+}
+
+/* Online presence dots breathe */
+.online-dot { animation: kfPulse 2s ease-out infinite; }
+.online-dot:hover { animation-play-state: paused; }
+
+/* Smoothly reveal table cards on the master list */
+.admin-table--master .ml-details-card {
+  animation: kfFadeIn .3s ease;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* =========================================================
+   PAGE TRANSITIONS
+   Clicking Login / Get Started sweeps the current page out
+   to the left, then the login page slides in from the left
+   edge of the viewport like a door opening.
+   ========================================================= */
+@keyframes kfSlideInLeft {
+  from { opacity: .4; transform: translateX(-100vw); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes kfExitLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-64px); }
+}
+
+/* Login page: the whole stage glides in from the left edge */
+.login-wrap { overflow-x: clip; }
+.login-stage {
+  animation: kfSlideInLeft .7s cubic-bezier(.19, 1, .22, 1) both;
+  will-change: transform, opacity;
+}
+/* The two halves rise and settle in after the slide for a layered feel */
+.login-stage .col-lg-6 {
+  animation: kfRise .5s cubic-bezier(.22, .61, .36, 1) both;
+}
+.login-stage .col-lg-6:nth-child(1) { animation-delay: .16s; }
+.login-stage .col-lg-6:nth-child(2) { animation-delay: .24s; }
+
+/* Home / public pages sweep left before the login page arrives */
+body.page-exit-left {
+  animation: kfExitLeft .3s cubic-bezier(.55, .06, .68, .19) both;
+}
+
+/* =========================================================
+   AFTER LOGIN
+   Submitting "Login to Your Space" slides the login page out
+   to the right, then the dashboard page glides in from the
+   right edge and its cards cascade into place.
+   ========================================================= */
+@keyframes kfSlideInRight {
+  from { opacity: .4; transform: translateX(100vw); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes kfExitRight {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: .4; transform: translateX(100vw); }
+}
+
+/* Dashboard shells enter from the right */
+body.app-enter {
+  animation: kfSlideInRight .6s cubic-bezier(.19, 1, .22, 1) both;
+}
+
+/* Login page exits to the right toward the dashboard */
+body.page-exit-right {
+  animation: kfExitRight .32s cubic-bezier(.55, .06, .68, .19) both;
+}
+
+/* Keep off-screen slides from ever flashing scrollbars */
+html, body { overflow-x: clip; }
+
+/* Clickable KPI cards keep their exact on-hover motion as links */
+a.admin-kpi-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+a.admin-kpi-card:hover,
+a.admin-kpi-card:focus-visible {
+  color: inherit;
+  outline: none;
+}
+a.admin-kpi-card:focus-visible {
+  border-color: var(--gold-500);
+  box-shadow: var(--shadow-tight), 0 0 0 .2rem rgb(232 163 61 / .25);
+}
+
+/* Compact sized selects inside filter bars. The theme's larger form-select
+   padding (.65rem/.85rem) makes native <select> controls too wide for the
+   narrow filter columns, so option text like "All records" gets clipped by
+   the rounded admin panel (overflow: hidden). */
+.input-group-sm .form-select {
+  padding: .3rem .55rem;
+  font-size: .85rem;
+  min-width: 0;
+}
+select.form-select {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 

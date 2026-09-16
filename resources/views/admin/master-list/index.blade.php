@@ -8,15 +8,15 @@
     <div>
         <h2 class="h5 fw-bold mb-1 d-flex align-items-center gap-2">
             <span class="admin-kpi-icon admin-kpi-icon--navy" style="width:36px;height:36px;font-size:1rem;flex-shrink:0;">
-                <i class="bi bi-clipboard-data"></i>
+                <i class="bi bi-box2-fill"></i>
             </span>
-            Master List
+            Master List Archive
         </h2>
         <p class="small text-muted-soft mb-0">
-            Every applicant on record, with their full pipeline status — filter by account creation date, applicant type, or name.
+            The permanent record of every applicant — including archived student accounts — with their full pipeline journey.
         </p>
     </div>
-    @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['search']))
+    @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
         <a href="{{ route('admin.master-list.index') }}" class="btn btn-sm btn-ghost text-muted-soft d-inline-flex align-items-center gap-1 flex-shrink-0">
             <i class="bi bi-x-lg"></i> Clear filters
         </a>
@@ -27,26 +27,42 @@
 <div class="admin-panel mb-4">
     <div class="admin-panel__body">
         <form method="GET" action="{{ route('admin.master-list.index') }}" id="masterListForm" class="row g-3 align-items-end">
-            <div class="col-12 col-md-6 col-xl-3">
+            <div class="col-12 col-md-6 col-xl-2">
                 <label class="form-label small fw-semibold mb-1"><i class="bi bi-calendar-week me-1"></i>Account Created Date</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text border-end-0"><i class="bi bi-calendar3"></i></span>
                     <input type="date" name="created_date" value="{{ $filters['created_date'] ?? '' }}" class="form-control border-start-0">
                 </div>
-                <div class="form-text mt-1" style="font-size:.68rem;">Shows applicants whose account was created on this date.</div>
             </div>
             <div class="col-12 col-md-6 col-xl-3">
-                <label class="form-label small fw-semibold mb-1"><i class="bi bi-tag me-1"></i>Applicant Type</label>
+                <label class="form-label small fw-semibold mb-1"><i class="bi bi-tag me-1"></i>Applicant Type &amp; Archive</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text border-end-0"><i class="bi bi-funnel"></i></span>
                     <select name="program_type" class="form-select form-select-sm border-start-0">
-                        <option value="">All types</option>
-                        <option value="new" {{ ($filters['program_type'] ?? '') === 'new' ? 'selected' : '' }}>New Applicant</option>
-                        <option value="renewal" {{ ($filters['program_type'] ?? '') === 'renewal' ? 'selected' : '' }}>Renewal</option>
+                        <option value="" {{ !$filters['program_type'] && $filters['archive_status'] === 'all' ? 'selected' : '' }}>All</option>
+                        <optgroup label="Program Type">
+                            <option value="new" {{ $filters['program_type'] === 'new' ? 'selected' : '' }}>New Applicant</option>
+                            <option value="renewal" {{ $filters['program_type'] === 'renewal' ? 'selected' : '' }}>Renewal</option>
+                        </optgroup>
+                        <optgroup label="Archive Status">
+                            <option value="active" {{ $filters['archive_status'] === 'active' ? 'selected' : '' }}>Active accounts</option>
+                            <option value="archived" {{ $filters['archive_status'] === 'archived' ? 'selected' : '' }}>Archived accounts</option>
+                        </optgroup>
                     </select>
                 </div>
             </div>
-            <div class="col-12 col-md-6 col-xl-4">
+            <div class="col-12 col-md-6 col-xl-2">
+                <label class="form-label small fw-semibold mb-1"><i class="bi bi-flag me-1"></i>Status</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text border-end-0"><i class="bi bi-check-circle"></i></span>
+                    <select name="status" class="form-select form-select-sm border-start-0" onchange="this.form.submit()">
+                        @foreach ($statuses as $key => $label)
+                            <option value="{{ $key }}" {{ ($filters['status'] ?? 'all') === $key ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
                 <label class="form-label small fw-semibold mb-1"><i class="bi bi-search me-1"></i>Search</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text border-end-0"><i class="bi bi-search"></i></span>
@@ -57,7 +73,7 @@
                 <button type="submit" class="btn btn-sm btn-navy flex-fill d-inline-flex align-items-center justify-content-center gap-1">
                     <i class="bi bi-filter"></i> Apply
                 </button>
-                @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['search']))
+                @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
                     <a href="{{ route('admin.master-list.index') }}" class="btn btn-sm btn-outline-navy d-inline-flex align-items-center justify-content-center">
                         <i class="bi bi-arrow-counterclockwise"></i>
                     </a>
@@ -69,16 +85,25 @@
 
 <!-- Summary -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-xl-3">
+    <div class="col-6 col-xl">
         <div class="admin-kpi admin-kpi--gradient" style="background: linear-gradient(135deg, #14213D, #1a2d50);">
-            <span class="admin-kpi__icon" style="background: rgba(255,255,255,.15); color:#fff;"><i class="bi bi-people-fill"></i></span>
+            <span class="admin-kpi__icon" style="background: rgba(255,255,255,.15); color:#fff;"><i class="bi bi-box2-fill"></i></span>
             <div>
                 <p class="admin-kpi__value text-white">{{ number_format($summary['total']) }}</p>
-                <p class="admin-kpi__label text-white-50">Total Applicants</p>
+                <p class="admin-kpi__label text-white-50">Total Records</p>
             </div>
         </div>
     </div>
-    <div class="col-6 col-xl-3">
+    <div class="col-6 col-xl">
+        <div class="admin-kpi admin-kpi--gradient" style="background: linear-gradient(135deg, #2c65ac, #1f4d85);">
+            <span class="admin-kpi__icon" style="background: rgba(255,255,255,.15); color:#fff;"><i class="bi bi-people-fill"></i></span>
+            <div>
+                <p class="admin-kpi__value text-white">{{ number_format($summary['active']) }}</p>
+                <p class="admin-kpi__label text-white-50">Active Accounts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl">
         <div class="admin-kpi admin-kpi--gradient" style="background: linear-gradient(135deg, #E8A33D, #d18a1f);">
             <span class="admin-kpi__icon" style="background: rgba(255,255,255,.2); color:#fff;"><i class="bi bi-hourglass-split"></i></span>
             <div>
@@ -87,21 +112,21 @@
             </div>
         </div>
     </div>
-    <div class="col-6 col-xl-3">
-        <div class="admin-kpi admin-kpi--gradient" style="background: linear-gradient(135deg, #2c65ac, #1f4d85);">
-            <span class="admin-kpi__icon" style="background: rgba(255,255,255,.15); color:#fff;"><i class="bi bi-patch-check-fill"></i></span>
-            <div>
-                <p class="admin-kpi__value text-white">{{ number_format($summary['qualified']) }}</p>
-                <p class="admin-kpi__label text-white-50">Qualified</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-xl-3">
+    <div class="col-6 col-xl">
         <div class="admin-kpi admin-kpi--gradient" style="background: linear-gradient(135deg, #1E6B3C, #15512d);">
             <span class="admin-kpi__icon" style="background: rgba(255,255,255,.15); color:#fff;"><i class="bi bi-cash-coin"></i></span>
             <div>
                 <p class="admin-kpi__value text-white">{{ number_format($summary['released']) }}</p>
                 <p class="admin-kpi__label text-white-50">Scholarship Released</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl">
+        <div class="admin-kpi admin-kpi--gradient" style="background: linear-gradient(135deg, #55606e, #3d4653);">
+            <span class="admin-kpi__icon" style="background: rgba(255,255,255,.15); color:#fff;"><i class="bi bi-archive-fill"></i></span>
+            <div>
+                <p class="admin-kpi__value text-white">{{ number_format($summary['archived']) }}</p>
+                <p class="admin-kpi__label text-white-50">Archived Accounts</p>
             </div>
         </div>
     </div>
@@ -112,10 +137,10 @@
     <div class="admin-panel__header d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 flex-wrap">
         <div>
             <h2 class="h6 fw-bold mb-0 d-flex align-items-center gap-2">
-                <i class="bi bi-table"></i> Applicant Records
+                <i class="bi bi-archive"></i> Archived Records
                 <span class="badge-soft-navy ms-1">{{ number_format($applicants->count()) }}</span>
             </h2>
-            <p class="small text-muted-soft mb-0 mt-1">Click the chevron to expand a full record.</p>
+            <p class="small text-muted-soft mb-0 mt-1">Click the chevron to expand a full record. Archived accounts are kept here for record.</p>
         </div>
     </div>
     <div class="admin-panel__body admin-panel__body--flush">
@@ -124,10 +149,10 @@
                 <span class="empty-state__icon"><i class="bi bi-clipboard-x"></i></span>
                 <h6>No applicants found</h6>
                 <p>
-                    @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['search']))
-                        No applicants match the current filters. Try a different date or clear the filters.
+                    @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
+                        No records match the current filters. Try a different date or clear the filters.
                     @else
-                        There are no applicant records yet.
+                        The archive is empty — no applicant records yet.
                     @endif
                 </p>
             </div>
@@ -160,8 +185,10 @@
                         $payoutTotal = $applicant->payouts->sum('amount');
                         $accountCreated = $applicant->user?->created_at ?? $applicant->created_at;
                         $disqualification = $applicant->disqualifications->first();
+                        $archived = (bool) $applicant->deleted_at;
+                        $deletedAt = $applicant->deleted_at;
                     @endphp
-                    <tr class="applicant-row">
+                    <tr class="applicant-row {{ $archived ? 'ml-archived' : '' }}">
                         <td class="ps-3 col-ml-applicant">
                             <div class="d-flex align-items-center gap-2" style="min-width:0;">
                                 <span class="avatar-wrap flex-shrink-0">
@@ -204,7 +231,11 @@
                             @endif
                         </td>
                         <td class="col-ml-status">
-                            <span class="admin-badge {{ $dashboard->statusBadgeClass($applicant->status) }}">{{ $dashboard->statusDisplayLabel($applicant->status) }}</span>
+                            @if ($archived)
+                                <span class="admin-badge-archived">Archived</span>
+                            @else
+                                <span class="admin-badge {{ $dashboard->statusBadgeClass($applicant->status) }}">{{ $dashboard->statusDisplayLabel($applicant->status) }}</span>
+                            @endif
                         </td>
                         <td class="text-end pe-3 col-ml-toggle">
                             <button type="button" class="btn-icon-sm ml-expand" data-bs-toggle="collapse" data-bs-target="#ml-detail-{{ $applicant->id }}" aria-expanded="false" title="View full record">
@@ -234,7 +265,11 @@
                                         </div>
                                         <div class="ml-profile-banner__badges">
                                             <span class="badge {{ $type === 'renewal' ? 'badge-soft-gold' : 'badge-soft-navy' }}">{{ $type === 'renewal' ? 'Renewal' : 'New Applicant' }}</span>
-                                            <span class="admin-badge {{ $dashboard->statusBadgeClass($applicant->status) }}">{{ $dashboard->statusDisplayLabel($applicant->status) }}</span>
+                                            @if ($archived)
+                                                <span class="admin-badge-archived">Archived</span>
+                                            @else
+                                                <span class="admin-badge {{ $dashboard->statusBadgeClass($applicant->status) }}">{{ $dashboard->statusDisplayLabel($applicant->status) }}</span>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -378,9 +413,12 @@
                                                 @if ($waste->count())
                                                     <dl class="ml-card2__list">
                                                         <div><dt>Status</dt><dd>{!! $wasteCompliant ? '<span class="admin-badge admin-badge-success">Compliant</span>' : '<span class="admin-badge admin-badge-pending">Pending</span>' !!}</dd></div>
-                                                        @foreach ($waste as $w)
-                                                            <div><dt>Sem {{ $w->semester }}</dt><dd>{{ $w->kilos_submitted ?? 0 }}/{{ $w->kilos_required ?? 0 }} kg</dd></div>
+                                                        @foreach ($waste->take(4) as $w)
+                                                            <div><dt>{{ $w->semester }}</dt><dd>{{ number_format((float) $w->kilos_submitted, 1) }}/{{ number_format((float) $w->kilos_required, 1) }} kg</dd></div>
                                                         @endforeach
+                                                        @if ($waste->count() > 4)
+                                                            <div class="ml-card2__note">+ {{ $waste->count() - 4 }} earlier {{ Str::plural('semester', $waste->count() - 4) }} on record</div>
+                                                        @endif
                                                     </dl>
                                                 @else
                                                     <p class="ml-card2__empty"><i class="bi bi-hourglass"></i> No waste compliance record</p>
@@ -449,10 +487,20 @@
                                         <div class="ml-detail__footer-meta">
                                             <i class="bi bi-clock-history"></i>
                                             Account created {{ $accountCreated?->format('M d, Y \a\t h:i A') ?? '—' }}
+                                            @if ($archived)
+                                                <span class="dot-sep">•</span>
+                                                <span class="text-danger"><i class="bi bi-archive me-1"></i>Archived {{ $deletedAt?->format('M d, Y \a\t h:i A') ?? '—' }}</span>
+                                            @endif
                                         </div>
-                                        <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-sm btn-navy d-inline-flex align-items-center gap-1">
-                                            <i class="bi bi-arrow-up-right"></i> Open full profile
-                                        </a>
+                                        @if ($archived)
+                                            <span class="btn btn-sm btn-outline-navy d-inline-flex align-items-center gap-1" style="cursor:default;">
+                                                <i class="bi bi-archive-fill"></i> Record archived — read-only
+                                            </span>
+                                        @else
+                                            <a href="{{ route('applicants.show', $applicant) }}" class="btn btn-sm btn-navy d-inline-flex align-items-center gap-1">
+                                                <i class="bi bi-arrow-up-right"></i> Open full profile
+                                            </a>
+                                        @endif
                                     </div>
 
                                 </div>

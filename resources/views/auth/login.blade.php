@@ -14,8 +14,8 @@
 </head>
 <body class="bg-surface">
 
-    <div class="container-fluid p-0">
-        <div class="row g-0 min-vh-100">
+    <div class="container-fluid p-0 login-wrap">
+        <div class="row g-0 min-vh-100 login-stage">
 
             <!-- Left: brand panel -->
             <div class="col-lg-6 d-none d-lg-flex position-relative bg-brand-navy text-white flex-column justify-content-between p-5"
@@ -123,6 +123,21 @@
             icon.classList.toggle('bi-eye');
             icon.classList.toggle('bi-eye-slash');
         }
+
+        (function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const form = document.querySelector('form[action]');
+            if (!form) return;
+
+            form.addEventListener('submit', function (e) {
+                // Only run after the browser's native validation has passed
+                if (reduceMotion || !form.checkValidity()) return;
+
+                e.preventDefault();
+                document.body.classList.add('page-exit-right');
+                window.setTimeout(function () { form.submit(); }, 330);
+            });
+        })();
     </script>
 </body>
 </html>

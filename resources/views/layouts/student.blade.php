@@ -13,7 +13,7 @@
     @include('partials.theme-init')
     @stack('styles')
 </head>
-<body class="bg-surface">
+<body class="bg-surface {{ request()->routeIs('dashboard') ? 'app-enter' : '' }}">
 
     <!-- Top nav -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-brand-navy shadow-soft py-2 sticky-top">

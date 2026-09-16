@@ -45,7 +45,7 @@
 <!-- KPI Cards -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-xl">
-        <div class="admin-kpi-card">
+        <a href="{{ route('admin.applicants.index') }}" class="admin-kpi-card" title="View all applicants">
             <div class="d-flex align-items-start justify-content-between gap-2">
                 <div>
                     <p class="small text-muted-soft mb-1">Total Applications</p>
@@ -59,10 +59,10 @@
                 </div>
                 <span class="admin-kpi-icon admin-kpi-icon--grad-navy"><i class="bi bi-folder2-open"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-xl">
-        <div class="admin-kpi-card">
+        <a href="{{ route('admin.applicants.index', ['group' => 'in_progress']) }}" class="admin-kpi-card" title="View in-progress applications">
             <div class="d-flex align-items-start justify-content-between gap-2">
                 <div>
                     <p class="small text-muted-soft mb-1">In Progress</p>
@@ -71,10 +71,10 @@
                 </div>
                 <span class="admin-kpi-icon admin-kpi-icon--grad-gold"><i class="bi bi-hourglass-split"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-xl">
-        <div class="admin-kpi-card">
+        <a href="{{ route('admin.applicants.index', ['group' => 'qualified']) }}" class="admin-kpi-card" title="View qualified applicants">
             <div class="d-flex align-items-start justify-content-between gap-2">
                 <div>
                     <p class="small text-muted-soft mb-1">Qualified</p>
@@ -83,10 +83,10 @@
                 </div>
                 <span class="admin-kpi-icon admin-kpi-icon--grad-green"><i class="bi bi-patch-check-fill"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-xl">
-        <div class="admin-kpi-card">
+        <a href="{{ route('admin.applicants.index', ['group' => 'released']) }}" class="admin-kpi-card" title="View released scholarships">
             <div class="d-flex align-items-start justify-content-between gap-2">
                 <div>
                     <p class="small text-muted-soft mb-1">Scholarship Released</p>
@@ -95,10 +95,10 @@
                 </div>
                 <span class="admin-kpi-icon admin-kpi-icon--grad-blue"><i class="bi bi-wallet2"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-xl">
-        <div class="admin-kpi-card">
+        <a href="{{ route('admin.applicants.index', ['group' => 'disqualified']) }}" class="admin-kpi-card" title="View disqualified applicants">
             <div class="d-flex align-items-start justify-content-between gap-2">
                 <div>
                     <p class="small text-muted-soft mb-1">Disqualified</p>
@@ -107,7 +107,7 @@
                 </div>
                 <span class="admin-kpi-icon admin-kpi-icon--grad-red"><i class="bi bi-x-octagon-fill"></i></span>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 
@@ -239,7 +239,7 @@
             </div>
             <div class="admin-panel__body admin-panel__body--flush flex-grow-1 d-flex flex-column">
                 @if ($recentApplicants->isNotEmpty())
-                <div class="admin-table-scroll admin-table-scroll--y flex-grow-1">
+                <div class="admin-table-scroll admin-table-scroll--y flex-grow-1" style="max-height: 520px;">
                     <table class="table admin-table admin-table--compact mb-0">
                         <thead>
                             <tr>

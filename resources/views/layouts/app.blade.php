@@ -13,7 +13,7 @@
     @include('partials.theme-init')
     @stack('styles')
 </head>
-<body class="bg-surface">
+<body class="bg-surface {{ request()->routeIs('admin.dashboard') ? 'app-enter' : '' }}">
 
 @auth
 <div class="d-flex" style="min-height: 100vh;">

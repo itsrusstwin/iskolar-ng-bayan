@@ -61,6 +61,27 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/theme.js') }}"></script>
+    <script>
+        (function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            document.addEventListener('click', function (e) {
+                const link = e.target.closest('a[href]');
+                if (!link) return;
+                if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || link.target === '_blank') return;
+
+                const href = link.getAttribute('href');
+                if (!href || href.indexOf('/login') === -1) return;
+
+                e.preventDefault();
+                if (reduceMotion) { window.location.href = href; return; }
+
+                // Sweep the current page out to the left, then open the login page
+                document.body.classList.add('page-exit-left');
+                window.setTimeout(function () { window.location.href = href; }, 300);
+            });
+        })();
+    </script>
     @stack('scripts')
 </body>
 </html>

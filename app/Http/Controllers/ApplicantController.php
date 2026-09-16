@@ -115,6 +115,24 @@ class ApplicantController extends Controller
             }
         }
 
+        // KPI cards link here with a progress "group" that reuses the dashboard's
+        // exact categorization, so the filtered list always matches the card count.
+        $group = $request->input('group');
+        if (in_array($group, ['in_progress', 'qualified', 'released', 'disqualified'], true)) {
+            $statuses = Applicant::query()
+                ->distinct()
+                ->pluck('status')
+                ->map(fn ($s) => (string) $s)
+                ->filter(fn ($s) => $dashboard->categorizeProgress($s) === $group)
+                ->values()
+                ->all();
+
+            if ($statuses === []) {
+                $statuses = ['__none__'];
+            }
+            $query->whereIn('status', $statuses);
+        }
+
         $applicants = $dashboard->onlineFirst($query->orderByDesc('created_at')->get());
 
         $statuses = array_merge(
@@ -126,6 +144,7 @@ class ApplicantController extends Controller
             'applicants' => $applicants,
             'statuses' => $statuses,
             'dashboard' => $dashboard,
+            'activeGroup' => $group,
         ]);
     }
 
@@ -135,10 +154,10 @@ class ApplicantController extends Controller
 
         DB::transaction(function () use ($applicant, $user) {
             AuditLog::record(
-                'student_account_deleted',
-                "Deleted student account for {$applicant->first_name} {$applicant->last_name}" .
+                'student_account_archived',
+                "Archived student account for {$applicant->first_name} {$applicant->last_name}" .
                     ($user ? " ({$user->email})" : '') .
-                    ' — all application records removed.',
+                    ' — account kept in the master list archive.',
                 $applicant
             );
 
@@ -151,7 +170,7 @@ class ApplicantController extends Controller
 
         return redirect()
             ->route('admin.applicants.index')
-            ->with('success', 'Student account deleted.');
+            ->with('success', 'Student account archived. It remains in the Master List archive.');
     }
 
     public function show(Applicant $applicant)

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Applicant extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
     'user_id',
@@ -39,6 +40,7 @@ class Applicant extends Model
         'exam_scheduled_at' => 'datetime',
         'orientation_scheduled_at' => 'datetime',
         'date_of_birth' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function user()
