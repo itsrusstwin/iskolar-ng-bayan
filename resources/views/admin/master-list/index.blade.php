@@ -275,6 +275,167 @@
 {{-- The error state is built in JS so it can never itself fail to render --}}
 
 
+@push('styles')
+<style>
+    /*
+     * Master List drawer fixes
+     * ------------------------
+     * The applicant record is loaded dynamically, so these rules are scoped
+     * to the drawer and only override the styles needed for the detail view.
+     */
+    #mlDrawer .ml-info-grid {
+        display: grid;
+        width: 100%;
+        height: auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #mlDrawer .ml-info-grid__item {
+        display: block;
+        width: 100%;
+        height: auto;
+        min-height: 58px;
+    }
+
+    #mlDrawer .ml-info-grid__label {
+        display: block;
+        height: auto;
+        margin-bottom: .3rem;
+        line-height: 1.2;
+    }
+
+    #mlDrawer .ml-info-grid__value {
+        display: block !important;
+        position: relative;
+        width: 100%;
+        height: auto !important;
+        min-height: 18px;
+        margin: 0;
+        padding: 0;
+        line-height: 1.4 !important;
+        font-size: .88rem;
+        font-weight: 600;
+        color: var(--text-900) !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        overflow: visible !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    #mlDrawer .ml-info-grid__item--full {
+        grid-column: 1 / -1;
+    }
+
+    #mlDrawer .ml-section-block {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    #mlDrawer .ml-section-block__toggle {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        min-height: 56px;
+        height: auto;
+        cursor: pointer;
+    }
+
+    #mlDrawer .ml-section-block__content {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        padding: 1rem 1.15rem;
+        overflow: visible;
+    }
+
+    #mlDrawer .ml-section-block .collapse:not(.show) {
+        display: none;
+    }
+
+    #mlDrawer .ml-section-block .collapse.show {
+        display: block !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    #mlDrawer .ml-section-block__toggle[aria-expanded="true"] .ml-section-block__chevron {
+        transform: rotate(180deg);
+    }
+
+    #mlDrawer .ml-section-block .ml-card2__list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+    }
+
+    #mlDrawer .ml-section-block .ml-card2__list > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+        min-height: 30px;
+        height: auto;
+        gap: 1rem;
+    }
+
+    #mlDrawer .ml-section-block .ml-card2__list dt,
+    #mlDrawer .ml-section-block .ml-card2__list dd {
+        display: block;
+        height: auto;
+        min-height: 18px;
+        line-height: 1.4;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    #mlDrawer .ml-section-block .ml-card2__list dt {
+        flex: 1;
+    }
+
+    #mlDrawer .ml-section-block .ml-card2__list dd {
+        flex: 1;
+        margin: 0;
+        text-align: right;
+        color: var(--text-900) !important;
+    }
+
+    #mlDrawer .ml-card2__empty {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        width: 100%;
+        min-height: 35px;
+    }
+
+    @media (max-width: 700px) {
+        #mlDrawer .ml-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        #mlDrawer .ml-info-grid__item--full {
+            grid-column: auto;
+        }
+
+        #mlDrawer .ml-section-block .ml-card2__list > div {
+            flex-direction: column;
+            gap: .25rem;
+        }
+
+        #mlDrawer .ml-section-block .ml-card2__list dd {
+            text-align: left;
+        }
+    }
+</style>
+@endpush
+
 @endsection
 
 @push('scripts')
@@ -311,11 +472,71 @@
             content.querySelectorAll('[data-ml-close]').forEach(function (btn) {
                 btn.addEventListener('click', closeDrawer);
             });
+
             var retry = content.querySelector('[data-ml-retry]');
             if (retry) {
                 retry.addEventListener('click', function () {
                     if (activeApplicantId !== null) load(activeApplicantId, true);
                 });
+            }
+
+            // The record HTML is injected dynamically, so Bootstrap's collapse
+            // data API may not be wired to these buttons. Handle the sections
+            // directly so they work every time a record is loaded.
+            content.querySelectorAll('.ml-section-block__toggle').forEach(function (button) {
+                var targetSelector = button.getAttribute('data-bs-target') || button.getAttribute('data-target');
+                if (!targetSelector) return;
+
+                var target = null;
+                try {
+                    target = content.querySelector(targetSelector);
+                } catch (e) {
+                    console.warn('[master-list] Invalid collapse target:', targetSelector);
+                }
+
+                if (!target) {
+                    console.warn('[master-list] Collapse target not found:', targetSelector);
+                    return;
+                }
+
+                var initiallyOpen = target.classList.contains('show');
+                setSectionState(button, target, initiallyOpen);
+
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    var isOpen = target.classList.contains('show');
+                    setSectionState(button, target, !isOpen);
+                });
+            });
+        }
+
+        function setSectionState(button, target, open) {
+            if (open) {
+                target.classList.add('show');
+                target.removeAttribute('hidden');
+                target.style.display = 'block';
+                target.style.height = 'auto';
+                target.style.maxHeight = 'none';
+                target.style.overflow = 'visible';
+
+                button.setAttribute('aria-expanded', 'true');
+
+                var chevron = button.querySelector('.ml-section-block__chevron');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            } else {
+                target.classList.remove('show');
+                target.setAttribute('hidden', '');
+                target.style.display = 'none';
+                target.style.height = '0px';
+                target.style.maxHeight = '0px';
+                target.style.overflow = 'hidden';
+
+                button.setAttribute('aria-expanded', 'false');
+
+                var chevron = button.querySelector('.ml-section-block__chevron');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
             }
         }
 

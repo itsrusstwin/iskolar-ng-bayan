@@ -3770,4 +3770,198 @@ select.form-select {
   background: var(--surface-100);
   color: var(--text-500);
 }
+/* =========================================================
+   MASTER LIST - APPLICANT RECORD CONTENT
+   ========================================================= */
 
+/* Applicant information cards */
+#mlDrawer .ml-info-section {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#mlDrawer .ml-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    height: auto;
+}
+
+#mlDrawer .ml-info-grid__item {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 58px;
+    padding: .7rem 1rem;
+}
+
+#mlDrawer .ml-info-grid__label {
+    display: block;
+    height: auto;
+    line-height: 1.2;
+    margin-bottom: .3rem;
+}
+
+#mlDrawer .ml-info-grid__value {
+    display: block !important;
+    position: relative;
+    width: 100%;
+    height: auto !important;
+    min-height: 18px;
+    line-height: 1.4 !important;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--text-900) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* Full-width information fields */
+#mlDrawer .ml-info-grid__item--full {
+    grid-column: 1 / -1;
+}
+
+/* =========================================================
+   EXPANDABLE RECORD SECTIONS
+   ========================================================= */
+
+#mlDrawer .ml-section-block {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+#mlDrawer .ml-section-block__toggle {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 56px;
+    height: auto;
+    cursor: pointer;
+}
+
+#mlDrawer .ml-section-block__content {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 1rem 1.15rem;
+    overflow: visible;
+}
+
+/* Closed */
+#mlDrawer .ml-section-block .collapse:not(.show) {
+    display: none;
+}
+
+/* Open */
+#mlDrawer .ml-section-block .collapse.show {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* Chevron */
+#mlDrawer .ml-section-block__toggle[aria-expanded="true"]
+.ml-section-block__chevron {
+    transform: rotate(180deg);
+}
+
+/* Record list */
+#mlDrawer .ml-record-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#mlDrawer .ml-record-list__item {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 50px;
+}
+
+/* Key/value records */
+#mlDrawer .ml-card2__list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+}
+
+#mlDrawer .ml-card2__list > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 30px;
+    height: auto;
+    gap: 1rem;
+}
+
+#mlDrawer .ml-card2__list dt,
+#mlDrawer .ml-card2__list dd {
+    display: block;
+    height: auto;
+    min-height: 18px;
+    line-height: 1.4;
+    visibility: visible;
+    opacity: 1;
+}
+
+#mlDrawer .ml-card2__list dt {
+    flex: 1;
+}
+
+#mlDrawer .ml-card2__list dd {
+    flex: 1;
+    text-align: right;
+    color: var(--text-900) !important;
+}
+
+/* Empty messages */
+#mlDrawer .ml-card2__empty {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+    min-height: 35px;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+    #mlDrawer .ml-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #mlDrawer .ml-info-grid__item--full {
+        grid-column: auto;
+    }
+
+    #mlDrawer .ml-card2__list > div {
+        flex-direction: column;
+        gap: .25rem;
+    }
+
+    #mlDrawer .ml-card2__list dd {
+        text-align: left;
+    }
+}
