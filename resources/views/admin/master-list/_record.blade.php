@@ -200,7 +200,9 @@
             </div>
             <div class="ml-info-grid__item">
                 <div class="ml-info-grid__label">Terms Accepted</div>
-                <div class="ml-info-grid__value">{{ $applicant->user?->terms_accepted_at?->format('M d, Y') ?? 'Not yet' }}</div>
+               <div class="ml-info-grid__value">
+    {{ $applicant->user?->terms_accepted_at ? \Illuminate\Support\Carbon::parse($applicant->user->terms_accepted_at)->format('M d, Y') : 'Not yet' }}
+</div>
             </div>
         </div>
     </div>

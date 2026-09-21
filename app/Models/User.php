@@ -51,6 +51,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'last_seen_at' => 'datetime',
             'deleted_at' => 'datetime',
+            'terms_accepted_at' => 'datetime',
         ];
     }
 

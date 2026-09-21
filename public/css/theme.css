@@ -1796,6 +1796,9 @@ body.ml-drawer-open {
 .ml-drawer__body::-webkit-scrollbar {
   width: 7px;
 }
+.ml-drawer__body::-webkit-scrollbar {
+  width: 7px;
+}
 .ml-drawer__body::-webkit-scrollbar-track {
   background: transparent;
 }
