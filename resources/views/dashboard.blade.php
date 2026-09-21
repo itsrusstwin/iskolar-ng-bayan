@@ -434,7 +434,7 @@
                 {{ $initials }}
             </span>
             @if (auth()->user()->isOnline())
-                <span class="online-dot online-dot--lg" title="You are online"></span>
+             
             @endif
         </span>
         <div style="min-width:0;">
@@ -483,7 +483,7 @@
                                 {{ $initials }}
                             </span>
                             @if (auth()->user()->isOnline())
-                                <span class="online-dot" title="You are online"></span>
+                                
                             @endif
                         </span>
                         <div>

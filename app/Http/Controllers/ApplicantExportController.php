@@ -53,7 +53,35 @@ class ApplicantExportController extends Controller
             ->all();
         $dashboardStatusLabels = AdminDashboardService::STATUS_LABELS;
 
-        return view('admin.export.select', compact('applicants', 'dashboardStatusClasses', 'dashboardStatusLabels'));
+        $schools = $applicants->pluck('school_name')->filter()->unique()->sort()->values();
+        $courses = $applicants->pluck('course')->filter()->unique()->sort()->values();
+        $yearLevels = $applicants->pluck('year_level')->filter()->unique()->sort()->values();
+
+        return view('admin.export.select', compact(
+            'applicants',
+            'dashboardStatusClasses',
+            'dashboardStatusLabels',
+            'schools',
+            'courses',
+            'yearLevels',
+        ));
+    }
+
+    /**
+     * Fetch the given applicants keeping the order the admin clicked them,
+     * so click order becomes the export order.
+     */
+    private function orderedApplicants(array $ids)
+    {
+        $found = Applicant::with('user')
+            ->whereIn('id', $ids)
+            ->get()
+            ->keyBy('id');
+
+        return collect($ids)
+            ->map(fn ($id) => $found->get($id))
+            ->filter()
+            ->values();
     }
 
     public function fields(Request $request)
@@ -69,15 +97,22 @@ class ApplicantExportController extends Controller
                 ->with('error', 'Please select at least one applicant.');
         }
 
-        $applicants = Applicant::with('user')
-            ->whereIn('id', $ids)
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get();
+        $applicants = $this->orderedApplicants($ids);
 
         $fieldOptions = self::FIELD_OPTIONS;
 
-        return view('admin.export.fields', compact('ids', 'applicants', 'fieldOptions'));
+        // Pre-resolve every selectable field for each applicant so the live
+        // preview shows exactly what the spreadsheet will contain.
+        $service = app(AdminDashboardService::class);
+        $preview = $applicants->map(function (Applicant $a) use ($service) {
+            $row = [];
+            foreach (self::FIELD_OPTIONS as $key => $label) {
+                $row[$key] = $this->valueFor($a, $key, $service);
+            }
+            return $row;
+        });
+
+        return view('admin.export.fields', compact('ids', 'applicants', 'fieldOptions', 'preview'));
     }
 
     /**
@@ -127,11 +162,7 @@ class ApplicantExportController extends Controller
                 ->with('error', 'No valid fields selected.');
         }
 
-        $applicants = Applicant::with('user')
-            ->whereIn('id', $ids)
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get();
+        $applicants = $this->orderedApplicants($ids);
 
         $service = app(AdminDashboardService::class);
 

@@ -272,7 +272,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ asset('js/theme.js') }}"></script>
+<script src="{{ asset('js/theme.js') . '?v=' . (file_exists(public_path('js/theme.js')) ? filemtime(public_path('js/theme.js')) : '1') }}"></script>
 <script>
     function previewFile(url, title) {
         const frame = document.getElementById('filePreviewFrame');

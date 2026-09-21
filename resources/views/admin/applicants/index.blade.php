@@ -87,7 +87,7 @@
                 @if ($activeGroup)
                     Showing applicants in the <strong>{{ \App\Services\AdminDashboardService::PROGRESS_LABELS[$activeGroup] ?? $activeGroup }}</strong> group.
                 @else
-                    Select applicants below to schedule the exam or orientation.
+                    Click an applicant to select them for scheduling the exam or orientation — click again to remove.
                 @endif
             </p>
         </div>
@@ -128,12 +128,6 @@
     </div>
 
     <div class="admin-panel__body admin-panel__body--flush">
-        <form id="bulkForm" method="POST" action="{{ route('admin.applicants.schedule-bulk') }}">
-            @csrf
-            <input type="hidden" name="type" id="bulkType" value="exam">
-            <div id="selectedIdsContainer"></div>
-        </form>
-
         @if ($applicants->isNotEmpty())
         <div class="admin-table-scroll admin-table-scroll--y">
             <table class="table admin-table admin-table--compact mb-0">
@@ -151,9 +145,13 @@
                 </thead>
                 <tbody>
                     @foreach ($applicants as $applicant)
-                    <tr class="applicant-row">
-                        <td class="ps-3">
-                            <input type="checkbox" class="form-check-input bulk-select" value="{{ $applicant->id }}" onclick="updateSelection()">
+                    <tr class="applicant-row"
+                        data-id="{{ $applicant->id }}"
+                        role="button"
+                        tabindex="0"
+                        title="Click to select for bulk scheduling — click again to remove">
+                        <td class="ps-3 text-center">
+                            <span class="row-selected-icon d-none"><i class="bi bi-check-circle-fill"></i></span>
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2" style="min-width:0;">
@@ -311,16 +309,33 @@
 @push('scripts')
 <script>
     const selected = new Set();
+    const rows = Array.from(document.querySelectorAll('.applicant-row'));
 
-    function updateSelection() {
-        selected.clear();
-        document.querySelectorAll('.bulk-select:checked').forEach(cb => selected.add(Number(cb.value)));
+    function setRowSelected(row, on) {
+        row.classList.toggle('is-selected', on);
+        const icon = row.querySelector('.row-selected-icon');
+        if (icon) icon.classList.toggle('d-none', !on);
+    }
+
+    function toggleRow(row) {
+        const id = Number(row.dataset.id);
+        if (selected.has(id)) {
+            selected.delete(id);
+            setRowSelected(row, false);
+        } else {
+            selected.add(id);
+            setRowSelected(row, true);
+        }
         syncBulkBar();
     }
 
     function toggleAll(source) {
-        document.querySelectorAll('.bulk-select').forEach(cb => { cb.checked = source.checked; });
-        updateSelection();
+        rows.forEach(r => {
+            const id = Number(r.dataset.id);
+            if (source.checked) { selected.add(id); setRowSelected(r, true); }
+            else { selected.delete(id); setRowSelected(r, false); }
+        });
+        syncBulkBar();
     }
 
     function syncBulkBar() {
@@ -329,13 +344,30 @@
         count.textContent = selected.size + ' selected';
         bar.classList.toggle('d-none', selected.size === 0);
         bar.classList.toggle('d-flex', selected.size > 0);
+        const selAll = document.getElementById('selectAll');
+        if (selAll) selAll.checked = rows.length > 0 && selected.size === rows.length;
     }
 
     function clearSelection() {
-        document.querySelectorAll('.bulk-select').forEach(cb => cb.checked = false);
-        document.getElementById('selectAll').checked = false;
-        updateSelection();
+        rows.forEach(r => setRowSelected(r, false));
+        selected.clear();
+        const selAll = document.getElementById('selectAll');
+        if (selAll) selAll.checked = false;
+        syncBulkBar();
     }
+
+    rows.forEach(r => {
+        r.addEventListener('click', function (e) {
+            if (e.target.closest('a, button, form, input, select, textarea, .actions-wrap, .btn-icon-sm')) return;
+            toggleRow(r);
+        });
+        r.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleRow(r);
+            }
+        });
+    });
 
     function openScheduleModal(type) {
         if (selected.size === 0) return;
@@ -349,6 +381,17 @@
 
     document.getElementById('scheduleDateInput').addEventListener('change', function () {
         document.getElementById('modalScheduledAt').value = this.value;
+    });
+
+    document.querySelector('#scheduleModal form').addEventListener('submit', function () {
+        this.querySelectorAll('input[name="applicant_ids[]"]').forEach(i => i.remove());
+        selected.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'applicant_ids[]';
+            input.value = id;
+            this.appendChild(input);
+        });
     });
 
     document.getElementById('scheduleModal').addEventListener('hidden.bs.modal', function () {
