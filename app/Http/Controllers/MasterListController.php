@@ -32,17 +32,13 @@ class MasterListController extends Controller
             'status' => $status,
         ];
 
+        // The list view only needs what the table renders. The full record is
+        // loaded on demand by show() when the admin clicks a row, so we no
+        // longer eager-load nine relations for every applicant on the page.
         $query = Applicant::withTrashed()
             ->with([
                 'user' => fn ($q) => $q->withTrashed(),
-                'requirements.requirement',
-                'verification',
-                'mswdoAssessment',
-                'examResults',
-                'orientation',
-                'wasteCompliance',
                 'payouts',
-                'disqualifications.appeals',
             ]);
 
         if ($filters['archive_status'] === 'active') {
@@ -105,5 +101,33 @@ class MasterListController extends Controller
         );
 
         return view('admin.master-list.index', compact('applicants', 'filters', 'summary', 'dashboard', 'statuses'));
+    }
+
+    /**
+     * Return the full record of ONE applicant as an HTML fragment.
+     *
+     * Requested over fetch() by the master list when a row is clicked, and
+     * injected into the slide-out drawer. Archived (soft-deleted) applicants
+     * are resolvable here too, which is why the binding is resolved by hand
+     * instead of relying on implicit route-model binding.
+     */
+    public function show(int $applicant, AdminDashboardService $dashboard)
+    {
+        $applicant = Applicant::withTrashed()
+            ->with([
+                'user' => fn ($q) => $q->withTrashed(),
+                'requirements.requirement',
+                'verification',
+                'mswdoAssessment',
+                'examResults.exam',
+                'orientation',
+                'wasteCompliance',
+                'payouts',
+                'disqualifications.appeals',
+                'auditLogs.user' => fn ($q) => $q->withTrashed(),
+            ])
+            ->findOrFail($applicant);
+
+        return view('admin.master-list._record', compact('applicant', 'dashboard'));
     }
 }

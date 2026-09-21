@@ -3504,3 +3504,267 @@ select.form-select {
   overflow: hidden;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   MASTER LIST — record drawer additions
+   Detail lists, file links, activity timeline, notices and the
+   loading skeleton used while a record is fetched.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Applicant reference chip in the drawer header */
+.ml-ref {
+  display: inline-flex;
+  align-items: center;
+  padding: .12rem .45rem;
+  border-radius: .35rem;
+  background: var(--surface-100);
+  color: var(--text-500);
+  font-size: .66rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Inline notice strips (archived banner, fetch errors) */
+.ml-record-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  padding: .7rem .9rem;
+  border-radius: .55rem;
+  font-size: .78rem;
+  line-height: 1.45;
+  margin-bottom: 1rem;
+}
+.ml-record-notice i {
+  flex-shrink: 0;
+  margin-top: .1rem;
+}
+.ml-record-notice--archived {
+  background: #f4f5f7;
+  border: 1px solid #e0e3e8;
+  color: #55606e;
+}
+.ml-record-notice--error {
+  background: #fdecec;
+  border: 1px solid #f5c6cb;
+  color: #a33b3b;
+}
+
+/* Repeating detail rows (requirements, exam attempts, semesters...) */
+.ml-record-list {
+  list-style: none;
+  margin: .65rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.ml-record-list__item {
+  padding: .65rem .75rem;
+  border: 1px solid var(--surface-border);
+  border-radius: .5rem;
+  background: var(--surface-50);
+}
+.ml-record-list__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+.ml-record-list__title {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text-900);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ml-record-list__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem .85rem;
+  margin-top: .3rem;
+  font-size: .7rem;
+  color: var(--text-500);
+}
+.ml-record-list__meta i {
+  margin-right: .2rem;
+}
+
+/* "View file" style buttons inside the drawer */
+.ml-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-top: .45rem;
+  padding: .28rem .6rem;
+  border: 1px solid var(--surface-border);
+  border-radius: .4rem;
+  background: var(--surface-0);
+  color: var(--text-900);
+  font-size: .72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.ml-file-link:hover {
+  background: var(--surface-100);
+  border-color: #2c65ac;
+  color: #2c65ac;
+}
+
+/* Appeals nested under a disqualification */
+.ml-appeal-group {
+  margin-top: .6rem;
+  padding-top: .6rem;
+  border-top: 1px dashed var(--surface-border);
+}
+.ml-appeal-group__title {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-500);
+  margin-bottom: .4rem;
+}
+.ml-appeal {
+  padding: .5rem .6rem;
+  border-radius: .45rem;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-border);
+}
+.ml-appeal + .ml-appeal {
+  margin-top: .4rem;
+}
+.ml-appeal__notes {
+  margin: .35rem 0 0;
+  font-size: .74rem;
+  line-height: 1.5;
+  color: var(--text-900);
+  overflow-wrap: anywhere;
+}
+
+/* Online flag in the Account section */
+.ml-online-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  color: #1E6B3C;
+  font-weight: 600;
+}
+.online-dot--inline {
+  position: static;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+}
+
+/* Audit-trail timeline */
+.ml-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1.1rem;
+  position: relative;
+}
+.ml-timeline::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: .35rem;
+  bottom: .35rem;
+  width: 2px;
+  background: var(--surface-border);
+}
+.ml-timeline__item {
+  position: relative;
+  padding-bottom: .85rem;
+}
+.ml-timeline__item:last-child {
+  padding-bottom: 0;
+}
+.ml-timeline__dot {
+  position: absolute;
+  left: -1.1rem;
+  top: .3rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2c65ac;
+  border: 2px solid var(--surface-0);
+}
+.ml-timeline__text {
+  margin: 0;
+  font-size: .76rem;
+  line-height: 1.45;
+  color: var(--text-900);
+  overflow-wrap: anywhere;
+}
+.ml-timeline__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .2rem .8rem;
+  margin-top: .2rem;
+  font-size: .68rem;
+  color: var(--text-500);
+}
+.ml-timeline__meta i {
+  margin-right: .2rem;
+}
+
+/* Loading skeleton shown while a record is fetched */
+.ml-skeleton {
+  background: linear-gradient(90deg, var(--surface-100) 25%, var(--surface-50) 37%, var(--surface-100) 63%);
+  background-size: 400% 100%;
+  animation: ml-skeleton-shimmer 1.3s ease infinite;
+  border-radius: .45rem;
+}
+.ml-skeleton--avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ml-skeleton--line {
+  height: .9rem;
+  margin-bottom: .45rem;
+}
+.ml-skeleton--block {
+  height: 72px;
+  margin-bottom: .85rem;
+}
+@keyframes ml-skeleton-shimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ml-skeleton { animation: none; }
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] .ml-record-list__item,
+[data-theme="dark"] .ml-appeal {
+  background: var(--surface-50);
+  border-color: var(--surface-border);
+}
+[data-theme="dark"] .ml-file-link {
+  background: var(--surface-50);
+  border-color: var(--surface-border);
+  color: var(--text-900);
+}
+[data-theme="dark"] .ml-file-link:hover {
+  background: var(--surface-100);
+}
+[data-theme="dark"] .ml-record-notice--archived {
+  background: var(--surface-50);
+  border-color: var(--surface-border);
+  color: var(--text-500);
+}
+[data-theme="dark"] .ml-record-notice--error {
+  background: rgba(192, 57, 43, .12);
+  border-color: rgba(192, 57, 43, .35);
+  color: #f0a3a3;
+}
+[data-theme="dark"] .ml-ref {
+  background: var(--surface-100);
+  color: var(--text-500);
+}
+

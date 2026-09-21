@@ -109,6 +109,12 @@ Route::middleware(['auth', 'admin', 'last_seen'])->prefix('admin')->group(functi
     // Master list — full applicant records with date / type filters
     Route::get('/master-list', [MasterListController::class, 'index'])->name('admin.master-list.index');
 
+    // One applicant's full record, returned as an HTML fragment for the
+    // master list slide-out drawer. Archived applicants resolve here too.
+    Route::get('/master-list/{applicant}', [MasterListController::class, 'show'])
+        ->whereNumber('applicant')
+        ->name('admin.master-list.show');
+
     // Applicant export to Excel (step 1: select, step 2: pick fields, download CSV)
     Route::get('/export/applicants', [ApplicantExportController::class, 'select'])->name('admin.export.applicants');
     Route::post('/export/applicants/fields', [ApplicantExportController::class, 'fields'])->name('admin.export.fields');
