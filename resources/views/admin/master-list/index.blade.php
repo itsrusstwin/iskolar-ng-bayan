@@ -283,6 +283,24 @@
      * The applicant record is loaded dynamically, so these rules are scoped
      * to the drawer and only override the styles needed for the detail view.
      */
+    /* Prevent the drawer's flex column from shrinking detail cards into thin lines. */
+    #mlDrawer .ml-drawer__body > *,
+    #mlDrawer .ml-info-section,
+    #mlDrawer .ml-drawer-pipeline,
+    #mlDrawer .ml-section-block {
+        flex: 0 0 auto !important;
+        flex-shrink: 0 !important;
+        min-width: 0;
+    }
+
+    #mlDrawer .ml-info-section {
+        min-height: 80px;
+    }
+
+    #mlDrawer .ml-section-block {
+        min-height: 56px;
+    }
+
     #mlDrawer .ml-info-grid {
         display: grid;
         width: 100%;
@@ -361,6 +379,16 @@
         height: auto !important;
         max-height: none !important;
         overflow: visible !important;
+    }
+
+    /* Ensure a toggled-off dynamically loaded panel stays hidden. */
+    #mlDrawer .ml-drawer-collapse[hidden] {
+        display: none !important;
+        height: 0 !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
     }
 
     #mlDrawer .ml-section-block__toggle[aria-expanded="true"] .ml-section-block__chevron {

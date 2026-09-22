@@ -1165,19 +1165,7 @@ a { text-decoration: none; }
   border-radius: 4px;
 }
 
-/* Let Recent Applications fill its panel height and scroll internally
-   when there are many rows, instead of clipping against a fixed height. */
-.admin-table-scroll--y {
-  min-height: 0;
-  max-height: none;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-.admin-table-scroll--y .admin-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
+/* Recent Applications sizing is finalized in the dashboard override below. */
 
 .admin-status-accordion .accordion-button {
   font-size: .9rem;
@@ -3771,197 +3759,189 @@ select.form-select {
   color: var(--text-500);
 }
 /* =========================================================
-   MASTER LIST - APPLICANT RECORD CONTENT
+   MASTER LIST DRAWER - RECORD VISIBILITY FIX
    ========================================================= */
 
-/* Applicant information cards */
-#mlDrawer .ml-info-section {
-    display: block;
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    overflow: hidden;
+#mlDrawer .ml-drawer__body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.25rem !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
 }
 
+/* Personal / Academic / Account information cards */
+#mlDrawer .ml-info-section {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 80px !important;
+    max-height: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+}
+
+/* Headers must remain visible */
+#mlDrawer .ml-info-section__header {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 42px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Information grid */
 #mlDrawer .ml-info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-    height: auto;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 #mlDrawer .ml-info-grid__item {
-    display: block;
-    position: relative;
-    width: 100%;
-    height: auto;
-    min-height: 58px;
-    padding: .7rem 1rem;
-}
-
-#mlDrawer .ml-info-grid__label {
-    display: block;
-    height: auto;
-    line-height: 1.2;
-    margin-bottom: .3rem;
-}
-
-#mlDrawer .ml-info-grid__value {
     display: block !important;
-    position: relative;
-    width: 100%;
     height: auto !important;
-    min-height: 18px;
-    line-height: 1.4 !important;
-    font-size: .88rem;
-    font-weight: 600;
-    color: var(--text-900) !important;
+    min-height: 55px !important;
     visibility: visible !important;
     opacity: 1 !important;
-    overflow: visible !important;
-    white-space: normal;
-    overflow-wrap: anywhere;
 }
 
-/* Full-width information fields */
-#mlDrawer .ml-info-grid__item--full {
-    grid-column: 1 / -1;
+#mlDrawer .ml-info-grid__label,
+#mlDrawer .ml-info-grid__value {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-/* =========================================================
-   EXPANDABLE RECORD SECTIONS
-   ========================================================= */
-
+/* Pipeline detail cards */
 #mlDrawer .ml-section-block {
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    overflow: hidden;
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 52px !important;
+    max-height: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
 }
 
+/* Section buttons */
 #mlDrawer .ml-section-block__toggle {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    min-height: 56px;
-    height: auto;
-    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 52px !important;
+    height: auto !important;
+    padding: .75rem 1rem !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-#mlDrawer .ml-section-block__content {
-    display: block;
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    padding: 1rem 1.15rem;
-    overflow: visible;
+/* Section title */
+#mlDrawer .ml-section-block__label {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-/* Closed */
-#mlDrawer .ml-section-block .collapse:not(.show) {
-    display: none;
+/* Section icons */
+#mlDrawer .ml-section-block__icon {
+    display: inline-flex !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-/* Open */
+/* Status badges */
+#mlDrawer .ml-section-block__status {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Show the actual record details */
+#mlDrawer .ml-section-block .collapse {
+    height: auto !important;
+}
+
 #mlDrawer .ml-section-block .collapse.show {
     display: block !important;
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
 }
 
-/* Chevron */
-#mlDrawer .ml-section-block__toggle[aria-expanded="true"]
-.ml-section-block__chevron {
-    transform: rotate(180deg);
-}
-
-/* Record list */
-#mlDrawer .ml-record-list {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: auto;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
+/* Make the information text visible */
+#mlDrawer .ml-card2__list,
+#mlDrawer .ml-card2__empty,
+#mlDrawer .ml-record-list,
 #mlDrawer .ml-record-list__item {
-    display: block;
-    width: 100%;
-    height: auto;
-    min-height: 50px;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-/* Key/value records */
-#mlDrawer .ml-card2__list {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: auto;
-    margin: 0;
-    padding: 0;
+/* Prevent accidental zero-height children */
+#mlDrawer .ml-section-block__content {
+    min-height: 40px !important;
+    height: auto !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-#mlDrawer .ml-card2__list > div {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-    min-height: 30px;
-    height: auto;
-    gap: 1rem;
-}
-
-#mlDrawer .ml-card2__list dt,
-#mlDrawer .ml-card2__list dd {
-    display: block;
-    height: auto;
-    min-height: 18px;
-    line-height: 1.4;
-    visibility: visible;
-    opacity: 1;
-}
-
-#mlDrawer .ml-card2__list dt {
-    flex: 1;
-}
-
-#mlDrawer .ml-card2__list dd {
-    flex: 1;
-    text-align: right;
-    color: var(--text-900) !important;
-}
-
-/* Empty messages */
-#mlDrawer .ml-card2__empty {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    width: 100%;
-    min-height: 35px;
-}
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
+/* Mobile */
 @media (max-width: 700px) {
     #mlDrawer .ml-info-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
     }
+}
+  
 
-    #mlDrawer .ml-info-grid__item--full {
-        grid-column: auto;
-    }
 
-    #mlDrawer .ml-card2__list > div {
-        flex-direction: column;
-        gap: .25rem;
-    }
 
-    #mlDrawer .ml-card2__list dd {
-        text-align: left;
+/* =========================================================
+   DASHBOARD — RECENT APPLICATIONS
+   Fill all available vertical space and keep the list scrollable.
+   The dashboard markup already uses flex-grow-1; the old inline
+   max-height: 520px prevented the list from using that space.
+   ========================================================= */
+
+.admin-table-scroll--y {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.admin-table-scroll--y > .admin-table {
+    width: 100%;
+    min-width: 100%;
+    margin-bottom: 0 !important;
+}
+
+.admin-table-scroll--y > .admin-table thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 5 !important;
+    background: var(--surface-0);
+}
+
+.admin-table-scroll--y > .admin-table tbody td {
+    vertical-align: middle;
+}
+
+@media (max-width: 991.98px) {
+    .admin-table-scroll--y {
+        max-height: none !important;
+        overflow-y: auto !important;
+        overflow-x: auto !important;
     }
 }

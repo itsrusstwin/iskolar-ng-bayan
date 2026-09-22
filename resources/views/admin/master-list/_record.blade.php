@@ -60,6 +60,129 @@
     ])->filter()->implode(', ');
 @endphp
 
+{{-- Critical drawer styles.
+     This fragment is loaded with fetch(), so these rules intentionally live
+     with the record markup and do not depend on Bootstrap collapse styles. --}}
+<style>
+    #mlDrawer .ml-drawer__body {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.25rem !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+
+    #mlDrawer .ml-drawer__body > .ml-info-section,
+    #mlDrawer .ml-drawer__body > .ml-drawer-pipeline,
+    #mlDrawer .ml-drawer__body > .ml-section-block {
+        display: block !important;
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        min-width: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #mlDrawer .ml-info-section__header {
+        display: flex !important;
+        min-height: 42px !important;
+        height: auto !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #mlDrawer .ml-info-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #mlDrawer .ml-info-grid__item {
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        min-height: 55px !important;
+        padding: .7rem 1rem !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #mlDrawer .ml-info-grid__label,
+    #mlDrawer .ml-info-grid__value {
+        display: block !important;
+        height: auto !important;
+        min-height: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        overflow: visible !important;
+    }
+
+    #mlDrawer .ml-info-grid__value {
+        color: var(--text-900) !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+    }
+
+    #mlDrawer .ml-section-block__toggle {
+        display: flex !important;
+        width: 100% !important;
+        min-height: 52px !important;
+        height: auto !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        cursor: pointer !important;
+    }
+
+    #mlDrawer .ml-drawer-collapse {
+        display: none;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    #mlDrawer .ml-drawer-collapse.show {
+        display: block !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #mlDrawer .ml-section-block__content {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 40px !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #mlDrawer .ml-card2__list,
+    #mlDrawer .ml-record-list,
+    #mlDrawer .ml-payout-list,
+    #mlDrawer .ml-timeline {
+        height: auto !important;
+        min-height: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    @media (max-width: 700px) {
+        #mlDrawer .ml-info-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+    }
+</style>
+
 {{-- ── Drawer header ── --}}
 <div class="ml-drawer__header">
     <button type="button" class="ml-drawer__close" data-ml-close title="Close panel">
@@ -231,7 +354,7 @@
 
     {{-- Policy Verification --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-verif" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-verif" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--navy"><i class="bi bi-shield-check"></i></span>
             <span class="ml-section-block__label">Policy Verification</span>
             <span class="ml-section-block__status">
@@ -247,7 +370,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-verif">
+        <div class="ml-drawer-collapse" id="drawer-verif">
             <div class="ml-section-block__content">
                 @if ($verification)
                     <dl class="ml-card2__list">
@@ -269,7 +392,7 @@
 
     {{-- MSWDO Assessment --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-mswdo" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-mswdo" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--teal"><i class="bi bi-clipboard2-heart"></i></span>
             <span class="ml-section-block__label">MSWDO Assessment</span>
             <span class="ml-section-block__status">
@@ -285,7 +408,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-mswdo">
+        <div class="ml-drawer-collapse" id="drawer-mswdo">
             <div class="ml-section-block__content">
                 @if ($mswdo)
                     <dl class="ml-card2__list">
@@ -310,7 +433,7 @@
 
     {{-- Qualifying Exam --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-exam" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-exam" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--blue"><i class="bi bi-pencil-square"></i></span>
             <span class="ml-section-block__label">Qualifying Exam</span>
             <span class="ml-section-block__status">
@@ -328,7 +451,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-exam">
+        <div class="ml-drawer-collapse" id="drawer-exam">
             <div class="ml-section-block__content">
                 @if ($applicant->exam_scheduled_at)
                     <p class="ml-card2__note">
@@ -380,7 +503,7 @@
 
     {{-- Orientation --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-orient" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-orient" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--purple"><i class="bi bi-mortarboard"></i></span>
             <span class="ml-section-block__label">Orientation</span>
             <span class="ml-section-block__status">
@@ -394,7 +517,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-orient">
+        <div class="ml-drawer-collapse" id="drawer-orient">
             <div class="ml-section-block__content">
                 @if ($applicant->orientation_scheduled_at)
                     <p class="ml-card2__note">
@@ -417,7 +540,7 @@
 
     {{-- Requirements --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-reqs" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-reqs" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--green"><i class="bi bi-file-earmark-check"></i></span>
             <span class="ml-section-block__label">Requirements</span>
             <span class="ml-section-block__status">
@@ -431,7 +554,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-reqs">
+        <div class="ml-drawer-collapse" id="drawer-reqs">
             <div class="ml-section-block__content">
                 @if ($reqs->count())
                     <div class="d-flex align-items-center gap-2 mb-2">
@@ -485,7 +608,7 @@
 
     {{-- Waste Compliance --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-waste" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-waste" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--emerald"><i class="bi bi-recycle"></i></span>
             <span class="ml-section-block__label">Waste Compliance</span>
             <span class="ml-section-block__status">
@@ -501,7 +624,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-waste">
+        <div class="ml-drawer-collapse" id="drawer-waste">
             <div class="ml-section-block__content">
                 @if ($waste->count())
                     <p class="ml-card2__note">
@@ -544,7 +667,7 @@
 
     {{-- Payout History --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-payout" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-payout" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--gold"><i class="bi bi-cash-stack"></i></span>
             <span class="ml-section-block__label">Payout History</span>
             <span class="ml-section-block__status">
@@ -556,7 +679,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-payout">
+        <div class="ml-drawer-collapse" id="drawer-payout">
             <div class="ml-section-block__content">
                 @if ($payouts->count())
                     <p class="ml-card2__note">
@@ -587,7 +710,7 @@
 
     {{-- Disqualification / Appeal --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-disq" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-disq" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--red"><i class="bi bi-exclamation-octagon"></i></span>
             <span class="ml-section-block__label">Disqualification / Appeal</span>
             <span class="ml-section-block__status">
@@ -603,7 +726,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-disq">
+        <div class="ml-drawer-collapse" id="drawer-disq">
             <div class="ml-section-block__content">
                 @if ($disqualifications->count())
                     <ul class="ml-record-list">
@@ -665,7 +788,7 @@
 
     {{-- Activity Timeline (audit trail) --}}
     <div class="ml-section-block">
-        <button class="ml-section-block__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#drawer-activity" aria-expanded="false">
+        <button class="ml-section-block__toggle" type="button" data-bs-target="#drawer-activity" aria-expanded="false">
             <span class="ml-section-block__icon ml-section-block__icon--navy"><i class="bi bi-clock-history"></i></span>
             <span class="ml-section-block__label">Activity Timeline</span>
             <span class="ml-section-block__status">
@@ -677,7 +800,7 @@
             </span>
             <i class="bi bi-chevron-down ml-section-block__chevron"></i>
         </button>
-        <div class="collapse" id="drawer-activity">
+        <div class="ml-drawer-collapse" id="drawer-activity">
             <div class="ml-section-block__content">
                 @if ($logs->count())
                     <ol class="ml-timeline">
