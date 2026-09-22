@@ -3454,7 +3454,7 @@ body.page-exit-left {
 
 /* Dashboard shells enter from the right */
 body.app-enter {
-  animation: kfSlideInRight .6s cubic-bezier(.19, 1, .22, 1) both;
+  animation: kfSlideInRight .6s cubic-bezier(.19, 1, .22, 1) backwards;
 }
 
 /* Login page exits to the right toward the dashboard */
