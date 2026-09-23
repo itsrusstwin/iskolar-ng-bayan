@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Applicant;
-use App\Models\AuditLog;
 use App\Services\AdminDashboardService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class MasterListController extends Controller
 {
@@ -103,48 +101,6 @@ class MasterListController extends Controller
         );
 
         return view('admin.master-list.index', compact('applicants', 'filters', 'summary', 'dashboard', 'statuses'));
-    }
-
-
-    /**
-     * Restore an archived applicant account.
-     *
-     * Both the applicant and their linked user account use soft deletes,
-     * so restoring both keeps the account usable again.
-     */
-    public function restore(int $applicant)
-    {
-        $applicant = Applicant::withTrashed()
-            ->with(['user' => fn ($q) => $q->withTrashed()])
-            ->findOrFail($applicant);
-
-        if (!$applicant->trashed()) {
-            return redirect()
-                ->route('admin.master-list.index')
-                ->with('info', 'This applicant account is already active.');
-        }
-
-        $user = $applicant->user;
-
-        DB::transaction(function () use ($applicant, $user) {
-            $applicant->restore();
-
-            if ($user && $user->trashed()) {
-                $user->restore();
-            }
-
-            AuditLog::record(
-                'student_account_restored',
-                "Restored student account for {$applicant->first_name} {$applicant->last_name}" .
-                    ($user ? " ({$user->email})" : '') .
-                    ' from the Master List archive.',
-                $applicant
-            );
-        });
-
-        return redirect()
-            ->route('admin.master-list.index')
-            ->with('success', 'Student account restored successfully. The applicant can access the account again.');
     }
 
 
