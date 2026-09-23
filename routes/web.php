@@ -109,11 +109,6 @@ Route::middleware(['auth', 'admin', 'last_seen'])->prefix('admin')->group(functi
     // Master list — full applicant records with date / type filters
     Route::get('/master-list', [MasterListController::class, 'index'])->name('admin.master-list.index');
 
-    // Restore an archived applicant account.
-    Route::post('/master-list/{applicant}/restore', [MasterListController::class, 'restore'])
-        ->whereNumber('applicant')
-        ->name('admin.master-list.restore');
-
     // One applicant's full record, returned as an HTML fragment for the
     // master list slide-out drawer. Archived applicants resolve here too.
     Route::get('/master-list/{applicant}', [MasterListController::class, 'show'])
