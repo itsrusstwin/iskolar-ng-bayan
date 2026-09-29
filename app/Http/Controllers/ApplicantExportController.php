@@ -43,9 +43,8 @@ class ApplicantExportController extends Controller
         abort_unless(Auth::user()?->role === 'admin', 403);
 
         $applicants = Applicant::with('user')
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get();
+    ->orderBy('id', 'asc')
+    ->get();
 
         $service = app(AdminDashboardService::class);
         $dashboardStatusClasses = collect($applicants->pluck('status')->unique())

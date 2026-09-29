@@ -109,6 +109,10 @@ Route::middleware(['auth', 'admin', 'last_seen'])->prefix('admin')->group(functi
     // Master list — full applicant records with date / type filters
     Route::get('/master-list', [MasterListController::class, 'index'])->name('admin.master-list.index');
 
+    Route::post('/master-list/{applicant}/restore', [MasterListController::class, 'restore'])
+    ->whereNumber('applicant')
+    ->name('admin.master-list.restore');
+
     // One applicant's full record, returned as an HTML fragment for the
     // master list slide-out drawer. Archived applicants resolve here too.
     Route::get('/master-list/{applicant}', [MasterListController::class, 'show'])
@@ -140,6 +144,12 @@ Route::middleware(['auth', 'admin', 'last_seen'])->prefix('admin')->group(functi
     Route::post('/reminders/{reminder}/toggle', [ReminderController::class, 'toggle'])->name('admin.reminders.toggle');
     Route::post('/reminders/{reminder}/move-up', [ReminderController::class, 'moveUp'])->name('admin.reminders.move-up');
     Route::post('/reminders/{reminder}/move-down', [ReminderController::class, 'moveDown'])->name('admin.reminders.move-down');
+
+    // Operations panels
+    Route::get('/schedules', [ScheduleController::class, 'index'])->name('admin.schedules.index');
+    Route::get('/waste-compliance', [WasteComplianceController::class, 'index'])->name('admin.waste-compliance.index');
+    Route::get('/payouts', [PayoutController::class, 'index'])->name('admin.payouts.index');
+    Route::get('/appeals', [AppealController::class, 'index'])->name('admin.appeals.index');
 
     Route::post('/applicants/{applicant}/verify-policy', [PolicyVerificationController::class, 'verify'])
         ->name('admin.verify-policy');

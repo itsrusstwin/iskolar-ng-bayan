@@ -46,16 +46,25 @@ class AdminDashboardService
 
     public function getDashboardData(): array
     {
-        $all = Applicant::with('user')->latest()->get();
+        $all = Applicant::with('user')
+    ->orderBy('id', 'asc')
+    ->get();
 
-        return [
-            'stats' => $this->getStats($all),
-            'progressChart' => $this->getProgressChartData($all),
-            'programChart' => $this->getProgramChartData($all),
-            'recentApplicants' => $this->onlineFirst($all->take(10)),
-            'recentActivity' => AuditLog::with(['user', 'applicant'])->latest()->take(8)->get(),
-            'applicantsByStatus' => $all->groupBy('status'),
-        ];
+$recentApplicants = Applicant::with('user')
+    ->orderByDesc('id')
+    ->take(10)
+    ->get()
+    ->sortBy('id')
+    ->values();
+
+return [
+    'stats' => $this->getStats($all),
+    'progressChart' => $this->getProgressChartData($all),
+    'programChart' => $this->getProgramChartData($all),
+    'recentApplicants' => $recentApplicants,
+    'recentActivity' => AuditLog::with(['user', 'applicant'])->latest()->take(8)->get(),
+    'applicantsByStatus' => $all->groupBy('status'),
+];
     }
 
     /**

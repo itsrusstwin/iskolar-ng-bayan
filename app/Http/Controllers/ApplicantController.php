@@ -133,7 +133,9 @@ class ApplicantController extends Controller
             $query->whereIn('status', $statuses);
         }
 
-        $applicants = $dashboard->onlineFirst($query->orderByDesc('created_at')->get());
+        $applicants = $query
+    ->orderBy('id', 'asc')
+    ->get();
 
         $statuses = array_merge(
             ['all' => 'All statuses', 'scholars' => 'Scholars (passed / active)'],

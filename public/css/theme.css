@@ -3945,3 +3945,25 @@ select.form-select {
         overflow-x: auto !important;
     }
 }
+/* =========================================================
+   STUDENT NAVBAR - NOTIFICATION BUTTON
+   Keep notification icon visible in light mode and dark mode.
+   ========================================================= */
+
+.navbar.bg-brand-navy .btn-icon {
+    background: rgba(255, 255, 255, 0.10) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+    box-shadow: none;
+}
+
+.navbar.bg-brand-navy .btn-icon:hover,
+.navbar.bg-brand-navy .btn-icon:focus-visible {
+    background: rgba(255, 255, 255, 0.18) !important;
+    border-color: rgba(255, 255, 255, 0.28) !important;
+    color: #ffffff !important;
+}
+
+.navbar.bg-brand-navy .btn-icon i {
+    color: #ffffff !important;
+}

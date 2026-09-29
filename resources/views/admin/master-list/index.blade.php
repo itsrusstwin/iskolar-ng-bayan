@@ -224,11 +224,38 @@
                             @endif
                         </td>
                         <td class="col-ml-status">
-                            @if ($archived)
-                                <span class="admin-badge-archived">Archived</span>
-                            @else
-                                <span class="admin-badge {{ $dashboard->statusBadgeClass($applicant->status) }}">{{ $dashboard->statusDisplayLabel($applicant->status) }}</span>
-                            @endif
+@if ($archived)
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+
+        <span class="admin-badge-archived">
+            Archived
+        </span>
+
+        <form method="POST"
+              action="{{ route('admin.master-list.restore', $applicant->id) }}"
+              class="d-inline"
+              onsubmit="return confirm('Restore this applicant account? The account will become active again and the applicant will be able to sign in.');">
+
+            @csrf
+
+            <button type="submit"
+                    class="btn btn-sm btn-outline-success"
+                    title="Restore applicant account"
+                    onclick="event.stopPropagation();">
+
+                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                Restore
+
+            </button>
+
+        </form>
+
+    </div>
+@else
+    <span class="admin-badge {{ $dashboard->statusBadgeClass($applicant->status) }}">
+        {{ $dashboard->statusDisplayLabel($applicant->status) }}
+    </span>
+@endif
                         </td>
                     </tr>
                     @endforeach

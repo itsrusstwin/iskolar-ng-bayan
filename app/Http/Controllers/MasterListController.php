@@ -81,7 +81,9 @@ class MasterListController extends Controller
             });
         }
 
-        $applicants = $query->orderByDesc('created_at')->get();
+        $applicants = $query
+    ->orderBy('id', 'asc')
+    ->get();
 
         $activeApplicants = $applicants->whereNull('deleted_at');
 
@@ -102,6 +104,29 @@ class MasterListController extends Controller
 
         return view('admin.master-list.index', compact('applicants', 'filters', 'summary', 'dashboard', 'statuses'));
     }
+
+    public function restore(int $applicant)
+{
+    $applicant = Applicant::withTrashed()
+        ->with(['user' => fn ($q) => $q->withTrashed()])
+        ->findOrFail($applicant);
+
+    if (!$applicant->trashed()) {
+        return redirect()
+            ->route('admin.master-list.index')
+            ->with('info', 'This applicant account is already active.');
+    }
+
+    $applicant->restore();
+
+    if ($applicant->user && $applicant->user->trashed()) {
+        $applicant->user->restore();
+    }
+
+    return redirect()
+        ->route('admin.master-list.index')
+        ->with('success', 'Student account restored successfully.');
+}
 
     /**
      * Return the full record of ONE applicant as an HTML fragment.
