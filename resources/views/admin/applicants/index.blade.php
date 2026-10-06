@@ -166,6 +166,8 @@
                                 <div style="min-width:0;">
                                     <div class="applicant-name fw-semibold admin-table__name">{{ $applicant->first_name }} {{ $applicant->last_name }}</div>
                                     <span class="text-muted-soft admin-table__meta" style="font-size: .72rem;">
+                                        <span class="fw-semibold">#{{ $applicant->application_number }}</span>
+                                        <span class="opacity-50">·</span>
                                         {{ $applicant->school_name ?? '—' }}
                                         <span class="opacity-50">·</span>
                                         {{ $applicant->user->email ?? 'no account' }}

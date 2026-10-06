@@ -16,7 +16,7 @@
             The permanent record of every applicant — including archived student accounts — with their full pipeline journey.
         </p>
     </div>
-    @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
+    @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['barangay']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
         <a href="{{ route('admin.master-list.index') }}" class="btn btn-sm btn-ghost text-muted-soft d-inline-flex align-items-center gap-1 flex-shrink-0">
             <i class="bi bi-x-lg"></i> Clear filters
         </a>
@@ -62,6 +62,18 @@
                     </select>
                 </div>
             </div>
+            <div class="col-12 col-md-6 col-xl-2">
+                <label class="form-label small fw-semibold mb-1"><i class="bi bi-geo-alt me-1"></i>Barangay</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text border-end-0"><i class="bi bi-geo-alt-fill"></i></span>
+                    <select name="barangay" class="form-select form-select-sm border-start-0">
+                        <option value="">All barangays</option>
+                        @foreach ($barangays as $barangay)
+                            <option value="{{ $barangay }}" {{ ($filters['barangay'] ?? '') === $barangay ? 'selected' : '' }}>{{ $barangay }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
             <div class="col-12 col-md-6 col-xl-3">
                 <label class="form-label small fw-semibold mb-1"><i class="bi bi-search me-1"></i>Search</label>
                 <div class="input-group input-group-sm">
@@ -73,7 +85,7 @@
                 <button type="submit" class="btn btn-sm btn-navy flex-fill d-inline-flex align-items-center justify-content-center gap-1">
                     <i class="bi bi-filter"></i> Apply
                 </button>
-                @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
+                @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['barangay']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
                     <a href="{{ route('admin.master-list.index') }}" class="btn btn-sm btn-outline-navy d-inline-flex align-items-center justify-content-center">
                         <i class="bi bi-arrow-counterclockwise"></i>
                     </a>
@@ -149,7 +161,7 @@
                 <span class="empty-state__icon"><i class="bi bi-clipboard-x"></i></span>
                 <h6>No applicants found</h6>
                 <p>
-                    @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
+                    @if (!empty($filters['created_date']) || !empty($filters['program_type']) || !empty($filters['status']) || !empty($filters['barangay']) || !empty($filters['search']) || $filters['archive_status'] !== 'all')
                         No records match the current filters. Try a different date or clear the filters.
                     @else
                         The archive is empty — no applicant records yet.

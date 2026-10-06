@@ -28,7 +28,8 @@ class ScheduleController extends Controller
                 $q->where(function ($q) use ($search) {
                     $q->where('first_name', 'like', "%{$search}%")
                         ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhere('school_name', 'like', "%{$search}%");
+                        ->orWhere('school_name', 'like', "%{$search}%")
+                        ->orWhereHas('user', fn ($u) => $u->where('application_id', 'like', "%{$search}%"));
                 });
             })
             ->get();

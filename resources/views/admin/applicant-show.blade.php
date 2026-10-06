@@ -46,6 +46,7 @@
                         </span>
                     @endif
                 </p>
+                <p class="small text-muted-soft mb-0 fw-semibold" style="letter-spacing:.04em;">Application ID: {{ $applicant->application_number }}</p>
                 @if ($applicant->course || $applicant->year_level)
                     <p class="small text-muted-soft mb-0">{{ $applicant->course }}{{ $applicant->course && $applicant->year_level ? ', ' : '' }}{{ $applicant->year_level }}</p>
                 @endif

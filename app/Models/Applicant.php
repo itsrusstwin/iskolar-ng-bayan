@@ -49,6 +49,19 @@ class Applicant extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * The Application ID an admin typed when creating this student's account
+     * (stored on the user). Falls back to the zero-padded row id only for
+     * the rare account that somehow has none.
+     */
+    public function getApplicationNumberAttribute(): string
+    {
+        $user = $this->user ?? $this->user()->withTrashed()->first();
+
+        return $user?->application_id
+            ?: str_pad((string) $this->id, 5, '0', STR_PAD_LEFT);
+    }
+
     public function requirements() { return $this->hasMany(ApplicantRequirement::class); }
     public function verification() { return $this->hasOne(ProgramVerification::class); }
     public function mswdoAssessment() { return $this->hasOne(MswdoAssessment::class); }

@@ -40,7 +40,7 @@
                 @endif
             </div>
             <div>
-                <p class="small text-muted-soft mb-0 fw-semibold" style="letter-spacing:.04em;">Application ID: {{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}</p>
+                <p class="small text-muted-soft mb-0 fw-semibold" style="letter-spacing:.04em;">Application ID: {{ $applicant->application_number }}</p>
                 <p class="fw-bold fs-5 mb-0 d-flex align-items-center gap-2">
                     {{ $applicant->first_name }} {{ $applicant->last_name }}
                     @if ($applicant->user?->isOnline())

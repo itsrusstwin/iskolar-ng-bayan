@@ -486,7 +486,7 @@
                                 
                             @endif
                         </span>
-                        <div>
+                        <div>   
                             <p class="small text-muted-soft mb-0 fw-semibold" style="letter-spacing:.04em;">Application ID: {{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}</p>
                             <p class="fw-bold fs-5 mb-0">{{ $applicant->first_name }} {{ $applicant->last_name }}</p>
                             @if ($applicant->course || $applicant->year_level)

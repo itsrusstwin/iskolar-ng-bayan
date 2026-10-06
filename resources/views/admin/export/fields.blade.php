@@ -12,6 +12,7 @@
 
 @php
     $fieldIcons = [
+        'application_id' => 'bi-hash',
         'first_name' => 'bi-person',
         'middle_name' => 'bi-person-add',
         'last_name' => 'bi-person-vcard',
@@ -32,7 +33,7 @@
     ];
 
     $fieldGroups = [
-        'Identity' => ['first_name', 'middle_name', 'last_name', 'sex', 'date_of_birth'],
+        'Identity' => ['application_id', 'first_name', 'middle_name', 'last_name', 'sex', 'date_of_birth'],
         'Contact' => ['email', 'contact_number'],
         'Academic' => ['school_name', 'course', 'year_level', 'program_type', 'status'],
         'Address & Family' => ['barangay', 'sitio', 'landmark', 'father_name', 'mother_maiden_name'],

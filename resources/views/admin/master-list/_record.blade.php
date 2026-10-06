@@ -209,7 +209,7 @@
                         {{ $dashboard->statusDisplayLabel($applicant->status) }}
                     </span>
                 @endif
-                <span class="ml-ref">#{{ str_pad((string) $applicant->id, 5, '0', STR_PAD_LEFT) }}</span>
+                <span class="ml-ref">#{{ $applicant->application_number }}</span>
             </div>
         </div>
     </div>

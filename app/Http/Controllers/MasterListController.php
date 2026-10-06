@@ -24,12 +24,17 @@ class MasterListController extends Controller
         $rawStatus = $request->input('status');
         $status = ($rawStatus && $rawStatus !== 'all') ? $rawStatus : null;
 
+        $barangay = in_array($request->input('barangay'), AdminDashboardService::BARANGAYS, true)
+            ? $request->input('barangay')
+            : null;
+
         $filters = [
             'created_date' => $request->input('created_date'),
             'program_type' => $programType,
             'search' => $request->input('search'),
             'archive_status' => $archiveStatus,
             'status' => $status,
+            'barangay' => $barangay,
         ];
 
         // The list view only needs what the table renders. The full record is
@@ -56,6 +61,10 @@ class MasterListController extends Controller
             $query->where('program_type', $filters['program_type']);
         }
 
+        if ($filters['barangay']) {
+            $query->where('barangay', $filters['barangay']);
+        }
+
         if ($filters['status']) {
             if ($filters['status'] === 'scholars') {
                 $query->whereIn('status', [
@@ -77,7 +86,7 @@ class MasterListController extends Controller
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('school_name', 'like', "%{$search}%")
                     ->orWhere('contact_number', 'like', "%{$search}%")
-                    ->orWhereHas('user', fn ($u) => $u->withTrashed()->where('email', 'like', "%{$search}%"));
+                    ->orWhereHas('user', fn ($u) => $u->withTrashed()->where(fn ($x) => $x->where('email', 'like', "%{$search}%")->orWhere('application_id', 'like', "%{$search}%")));
             });
         }
 
@@ -102,7 +111,9 @@ class MasterListController extends Controller
             AdminDashboardService::STATUS_LABELS
         );
 
-        return view('admin.master-list.index', compact('applicants', 'filters', 'summary', 'dashboard', 'statuses'));
+        $barangays = AdminDashboardService::BARANGAYS;
+
+        return view('admin.master-list.index', compact('applicants', 'filters', 'summary', 'dashboard', 'statuses', 'barangays'));
     }
 
     public function restore(int $applicant)

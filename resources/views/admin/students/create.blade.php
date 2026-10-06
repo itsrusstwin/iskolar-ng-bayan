@@ -32,9 +32,17 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Application ID</label>
-                    <input type="text" name="application_id" value="{{ old('application_id') }}" class="form-control" placeholder="e.g. APP-2026-0001" required>
-                    <div class="form-text text-muted-soft">The student's application number for tracking purposes.</div>
+                    <label class="form-label" for="application_id">Application ID</label>
+                    <input type="text" id="application_id" name="application_id" value="{{ old('application_id') }}"
+                           class="form-control @error('application_id') is-invalid @enderror"
+                           inputmode="numeric" pattern="[0-9]+" maxlength="20" autocomplete="off"
+                           oninput="this.value = this.value.replace(/\D/g, '')"
+                           placeholder="e.g. 00123" required>
+                    @error('application_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @else
+                        <div class="form-text text-muted-soft">Numbers only. Each student needs their own unique ID.</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">

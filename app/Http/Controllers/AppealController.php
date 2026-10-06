@@ -40,7 +40,8 @@ class AppealController extends Controller
             $query->whereHas('disqualification.applicant', function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhere('school_name', 'like', "%{$search}%");
+                    ->orWhere('school_name', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn ($u) => $u->where('application_id', 'like', "%{$search}%"));
             });
         }
 

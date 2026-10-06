@@ -44,6 +44,18 @@ class AdminDashboardService
         'aspiring' => 'Aspiring Scholar',
     ];
 
+    /** @var array<int, string> Official barangays of Santa Cruz, Laguna. */
+    public const BARANGAYS = [
+        'Brgy. Alipit', 'Brgy. Bagumbayan', 'Brgy. I (Poblacion)', 'Brgy. II (Poblacion)',
+        'Brgy. III (Poblacion)', 'Brgy. IV (Poblacion)', 'Brgy. V (Poblacion)',
+        'Brgy. Bubukal', 'Brgy. Calios', 'Brgy. Duhat', 'Brgy. Gatid',
+        'Brgy. Jasaan', 'Brgy. Labuin', 'Brgy. Malinao', 'Brgy. Oogong',
+        'Brgy. Pagsawitan', 'Brgy. Palasan', 'Brgy. Patimbao',
+        'Brgy. San Jose', 'Brgy. San Juan', 'Brgy. San Pablo Norte',
+        'Brgy. San Pablo Sur', 'Brgy. Santisima Cruz',
+        'Brgy. Santo Angel Central', 'Brgy. Santo Angel Norte', 'Brgy. Santo Angel Sur',
+    ];
+
     public function getDashboardData(): array
     {
         $all = Applicant::with('user')

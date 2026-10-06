@@ -28,7 +28,7 @@
                 <p class="section-eyebrow mb-3 mt-2">Personal Information</p>
                 <div class="mb-3">
                     <label class="form-label">Application ID</label>
-                    <input type="text" value="{{ str_pad($applicant->id, 5, '0', STR_PAD_LEFT) }}" class="form-control bg-surface" readonly>
+                    <input type="text" value="{{ $applicant->application_number }}" class="form-control bg-surface" readonly>
                 </div>
                 <div class="row g-3 mb-2">
                     <div class="col-md-4">

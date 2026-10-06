@@ -2917,9 +2917,10 @@ body.ml-drawer-open {
 
 /* Ghost / quiet buttons */
 .btn-ghost {
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--text-500);
+  background: linear-gradient(135deg, #0f3260 0%, #24639f 100%);
+  border: 1px solid rgba(138, 180, 232, .45);
+  color: #fff;
+  box-shadow: 0 4px 14px -5px rgba(63, 122, 198, .55);
 }
 .btn-ghost:hover {
   background: var(--surface-100);
@@ -3222,8 +3223,10 @@ body.ml-drawer-open {
 
 /* Ghost/quiet buttons — keep them subtle but discoverable */
 [data-theme="dark"] .btn-ghost { color: var(--text-500); }
+
+
 [data-theme="dark"] .btn-ghost:hover {
-  background: var(--surface-100);
+  background: linear-gradient(135deg, #1f4a86 0%, #3f7ac6 100%);
   color: var(--text-900);
   border-color: var(--surface-border);
 }

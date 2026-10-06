@@ -42,7 +42,7 @@ class WasteComplianceController extends Controller
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('school_name', 'like', "%{$search}%")
                     ->orWhere('contact_number', 'like', "%{$search}%")
-                    ->orWhereHas('user', fn ($uq) => $uq->where('email', 'like', "%{$search}%"));
+                    ->orWhereHas('user', fn ($uq) => $uq->where(fn ($x) => $x->where('email', 'like', "%{$search}%")->orWhere('application_id', 'like', "%{$search}%")));
             });
         }
 

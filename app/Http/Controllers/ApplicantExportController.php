@@ -19,6 +19,7 @@ class ApplicantExportController extends Controller
      * @var array<string, string>
      */
     private const FIELD_OPTIONS = [
+        'application_id' => 'Application ID',
         'first_name' => 'First Name',
         'middle_name' => 'Middle Name',
         'last_name' => 'Last Name',
@@ -120,6 +121,7 @@ class ApplicantExportController extends Controller
      * @var array<string, int>
      */
     private const FIELD_WIDTHS = [
+        'application_id' => 16,
         'first_name' => 15,
         'middle_name' => 15,
         'last_name' => 15,
@@ -300,6 +302,8 @@ class ApplicantExportController extends Controller
     private function valueFor(Applicant $applicant, string $field, AdminDashboardService $service): string
     {
         switch ($field) {
+            case 'application_id':
+                return $applicant->application_number;
             case 'email':
                 return $applicant->user?->email ?? '';
             case 'date_of_birth':

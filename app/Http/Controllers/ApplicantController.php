@@ -93,7 +93,7 @@ class ApplicantController extends Controller
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('school_name', 'like', "%{$search}%")
                     ->orWhere('contact_number', 'like', "%{$search}%")
-                    ->orWhereHas('user', fn ($u) => $u->where('email', 'like', "%{$search}%"));
+                    ->orWhereHas('user', fn ($u) => $u->where(fn ($x) => $x->where('email', 'like', "%{$search}%")->orWhere('application_id', 'like', "%{$search}%")));
             });
         }
 

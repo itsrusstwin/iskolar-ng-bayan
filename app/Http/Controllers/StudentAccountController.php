@@ -25,12 +25,18 @@ class StudentAccountController extends Controller
     {
         abort_unless(Auth::user()?->role === 'admin', 403);
 
+        // Trim stray spaces so "00123 " and "00123" count as the same ID.
+        $request->merge(['application_id' => trim((string) $request->input('application_id'))]);
+
         $validated = $request->validate([
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
-            'application_id' => 'required|string|max:50',
+            'application_id' => ['required', 'string', 'max:20', 'regex:/^\d+$/', 'unique:users,application_id'],
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
+        ], [
+            'application_id.regex' => 'The Application ID must contain numbers only.',
+            'application_id.unique' => 'That Application ID is already assigned to another account.',
         ]);
 
         $name = strtoupper($validated['first_name'] . ' ' . $validated['last_name']);
