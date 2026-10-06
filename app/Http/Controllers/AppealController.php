@@ -20,6 +20,42 @@ class AppealController extends Controller
         $this->workflow = $workflow;
     }
 
+    /**
+     * Admin "Appeals" panel: all appeals with a status filter.
+     */
+    public function index(Request $request)
+    {
+        $status = in_array($request->input('status'), ['pending', 'approved', 'denied'], true)
+            ? $request->input('status')
+            : ($request->input('status') === 'all' ? 'all' : 'pending');
+        $search = trim((string) $request->input('search', ''));
+
+        $query = Appeal::with('disqualification.applicant.user')->latest('filed_at');
+
+        if ($status !== 'all') {
+            $query->where('result', $status);
+        }
+
+        if ($search !== '') {
+            $query->whereHas('disqualification.applicant', function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('school_name', 'like', "%{$search}%");
+            });
+        }
+
+        return view('admin.appeals.index', [
+            'appeals' => $query->get(),
+            'status' => $status,
+            'search' => $search,
+            'counts' => [
+                'pending' => Appeal::where('result', 'pending')->count(),
+                'approved' => Appeal::where('result', 'approved')->count(),
+                'denied' => Appeal::where('result', 'denied')->count(),
+            ],
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -28,6 +64,9 @@ class AppealController extends Controller
         ]);
 
         $disqualification = Disqualification::findOrFail($validated['disqualification_id']);
+
+        // A student may only appeal their own disqualification.
+        abort_unless($disqualification->applicant?->user_id === Auth::id(), 403);
 
         // Don't allow a second appeal while one is pending or already approved.
         $existing = $disqualification->appeals()->whereIn('result', ['pending', 'approved'])->first();
@@ -63,6 +102,10 @@ class AppealController extends Controller
     {
         abort_unless(Auth::user()?->role === 'admin', 403);
 
+        if ($appeal->result !== 'pending') {
+            return redirect()->back()->with('success', 'This appeal has already been resolved.');
+        }
+
         $appeal->update(['result' => 'approved']);
         $applicant = $appeal->disqualification->applicant;
 
@@ -81,6 +124,10 @@ class AppealController extends Controller
     public function reject(Appeal $appeal)
     {
         abort_unless(Auth::user()?->role === 'admin', 403);
+
+        if ($appeal->result !== 'pending') {
+            return redirect()->back()->with('success', 'This appeal has already been resolved.');
+        }
 
         $appeal->update(['result' => 'denied']);
 

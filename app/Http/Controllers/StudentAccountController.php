@@ -28,6 +28,7 @@ class StudentAccountController extends Controller
         $validated = $request->validate([
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
+            'application_id' => 'required|string|max:50',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
         ]);
@@ -39,6 +40,7 @@ class StudentAccountController extends Controller
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
             'role' => 'applicant',
+            'application_id' => $validated['application_id'],
         ]);
 
         // Note: we intentionally do NOT Auth::login() here —
@@ -48,6 +50,7 @@ class StudentAccountController extends Controller
             'name' => $name,
             'email' => $validated['email'],
             'password' => $validated['password'],
+            'application_id' => $validated['application_id'],
             'user_id' => $user->id,
             'created_by' => Auth::id(),
         ]);

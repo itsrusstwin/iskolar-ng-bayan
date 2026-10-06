@@ -49,18 +49,16 @@ class ApplicantController extends Controller
     {
         $data = $dashboard->getDashboardData();
 
-        $selectedMonth = $request->input('month', now()->format('Y-m'));
-        $monthPayouts = collect();
-        $monthTotal = 0;
-
-        if (preg_match('/^\d{4}-\d{2}$/', (string) $selectedMonth)) {
-            $monthPayouts = \App\Models\Payout::with('applicant')
-                ->whereMonth('released_at', substr($selectedMonth, 5, 2))
-                ->whereYear('released_at', substr($selectedMonth, 0, 4))
-                ->latest('released_at')
-                ->get();
-            $monthTotal = $monthPayouts->sum('amount');
-        }
+        $ops = [
+            'waste_deficient' => \App\Models\WasteCompliance::where('is_compliant', false)->count(),
+            'waste_pending' => Applicant::whereIn('status', ['oriented', 'compliance_pending'])->count(),
+            'payout_month' => \App\Models\Payout::whereYear('released_at', now()->year)
+                ->whereMonth('released_at', now()->month)->sum('amount'),
+            'payout_eligible' => Applicant::whereIn('status', ['compliance_met', 'oriented'])->count(),
+            'schedules_upcoming' => Applicant::where('exam_scheduled_at', '>=', now())
+                ->orWhere('orientation_scheduled_at', '>=', now())->count(),
+            'appeals_pending' => \App\Models\Appeal::where('result', 'pending')->count(),
+        ];
 
         return view('admin.dashboard', [
             'stats' => $data['stats'],
@@ -70,9 +68,7 @@ class ApplicantController extends Controller
             'recentActivity' => $data['recentActivity'],
             'applicants' => $data['applicantsByStatus'],
             'dashboard' => $dashboard,
-            'monthPayouts' => $monthPayouts,
-            'monthTotal' => $monthTotal,
-            'selectedMonth' => $selectedMonth,
+            'ops' => $ops,
         ]);
     }
 

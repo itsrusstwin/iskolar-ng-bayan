@@ -595,138 +595,84 @@
                 <i class="bi bi-person-lines-fill"></i> View Application Details
             </a>
             @if ($latestDisqualification)
-                @if ($existingAppeal && $existingAppeal->result === 'pending')
-                    <span class="btn btn-outline-navy btn-sm d-inline-flex align-items-center gap-1 disabled">
-                        <i class="bi bi-hourglass-split"></i> Appeal pending
-                    </span>
-                @else
-                    <a href="#appeal-form" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1">
-                        <i class="bi bi-shield-exclamation"></i> File an appeal
-                    </a>
-                @endif
+                <a href="{{ route('student.appeals') }}" class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-shield-exclamation"></i>
+                    {{ $existingAppeal && $existingAppeal->result === 'pending' ? 'Appeal pending' : 'View appeal' }}
+                </a>
             @endif
         </div>
-
-        @if ($latestDisqualification && (! $existingAppeal || $existingAppeal->result !== 'pending'))
-        <form id="appeal-form" method="POST" action="{{ route('appeals.store') }}" class="mt-4 pt-3 border-top">
-            @csrf
-            <input type="hidden" name="disqualification_id" value="{{ $latestDisqualification->id }}">
-            <p class="fw-semibold small mb-2">File an appeal</p>
-            <textarea name="reconsideration_notes" rows="3" class="form-control mb-2" placeholder="Explain why you believe the disqualification is a mistake..." required></textarea>
-            <button type="submit" class="btn btn-navy btn-sm px-3">Submit appeal</button>
-        </form>
-        @endif
     </div>
 
-    <!-- My benefits: Waste compliance + Payouts -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-6">
-            <div class="card-elevated p-4 h-100">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <span class="admin-kpi-icon admin-kpi-icon--green" style="width:38px;height:38px;font-size:1.05rem;flex-shrink:0;">
-                        <i class="bi bi-recycle"></i>
-                    </span>
-                    <div>
-                        <p class="fw-bold mb-0">Waste Compliance</p>
-                        <p class="small text-muted-soft mb-0">Plastic waste submission per semester</p>
-                    </div>
+    <!-- Panels: quick summaries that link to their own pages -->
+    @php
+        $nextSchedule = collect([
+            ['label' => 'Qualifying exam', 'at' => $applicant->exam_scheduled_at],
+            ['label' => 'Orientation', 'at' => $applicant->orientation_scheduled_at],
+        ])->filter(fn ($e) => $e['at'] && $e['at']->isFuture())->sortBy('at')->first();
+        $appealSummary = ! $latestDisqualification ? 'No appeal needed'
+            : (! $existingAppeal ? 'You can file an appeal'
+                : ['pending' => 'Appeal under review', 'approved' => 'Appeal approved', 'denied' => 'Appeal denied'][$existingAppeal->result] ?? 'View appeal');
+    @endphp
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <a href="{{ route('student.benefits') }}" class="panel-link">
+                <div class="panel-link__top">
+                    <span class="panel-link__label">Waste compliance</span>
+                    <span class="panel-head__icon"><i class="bi bi-recycle"></i></span>
                 </div>
-
-                @php
-                    $totalComplied = $applicant->wasteCompliance->where('is_compliant', true)->count();
-                    $totalKilosSubmitted = $applicant->wasteCompliance->sum('kilos_submitted');
-                @endphp
-
-                @if ($applicant->wasteCompliance->count())
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-2">
-                            <thead>
-                                <tr class="small text-muted-soft">
-                                    <th>Semester</th>
-                                    <th class="text-end">Submitted</th>
-                                    <th class="text-end">Date recorded</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($applicant->wasteCompliance->sortByDesc('semester') as $wc)
-                                    <tr>
-                                        <td class="small">{{ $wc->semester }}</td>
-                                        <td class="small text-end">{{ number_format($wc->kilos_submitted, 1) }} kg</td>
-                                        <td class="small text-end text-muted-soft">
-                                            {{ $wc->created_at?->format('M d, Y') ?? '—' }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="d-flex justify-content-between small pt-2 border-top">
-                        <span class="text-muted-soft">Total kilos submitted</span>
-                        <span class="fw-semibold">{{ number_format($totalKilosSubmitted, 1) }} kg</span>
-                    </div>
-                @else
-                    <div class="text-center py-4">
-                        <i class="bi bi-inbox fs-1 d-block mb-2" style="color: var(--text-500); opacity:.5;"></i>
-                        <p class="small text-muted-soft mb-0">No waste compliance records yet.</p>
-                    </div>
-                @endif
-            </div>
+                <p class="panel-link__value">{{ number_format($applicant->wasteCompliance->sum('kilos_submitted'), 1) }} kg</p>
+                <p class="panel-link__hint">{{ $applicant->wasteCompliance->count() }} submission{{ $applicant->wasteCompliance->count() === 1 ? '' : 's' }} recorded</p>
+                <span class="panel-link__cta">View details <i class="bi bi-arrow-right"></i></span>
+            </a>
         </div>
-
-        <div class="col-lg-6">
-            <div class="card-elevated p-4 h-100">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <span class="admin-kpi-icon admin-kpi-icon--blue" style="width:38px;height:38px;font-size:1.05rem;flex-shrink:0;">
-                        <i class="bi bi-wallet2"></i>
-                    </span>
-                    <div>
-                        <p class="fw-bold mb-0">Scholarship Payouts</p>
-                        <p class="small text-muted-soft mb-0">Financial assistance released</p>
-                    </div>
+        <div class="col-md-6 col-xl-3">
+            <a href="{{ route('student.benefits') }}" class="panel-link">
+                <div class="panel-link__top">
+                    <span class="panel-link__label">Scholarship payouts</span>
+                    <span class="panel-head__icon"><i class="bi bi-wallet2"></i></span>
                 </div>
-
-                @php $totalPayoutAmount = $applicant->payouts->sum('amount'); @endphp
-
-                @if ($applicant->payouts->count())
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-2">
-                            <thead>
-                                <tr class="small text-muted-soft">
-                                    <th>Amount</th>
-                                    <th>Released</th>
-                                    <th class="text-end">Reference</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($applicant->payouts->sortByDesc('released_at') as $payout)
-                                    <tr>
-                                        <td class="small fw-semibold">₱{{ number_format($payout->amount, 2) }}</td>
-                                        <td class="small">{{ $payout->released_at?->format('M d, Y') ?? '—' }}</td>
-                                        <td class="small text-end text-muted-soft">{{ $payout->reference_no ?? 'N/A' }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="d-flex justify-content-between small pt-2 border-top">
-                        <span class="text-muted-soft">Total assistance received</span>
-                        <span class="fw-semibold">₱{{ number_format($totalPayoutAmount, 2) }}</span>
-                    </div>
+                <p class="panel-link__value">₱{{ number_format($applicant->payouts->sum('amount'), 2) }}</p>
+                <p class="panel-link__hint">{{ $applicant->payouts->count() }} release{{ $applicant->payouts->count() === 1 ? '' : 's' }} so far</p>
+                <span class="panel-link__cta">View details <i class="bi bi-arrow-right"></i></span>
+            </a>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <a href="{{ route('student.schedules') }}" class="panel-link">
+                <div class="panel-link__top">
+                    <span class="panel-link__label">Upcoming schedule</span>
+                    <span class="panel-head__icon"><i class="bi bi-calendar-event"></i></span>
+                </div>
+                @if ($nextSchedule)
+                    <p class="panel-link__value">{{ $nextSchedule['at']->format('M j, g:ia') }}</p>
+                    <p class="panel-link__hint">{{ $nextSchedule['label'] }}</p>
                 @else
-                    <div class="text-center py-4">
-                        <i class="bi bi-inbox fs-1 d-block mb-2" style="color: var(--text-500); opacity:.5;"></i>
-                        <p class="small text-muted-soft mb-0">No payouts released yet.</p>
-                    </div>
+                    <p class="panel-link__value">None yet</p>
+                    <p class="panel-link__hint">We'll notify you when set</p>
                 @endif
-            </div>
+                <span class="panel-link__cta">View schedules <i class="bi bi-arrow-right"></i></span>
+            </a>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <a href="{{ route('student.appeals') }}" class="panel-link">
+                <div class="panel-link__top">
+                    <span class="panel-link__label">Appeals</span>
+                    <span class="panel-head__icon"><i class="bi bi-shield-exclamation"></i></span>
+                </div>
+                <p class="panel-link__value" style="font-size:1.05rem;">{{ $appealSummary }}</p>
+                <p class="panel-link__hint">{{ $isDisqualified ? 'Application disqualified' : 'Application in good standing' }}</p>
+                <span class="panel-link__cta">Open appeals <i class="bi bi-arrow-right"></i></span>
+            </a>
         </div>
     </div>
 
     <!-- Important Reminders -->
     <div class="card-elevated p-4 mb-4">
-        <div class="d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-exclamation-triangle-fill" style="color: var(--gold-500);"></i>
-            <p class="fw-bold mb-0">Important Reminders</p>
+        <div class="panel-head">
+            <span class="panel-head__icon"><i class="bi bi-exclamation-triangle-fill" style="color: var(--gold-500);"></i></span>
+            <div>
+                <p class="panel-head__title">Important Reminders</p>
+                <p class="panel-head__sub">Please read before your next step</p>
+            </div>
         </div>
         <ul class="mb-0 ps-3" style="line-height: 1.9;">
             @forelse ($reminders as $reminder)
@@ -737,43 +683,16 @@
         </ul>
     </div>
 
-    @if ($applicant->exam_scheduled_at || $applicant->orientation_scheduled_at)
-        <!-- Upcoming schedules -->
-        <div class="card-elevated p-4 mb-4">
-            <p class="fw-bold mb-3">Upcoming Schedules</p>
-
-            @if ($applicant->exam_scheduled_at)
-                <div class="d-flex align-items-center justify-content-between py-2 border-bottom flex-wrap gap-2">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-calendar-event fs-5 text-muted-soft"></i>
-                        <div>
-                            <p class="mb-0 fw-semibold small">Qualifying Exam</p>
-                            <p class="small text-muted-soft mb-0">{{ $applicant->exam_scheduled_at->format('F j, Y \a\t g:ia') }}</p>
-                        </div>
-                    </div>
-                    <span class="badge-soft-navy">Scheduled</span>
-                </div>
-            @endif
-
-            @if ($applicant->orientation_scheduled_at)
-                <div class="d-flex align-items-center justify-content-between py-2 flex-wrap gap-2 {{ $applicant->exam_scheduled_at ? 'pt-3' : '' }}">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-mortarboard fs-5 text-muted-soft"></i>
-                        <div>
-                            <p class="mb-0 fw-semibold small">Orientation</p>
-                            <p class="small text-muted-soft mb-0">{{ $applicant->orientation_scheduled_at->format('F j, Y \a\t g:ia') }}</p>
-                        </div>
-                    </div>
-                    <span class="badge-soft-navy">Scheduled</span>
-                </div>
-            @endif
-        </div>
-    @endif
-
     <!-- Announcements -->
     @if (isset($announcements) && $announcements->isNotEmpty())
     <div class="card-elevated p-4 mb-4">
-        <p class="fw-bold mb-3">Announcements</p>
+        <div class="panel-head">
+            <span class="panel-head__icon"><i class="bi bi-megaphone"></i></span>
+            <div>
+                <p class="panel-head__title">Announcements</p>
+                <p class="panel-head__sub">Latest updates from the office</p>
+            </div>
+        </div>
         <div class="row g-3">
             @foreach ($announcements as $announcement)
             <div class="col-md-6">
@@ -804,7 +723,7 @@
             </a>
         </div>
         <div class="col-md-4">
-            <a href="#appeal" class="btn w-100 d-flex align-items-center justify-content-between px-3 py-3 text-decoration-none" style="background: var(--gold-500); color: var(--ink-900); font-weight:600;">
+            <a href="{{ route('student.appeals') }}" class="btn w-100 d-flex align-items-center justify-content-between px-3 py-3 text-decoration-none" style="background: var(--gold-500); color: var(--ink-900); font-weight:600;">
                 <span class="d-flex align-items-center gap-2"><i class="bi bi-file-earmark-text fs-5"></i> <span class="fw-semibold">File Appeal</span></span>
                 <i class="bi bi-chevron-right"></i>
             </a>
@@ -820,7 +739,13 @@
     <!-- Assessment & Exam Records -->
     @if ($applicant->mswdoAssessment || $applicant->examResults->count())
         <div class="card-elevated p-4 mb-4">
-            <p class="fw-bold mb-3">Assessment &amp; Exam Records</p>
+            <div class="panel-head">
+                <span class="panel-head__icon"><i class="bi bi-clipboard2-check"></i></span>
+                <div>
+                    <p class="panel-head__title">Assessment &amp; Exam Records</p>
+                    <p class="panel-head__sub">Reports and results on file</p>
+                </div>
+            </div>
 
             @if ($applicant->mswdoAssessment)
                 <div class="d-flex align-items-center justify-content-between py-2 border-bottom flex-wrap gap-2">
@@ -865,49 +790,6 @@
             @endforeach
         </div>
     @endif
-
-    <!-- Disqualification / Appeal -->
-    <div id="appeal" class="mb-4">
-        @if ($isDisqualified && $latestDisqualification)
-            <div class="alert-brand-danger p-4">
-                <p class="fw-bold mb-1">Application Disqualified</p>
-                <p class="small mb-3">{{ $latestDisqualification->reason }}</p>
-
-                @if ($existingAppeal)
-                    <div class="p-3 rounded-md surface-inset">
-                        <p class="small text-muted-soft mb-1">
-                            Your appeal, filed {{ $existingAppeal->filed_at?->format('M d, Y') }}:
-                        </p>
-                        <p class="small mb-2">{{ $existingAppeal->reconsideration_notes }}</p>
-
-                        @if ($existingAppeal->result === 'pending')
-                            <span class="badge-soft-navy">Under review</span>
-                        @elseif ($existingAppeal->result === 'approved')
-                            <span class="badge-soft-gold">Approved — reinstated</span>
-                        @else
-                            <span class="badge bg-danger-subtle text-danger-emphasis">Denied</span>
-                        @endif
-                    </div>
-                @else
-                    <form method="POST" action="{{ route('appeals.store') }}" class="mt-2">
-                        @csrf
-                        <input type="hidden" name="disqualification_id" value="{{ $latestDisqualification->id }}">
-                        <label class="form-label small fw-semibold">Reason for reconsideration</label>
-                        <textarea name="reconsideration_notes" rows="4" class="form-control mb-3" required placeholder="Explain why you believe this decision should be reconsidered...">{{ old('reconsideration_notes') }}</textarea>
-                        <button type="submit" class="btn btn-navy btn-sm px-3">File an Appeal</button>
-                    </form>
-                @endif
-            </div>
-        @else
-            <div class="card-elevated p-4">
-                <p class="fw-bold mb-1">Appeals</p>
-                <p class="small text-muted-soft mb-0">
-                    You don't have any disqualification on record right now, so there's nothing to appeal.
-                    If you believe there's an error with your application, please reach out via Contact Support.
-                </p>
-            </div>
-        @endif
-    </div>
 
     <!-- Requirements checklist -->
     <div id="requirements" class="card-elevated p-4">

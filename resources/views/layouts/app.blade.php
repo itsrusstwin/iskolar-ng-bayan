@@ -16,6 +16,7 @@
 <body class="bg-surface {{ request()->routeIs('admin.dashboard') ? 'app-enter' : '' }}">
 
 @auth
+@php $pendingAppealsCount = auth()->user()->isAdmin() ? \App\Models\Appeal::where('result', 'pending')->count() : 0; @endphp
 <div class="d-flex" style="min-height: 100vh;">
 
     <!-- Sidebar -->
@@ -41,6 +42,23 @@
             </a>
             <a href="{{ route('admin.master-list.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.master-list.*') ? 'active' : '' }}">
                 <i class="bi bi-clipboard-data-fill"></i> <span>Master List</span>
+            </a>
+
+            <span class="admin-sidebar__label mt-3">Operations</span>
+            <a href="{{ route('admin.schedules.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar-event-fill"></i> <span>Upcoming Schedules</span>
+            </a>
+            <a href="{{ route('admin.waste-compliance.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.waste-compliance.*') ? 'active' : '' }}">
+                <i class="bi bi-recycle"></i> <span>Waste Compliance</span>
+            </a>
+            <a href="{{ route('admin.payouts.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.payouts.*') ? 'active' : '' }}">
+                <i class="bi bi-wallet2"></i> <span>Scholarship Payouts</span>
+            </a>
+            <a href="{{ route('admin.appeals.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.appeals.*') ? 'active' : '' }}">
+                <i class="bi bi-shield-exclamation"></i> <span>Appeals</span>
+                @if ($pendingAppealsCount > 0)
+                    <span class="badge rounded-pill bg-danger ms-auto">{{ $pendingAppealsCount }}</span>
+                @endif
             </a>
 
             <span class="admin-sidebar__label mt-3">Management</span>
@@ -196,6 +214,23 @@
             <a href="{{ route('admin.master-list.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.master-list.*') ? 'active' : '' }}">
                 <i class="bi bi-clipboard-data-fill"></i> <span>Master List</span>
             </a>
+            <span class="admin-sidebar__label mt-3">Operations</span>
+            <a href="{{ route('admin.schedules.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar-event-fill"></i> <span>Upcoming Schedules</span>
+            </a>
+            <a href="{{ route('admin.waste-compliance.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.waste-compliance.*') ? 'active' : '' }}">
+                <i class="bi bi-recycle"></i> <span>Waste Compliance</span>
+            </a>
+            <a href="{{ route('admin.payouts.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.payouts.*') ? 'active' : '' }}">
+                <i class="bi bi-wallet2"></i> <span>Scholarship Payouts</span>
+            </a>
+            <a href="{{ route('admin.appeals.index') }}" class="admin-sidebar__link {{ request()->routeIs('admin.appeals.*') ? 'active' : '' }}">
+                <i class="bi bi-shield-exclamation"></i> <span>Appeals</span>
+                @if ($pendingAppealsCount > 0)
+                    <span class="badge rounded-pill bg-danger ms-auto">{{ $pendingAppealsCount }}</span>
+                @endif
+            </a>
+
             <span class="admin-sidebar__label mt-3">Management</span>
             <a href="{{ route('admin.students.create') }}" class="admin-sidebar__link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
                 <i class="bi bi-person-plus-fill"></i> <span>Create Account</span>

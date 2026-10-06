@@ -10,6 +10,67 @@ use Illuminate\Support\Carbon;
 
 class ScheduleController extends Controller
 {
+    /**
+     * Admin "Schedules" panel: every exam / orientation slot that has been set,
+     * with type, time-window and name filters.
+     */
+    public function index(Request $request)
+    {
+        $type = in_array($request->input('type'), ['exam', 'orientation'], true) ? $request->input('type') : 'all';
+        $when = in_array($request->input('when'), ['past', 'all'], true) ? $request->input('when') : 'upcoming';
+        $search = trim((string) $request->input('search', ''));
+
+        $applicants = Applicant::with('user')
+            ->where(function ($q) {
+                $q->whereNotNull('exam_scheduled_at')->orWhereNotNull('orientation_scheduled_at');
+            })
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('school_name', 'like', "%{$search}%");
+                });
+            })
+            ->get();
+
+        $slots = collect();
+        foreach ($applicants as $applicant) {
+            if ($applicant->exam_scheduled_at) {
+                $slots->push(['applicant' => $applicant, 'type' => 'exam', 'at' => $applicant->exam_scheduled_at]);
+            }
+            if ($applicant->orientation_scheduled_at) {
+                $slots->push(['applicant' => $applicant, 'type' => 'orientation', 'at' => $applicant->orientation_scheduled_at]);
+            }
+        }
+
+        $now = now();
+        $stats = [
+            'upcoming_exams' => $slots->where('type', 'exam')->filter(fn ($s) => $s['at']->gte($now))->count(),
+            'upcoming_orientations' => $slots->where('type', 'orientation')->filter(fn ($s) => $s['at']->gte($now))->count(),
+            'today' => $slots->filter(fn ($s) => $s['at']->isToday())->count(),
+            'past' => $slots->filter(fn ($s) => $s['at']->lt($now))->count(),
+        ];
+
+        if ($type !== 'all') {
+            $slots = $slots->where('type', $type);
+        }
+        if ($when === 'upcoming') {
+            $slots = $slots->filter(fn ($s) => $s['at']->gte($now))->sortBy('at');
+        } elseif ($when === 'past') {
+            $slots = $slots->filter(fn ($s) => $s['at']->lt($now))->sortByDesc('at');
+        } else {
+            $slots = $slots->sortByDesc('at');
+        }
+
+        return view('admin.schedules.index', [
+            'slots' => $slots->values(),
+            'type' => $type,
+            'when' => $when,
+            'search' => $search,
+            'stats' => $stats,
+        ]);
+    }
+
     public function scheduleExam(Request $request, Applicant $applicant)
     {
         $validated = $request->validate([

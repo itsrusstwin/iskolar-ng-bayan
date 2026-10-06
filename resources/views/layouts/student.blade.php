@@ -33,6 +33,9 @@
                     <li class="nav-item"><a href="{{ route('home') }}" class="nav-link text-white-50 fw-semibold">Home</a></li>
                     <li class="nav-item"><a href="{{ route('dashboard') }}" class="nav-link text-white fw-semibold" style="border-bottom: 2px solid var(--gold-500); padding-bottom: .35rem;">Dashboard</a></li>
                     <li class="nav-item"><a href="{{ route('guides') }}" class="nav-link text-white-50 fw-semibold">Guides</a></li>
+                    <li class="nav-item d-lg-none"><a href="{{ route('student.benefits') }}" class="nav-link text-white-50 fw-semibold">My Benefits</a></li>
+                    <li class="nav-item d-lg-none"><a href="{{ route('student.schedules') }}" class="nav-link text-white-50 fw-semibold">Schedules</a></li>
+                    <li class="nav-item d-lg-none"><a href="{{ route('student.appeals') }}" class="nav-link text-white-50 fw-semibold">Appeals</a></li>
                 </ul>
 
                 <ul class="navbar-nav mt-3 mt-lg-0 align-items-lg-center gap-lg-2">
@@ -156,6 +159,15 @@
                         </a>
                         <a href="{{ route('dashboard') }}#application-status" class="student-nav-item">
                             <i class="bi bi-clock-history"></i> Application status
+                        </a>
+                        <a href="{{ route('student.benefits') }}" class="student-nav-item {{ request()->routeIs('student.benefits') ? 'student-nav-item--active' : '' }}">
+                            <i class="bi bi-wallet2"></i> My Benefits
+                        </a>
+                        <a href="{{ route('student.schedules') }}" class="student-nav-item {{ request()->routeIs('student.schedules') ? 'student-nav-item--active' : '' }}">
+                            <i class="bi bi-calendar-event-fill"></i> Schedules
+                        </a>
+                        <a href="{{ route('student.appeals') }}" class="student-nav-item {{ request()->routeIs('student.appeals') ? 'student-nav-item--active' : '' }}">
+                            <i class="bi bi-shield-exclamation"></i> Appeals
                         </a>
                         <a href="{{ route('support.index') }}" class="student-nav-item {{ request()->routeIs('support.*') ? 'student-nav-item--active' : '' }}">
                             <i class="bi bi-headset"></i> Contact Support

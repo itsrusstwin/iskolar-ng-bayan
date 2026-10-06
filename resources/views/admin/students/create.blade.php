@@ -32,6 +32,12 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Application ID</label>
+                    <input type="text" name="application_id" value="{{ old('application_id') }}" class="form-control" placeholder="e.g. APP-2026-0001" required>
+                    <div class="form-text text-muted-soft">The student's application number for tracking purposes.</div>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Email Address</label>
                     <input type="email" name="email" value="{{ old('email') }}" class="form-control" required>
                 </div>
@@ -77,6 +83,11 @@
                                 </span>
                                 <div style="min-width:0;">
                                     <p class="fw-semibold small mb-0 text-truncate" style="max-width: 220px;">{{ $account->name }}</p>
+                                    @if ($account->application_id)
+                                        <p class="small text-muted-soft mb-0" style="font-size:.75rem;">
+                                            <i class="bi bi-hash"></i> {{ $account->application_id }}
+                                        </p>
+                                    @endif
                                     <p class="small text-muted-soft mb-0 text-truncate" style="font-size:.75rem; max-width:220px;">
                                         <i class="bi bi-envelope"></i> {{ $account->email }}
                                     </p>

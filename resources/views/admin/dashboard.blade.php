@@ -111,112 +111,58 @@
     </div>
 </div>
 
-<!-- Disbursements -->
-<div class="row g-4 mb-4">
-    <div class="col-lg-5">
-        <div class="admin-panel h-100">
-            <div class="admin-panel__header">
-                <h2 class="h6 fw-bold mb-0">Disbursements</h2>
-                <p class="small text-muted-soft mb-0">Scholarship payouts released</p>
-            </div>
-            <div class="admin-panel__body d-flex flex-column">
-                <form method="GET" action="{{ route('admin.dashboard') }}" class="mb-3">
-                    <label class="form-label small fw-semibold mb-1" for="disbursementMonth">View a month</label>
-                    <div class="input-group input-group-sm">
-                        <input type="month" id="disbursementMonth" name="month" value="{{ $selectedMonth }}"
-                               class="form-control" max="{{ now()->format('Y-m') }}">
-                        <button class="btn btn-navy d-inline-flex align-items-center gap-1" type="submit">
-                            <i class="bi bi-funnel"></i> View
-                        </button>
-                    </div>
-                </form>
-
-                <div class="rounded-md p-4 text-center mb-3"
-                     style="background: linear-gradient(135deg, var(--ink-800), var(--ink-600));">
-                    <p class="small text-white-50 mb-1">Total disbursed in
-                        {{ \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}</p>
-                    <p class="h3 fw-bold mb-0 text-white">₱{{ number_format($monthTotal, 2) }}</p>
-                </div>
-
-                <div class="d-flex justify-content-between small text-muted-soft pt-2 border-top">
-                    <span>All-time disbursed</span>
-                    <span class="fw-semibold" style="color: var(--ink-700);">₱{{ number_format($stats['total_payout'], 2) }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-7">
-        <div class="admin-panel h-100">
-            <div class="admin-panel__header d-flex align-items-center justify-content-between flex-wrap gap-2">
+<!-- Operations at a glance -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('admin.schedules.index') }}" class="admin-kpi-card" title="Open Upcoming Schedules">
+            <div class="d-flex align-items-start justify-content-between gap-2">
                 <div>
-                    <h2 class="h6 fw-bold mb-0">Payouts in
-                        {{ \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}</h2>
-                    <p class="small text-muted-soft mb-0">Individual releases for the selected month</p>
+                    <p class="small text-muted-soft mb-1">Upcoming Schedules</p>
+                    <p class="h3 fw-bold mb-0">{{ number_format($ops['schedules_upcoming']) }}</p>
+                    <p class="small text-muted-soft mb-0 mt-1">Exams &amp; orientations ahead</p>
                 </div>
-                @if ($monthPayouts->isNotEmpty())
-                    <span class="badge-soft-navy">{{ $monthPayouts->count() }} release{{ $monthPayouts->count() > 1 ? 's' : '' }}</span>
-                @endif
+                <span class="admin-kpi-icon admin-kpi-icon--grad-navy"><i class="bi bi-calendar-event-fill"></i></span>
             </div>
-            <div class="admin-panel__body admin-panel__body--flush">
-                @if ($monthPayouts->isNotEmpty())
-                    <div class="admin-table-scroll admin-table-scroll--y" style="max-height: 300px;">
-                        <table class="table admin-table admin-table--compact mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="ps-3">Scholar</th>
-                                    <th>Released</th>
-                                    <th class="text-end">Amount</th>
-                                    <th class="text-end pe-3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($monthPayouts as $payout)
-                                <tr>
-                                    <td class="ps-3">
-                                        <div class="d-flex align-items-center gap-2" style="min-width:0;">
-                                            <span class="admin-avatar">
-                                                {{ strtoupper(substr(optional($payout->applicant)->first_name, 0, 1) . substr(optional($payout->applicant)->last_name, 0, 1)) }}
-                                            </span>
-                                            <div style="min-width:0;">
-                                                <div class="fw-semibold admin-table__name">
-                                                    {{ optional($payout->applicant)->first_name }} {{ optional($payout->applicant)->last_name ?? '—' }}
-                                                </div>
-                                                @if ($payout->reference_no)
-                                                    <span class="text-muted-soft admin-table__meta" style="font-size: .72rem;">
-                                                        Ref: {{ $payout->reference_no }}
-                                                    </span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted-soft">{{ $payout->released_at?->format('M d, Y') ?? '—' }}</td>
-                                    <td class="text-end fw-semibold">₱{{ number_format($payout->amount, 2) }}</td>
-                                    <td class="text-end pe-3">
-                                        <form method="POST" action="{{ route('admin.payout.destroy', $payout) }}"
-                                              onsubmit="return confirm('Delete this payout of ₱{{ number_format($payout->amount, 2) }}? This cannot be undone.');" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1"
-                                                    style="padding:.25rem .6rem; font-size:.75rem;" title="Delete payout">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <div class="text-center text-muted-soft py-5">
-                        <i class="bi bi-wallet2 fs-2 d-block mb-2 opacity-50"></i>
-                        No payouts released in
-                        {{ \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}.
-                    </div>
-                @endif
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('admin.waste-compliance.index') }}" class="admin-kpi-card" title="Open Waste Compliance">
+            <div class="d-flex align-items-start justify-content-between gap-2">
+                <div>
+                    <p class="small text-muted-soft mb-1">Waste Compliance</p>
+                    <p class="h3 fw-bold mb-0 kpi-value-blue">{{ number_format($ops['waste_pending']) }}</p>
+                    <p class="small text-muted-soft mb-0 mt-1">
+                        Scholars to record
+                        @if ($ops['waste_deficient'] > 0) · <span class="text-danger">{{ $ops['waste_deficient'] }} deficient</span> @endif
+                    </p>
+                </div>
+                <span class="admin-kpi-icon admin-kpi-icon--grad-green"><i class="bi bi-recycle"></i></span>
             </div>
-        </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('admin.payouts.index') }}" class="admin-kpi-card" title="Open Scholarship Payouts">
+            <div class="d-flex align-items-start justify-content-between gap-2">
+                <div>
+                    <p class="small text-muted-soft mb-1">Scholarship Payouts</p>
+                    <p class="h3 fw-bold mb-0">₱{{ number_format($ops['payout_month'], 2) }}</p>
+                    <p class="small text-muted-soft mb-0 mt-1">This month · {{ $ops['payout_eligible'] }} awaiting</p>
+                </div>
+                <span class="admin-kpi-icon admin-kpi-icon--grad-blue"><i class="bi bi-wallet2"></i></span>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('admin.appeals.index') }}" class="admin-kpi-card" title="Open Appeals">
+            <div class="d-flex align-items-start justify-content-between gap-2">
+                <div>
+                    <p class="small text-muted-soft mb-1">Appeals</p>
+                    <p class="h3 fw-bold mb-0 {{ $ops['appeals_pending'] > 0 ? 'text-danger' : '' }}">{{ number_format($ops['appeals_pending']) }}</p>
+                    <p class="small text-muted-soft mb-0 mt-1">Pending review</p>
+                </div>
+                <span class="admin-kpi-icon admin-kpi-icon--grad-red"><i class="bi bi-shield-exclamation"></i></span>
+            </div>
+        </a>
     </div>
 </div>
 

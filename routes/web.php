@@ -27,6 +27,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ApplicantExportController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\MasterListController;
+use App\Http\Controllers\StudentPanelController;
 
 
 
@@ -76,7 +77,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // -----------------------------
 
 Route::get('/applicants/{applicant}', [ApplicantController::class, 'show'])->name('applicants.show');
-Route::post('/appeals', [AppealController::class, 'store'])->name('appeals.store');
 
 // -----------------------------
 // Complete Profile — requires login (Step 2, after admin creates the account)
@@ -85,6 +85,12 @@ Route::middleware(['auth', 'last_seen'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard', [DashboardController::class, 'store'])->name('applicants.store');
     Route::post('/accept-terms', [AuthController::class, 'acceptTerms'])->name('terms.accept');
+
+    // Student panels (split out of the dashboard)
+    Route::get('/my/benefits', [StudentPanelController::class, 'benefits'])->name('student.benefits');
+    Route::get('/my/schedules', [StudentPanelController::class, 'schedules'])->name('student.schedules');
+    Route::get('/my/appeals', [StudentPanelController::class, 'appeals'])->name('student.appeals');
+    Route::post('/appeals', [AppealController::class, 'store'])->name('appeals.store');
 
     // Student <-> Admin support messaging
     Route::get('/support', [SupportController::class, 'index'])->name('support.index');

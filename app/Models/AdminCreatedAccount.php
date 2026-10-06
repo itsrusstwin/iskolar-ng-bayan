@@ -18,6 +18,7 @@ class AdminCreatedAccount extends Model
         'name',
         'email',
         'password',
+        'application_id',
         'user_id',
         'created_by',
     ];

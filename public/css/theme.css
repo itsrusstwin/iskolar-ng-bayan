@@ -3967,3 +3967,47 @@ select.form-select {
 .navbar.bg-brand-navy .btn-icon i {
     color: #ffffff !important;
 }
+/* ------------------------------------------------------------------
+   Student panels: shared panel header + dashboard summary cards
+------------------------------------------------------------------- */
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: 1rem;
+  padding-bottom: .85rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+.panel-head__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--surface-100);
+  color: var(--ink-700);
+  font-size: 1.05rem;
+}
+.panel-head__title { font-weight: 700; margin: 0; line-height: 1.2; }
+.panel-head__sub { font-size: .8rem; color: var(--text-500); margin: 0; }
+
+.panel-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-0);
+  box-shadow: var(--shadow-soft);
+  text-decoration: none;
+  color: inherit;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.panel-link:hover { transform: translateY(-2px); color: inherit; }
+.panel-link__top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .6rem; }
+.panel-link__label { font-size: .8rem; font-weight: 600; color: var(--text-500); text-transform: uppercase; letter-spacing: .04em; }
+.panel-link__value { font-size: 1.25rem; font-weight: 700; line-height: 1.25; margin: 0; }
+.panel-link__hint { font-size: .8rem; color: var(--text-500); margin: .2rem 0 0; }
+.panel-link__cta { margin-top: auto; padding-top: .75rem; font-size: .8rem; font-weight: 600; color: var(--ink-700); }
